@@ -6,18 +6,30 @@
     <title>ScoreStream Ticker</title>
     <style>
       html, body { height: 100%; margin: 0; background: #000; }
-      /* give the widget a real height or it won't render */
-      .ss-wrap { height: 120px; } /* adjust to 90–160px to taste */
+      /* Make sure there is visible space for the widget */
+      .zone { width: 100%; height: 140px; }
+      /* If you try the scoreboard test below, give it more height */
+      .scoreboard { width: 100%; height: 260px; margin-top: 8px; }
     </style>
   </head>
   <body>
-    <div class="ss-wrap">
-      <!-- IMPORTANT: ScoreStream looks for data-ss-widget (dash), not data-ss_widget_type (underscore) -->
+    <!-- TICKER (preferred) -->
+    <div class="zone">
       <div class="scorestream-widget-container"
            data-ss-widget="ticker"
            data-user-widget-id="66323"></div>
     </div>
-    <!-- keep the script non-async so it runs after the container exists -->
+
+    <!-- SCOREBOARD (debug helper):
+         If ticker still shows black, this gives us a second render target to test.
+         You can delete this block later. -->
+    <div class="scoreboard">
+      <div class="scorestream-widget-container"
+           data-ss-widget="horzScoreboard"
+           data-user-widget-id="66323"></div>
+    </div>
+
+    <!-- IMPORTANT: no async/defer; load AFTER containers exist -->
     <script src="https://scorestream.com/apiJsCdn/widgets/embed.js"></script>
   </body>
 </html>
