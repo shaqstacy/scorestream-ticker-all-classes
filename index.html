@@ -5,31 +5,22 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>ScoreStream Ticker</title>
     <style>
-      html, body { height: 100%; margin: 0; background: #000; }
-      /* Make sure there is visible space for the widget */
-      .zone { width: 100%; height: 140px; }
-      /* If you try the scoreboard test below, give it more height */
-      .scoreboard { width: 100%; height: 260px; margin-top: 8px; }
+      html, body { margin: 0; height: 100%; background: #000; }
+      /* Give the ticker visible space */
+      .ss-wrap { width: 100%; height: 140px; } /* try 120–180px if needed */
+      /* Optional: helps avoid layout collapse while script loads */
+      .scorestream-widget-container { display: block; min-height: 100%; }
     </style>
   </head>
   <body>
-    <!-- TICKER (preferred) -->
-    <div class="zone">
+    <div class="ss-wrap">
+      <!-- IMPORTANT: dash version `data-ss-widget` -->
       <div class="scorestream-widget-container"
            data-ss-widget="ticker"
            data-user-widget-id="66323"></div>
     </div>
 
-    <!-- SCOREBOARD (debug helper):
-         If ticker still shows black, this gives us a second render target to test.
-         You can delete this block later. -->
-    <div class="scoreboard">
-      <div class="scorestream-widget-container"
-           data-ss-widget="horzScoreboard"
-           data-user-widget-id="66323"></div>
-    </div>
-
-    <!-- IMPORTANT: no async/defer; load AFTER containers exist -->
+    <!-- Load AFTER the container exists; no async/defer -->
     <script src="https://scorestream.com/apiJsCdn/widgets/embed.js"></script>
   </body>
 </html>
