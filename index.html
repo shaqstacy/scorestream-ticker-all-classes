@@ -3,19 +3,23 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>ScoreStream Ticker</title>
+    <title>WV High School Football Ticker</title>
     <style>
-      /* Make sure there is visible space for the widget */
-      html, body { height: 100%; margin: 0; background: #000; }
-      .ss-wrap { height: 120px; } /* adjust to 90–160px for a ticker/banner */
+      html, body {
+        height: 100%;
+        margin: 0;
+        background: #000;   /* black background */
+      }
+      .ss-wrap {
+        height: 120px;      /* adjust height if you want the ticker taller/thinner */
+      }
     </style>
   </head>
   <body>
     <div class="ss-wrap">
-      <!-- IMPORTANT: attribute name is data-ss-widget (dash), not data-ss_widget_type (underscore) -->
       <div class="scorestream-widget-container"
-           data-ss-widget="horzScoreboard"
-           data-user-widget-id="66322"></div>
+           data-ss-widget="ticker"
+           data-user-widget-id="66323"></div>
     </div>
 
     <script src="https://scorestream.com/apiJsCdn/widgets/embed.js"></script>
