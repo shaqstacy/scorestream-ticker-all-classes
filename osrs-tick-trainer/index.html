@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Leviathan Tick Trainer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Barlow:wght@400;600&display=swap">
+<style>
+/* Layout: OSRS-style stone frame — arena canvas left, side panel right, tick strip under the arena. Single dark look on purpose. */
+:root {
+  color-scheme: dark;
+  --bg: #15120e;
+  --panel: #3b3226;
+  --panel-deep: #282118;
+  --edge: #5f5140;
+  --edge-hi: #7d6b54;
+  --ink: #e9ddc2;
+  --muted: #b09f80;
+  --yellow: #ffff00;
+  --orange: #ff981f;
+  --good: #48c048;
+  --bad: #e2402f;
+  --info: #4aa3e8;
+  --display: "Pixelify Sans", "Courier New", monospace;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.45 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 32px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; }
+h1 { font: 600 28px/1.1 var(--display); color: var(--orange); margin: 0; text-wrap: balance; text-shadow: 2px 2px 0 #000; }
+.sub { color: var(--muted); margin: 4px 0 0; }
+.bosses { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 14px var(--display); padding: 5px 10px; border: 2px solid var(--edge);
+  background: var(--panel-deep); color: var(--muted); border-radius: 2px;
+}
+.chip.on { color: var(--yellow); border-color: var(--edge-hi); background: var(--panel); }
+.chip[disabled] { opacity: .55; cursor: not-allowed; }
+.game { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
+@media (max-width: 820px) { .game { grid-template-columns: minmax(0, 1fr); } }
+.stone {
+  background: var(--panel); border: 3px solid var(--edge);
+  box-shadow: inset 0 0 0 2px #000, 0 2px 0 #000; border-radius: 3px;
+}
+.arena-box { padding: 8px; display: grid; gap: 8px; min-width: 0; }
+.bossbar { display: grid; gap: 4px; }
+.bossbar .row { display: flex; justify-content: space-between; font: 15px var(--display); color: var(--yellow); text-shadow: 1px 1px 0 #000; }
+.bar { height: 16px; background: var(--bad); border: 1px solid #000; position: relative; }
+.bar > i { position: absolute; inset: 0 auto 0 0; background: var(--good); width: 100%; transition: width .3s; }
+.bar .mark { position: absolute; top: -2px; bottom: -2px; width: 2px; background: #000; }
+.canvas-holder { position: relative; width: 100%; }
+canvas { display: block; width: 100%; height: auto; touch-action: manipulation; cursor: crosshair; image-rendering: pixelated; border: 2px solid #000; }
+.overlay {
+  position: absolute; inset: 0; display: grid; place-items: center; text-align: center;
+  background: rgba(10, 8, 5, .82); padding: 12px; overflow: auto;
+}
+@media (max-width: 520px) {
+  .overlay { font-size: 13px; align-items: start; }
+  .overlay h2 { font-size: 20px; }
+  .grade { font-size: 36px; }
+  .overlay .card { gap: 6px; }
+}
+.overlay .card { max-width: 420px; display: grid; gap: 10px; }
+.overlay h2 { margin: 0; font: 600 26px var(--display); color: var(--orange); text-shadow: 2px 2px 0 #000; }
+.overlay p { margin: 0; color: var(--ink); }
+.grade { font: 600 54px/1 var(--display); color: var(--yellow); text-shadow: 3px 3px 0 #000; }
+.results { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; text-align: left; font-variant-numeric: tabular-nums; }
+.results span:nth-child(odd) { color: var(--muted); }
+button.btn {
+  font: 600 16px var(--display); color: var(--yellow); background: var(--panel-deep);
+  border: 2px solid var(--edge-hi); box-shadow: inset 0 0 0 1px #000; padding: 8px 14px; cursor: pointer; border-radius: 2px;
+}
+button.btn:hover { background: #3a2f22; }
+button.btn:focus-visible, select:focus-visible, input:focus-visible, .chip:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.strip-box { display: grid; gap: 6px; }
+.strip-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font: 14px var(--display); color: var(--orange); }
+.metro { width: 14px; height: 14px; border-radius: 50%; background: var(--panel-deep); border: 2px solid #000; display: inline-block; vertical-align: middle; margin-left: 6px; }
+.metro.flash { background: var(--yellow); }
+.strip { display: grid; grid-template-columns: repeat(40, minmax(0, 1fr)); gap: 2px; height: 22px; }
+.strip i { background: var(--panel-deep); border: 1px solid #000; position: relative; }
+.strip i.attack { background: var(--good); }
+.strip i.move { background: var(--info); }
+.strip i.wait { background: #6d5f4b; }
+.strip i.wasted { background: var(--bad); }
+.strip i.hit::after { content: ""; position: absolute; inset: 30% 30%; background: var(--orange); border-radius: 50%; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; color: var(--muted); }
+.legend b { display: inline-block; width: 10px; height: 10px; border: 1px solid #000; margin-right: 5px; vertical-align: -1px; }
+aside { padding: 12px; display: grid; gap: 14px; }
+aside h3 { margin: 0 0 6px; font: 600 16px var(--display); color: var(--orange); letter-spacing: .03em; }
+.field { display: grid; gap: 3px; margin-bottom: 8px; }
+.field label { font-size: 13px; color: var(--muted); }
+select {
+  font: 15px var(--body); color: var(--ink); background: var(--panel-deep); border: 2px solid var(--edge);
+  padding: 5px 6px; border-radius: 2px; width: 100%;
+}
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; margin-bottom: 4px; }
+.stats { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-variant-numeric: tabular-nums; }
+.stats span:nth-child(odd) { color: var(--muted); }
+.stats span:nth-child(even) { color: var(--yellow); font-family: var(--display); }
+.hp { display: flex; align-items: center; gap: 8px; font: 16px var(--display); color: var(--yellow); }
+.hp .orb { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #000; background: radial-gradient(circle at 35% 35%, #ff6b5a, #9b1408); display: grid; place-items: center; font-size: 13px; color: #fff; text-shadow: 1px 1px 0 #000; }
+.buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.wpn { font-size: 13px; color: var(--muted); }
+.guide { padding: 14px 16px; display: grid; gap: 10px; }
+.guide h2 { margin: 0; font: 600 20px var(--display); color: var(--orange); }
+.guide ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 72ch; }
+.guide p { margin: 0; color: var(--muted); max-width: 72ch; }
+kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px solid var(--edge); padding: 0 5px; color: var(--yellow); }
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Leviathan Tick Trainer</h1>
+      <p class="sub">Keep your attack cadence while dodging falling debris. One game tick = 0.6 seconds.</p>
+    </div>
+    <div class="bosses" role="group" aria-label="Boss">
+      <button class="chip on" type="button" aria-pressed="true">Leviathan</button>
+      <button class="chip" type="button" disabled title="Coming later">Vardorvis</button>
+      <button class="chip" type="button" disabled title="Coming later">Duke Sucellus</button>
+      <button class="chip" type="button" disabled title="Coming later">Whisperer</button>
+    </div>
+  </header>
+
+  <div class="game">
+    <section class="stone arena-box">
+      <div class="bossbar">
+        <div class="row"><span id="bossName">The Leviathan</span><span id="bossHpText">600 / 600</span></div>
+        <div class="bar" id="bossBar"><i id="bossFill"></i><span class="mark" style="left:66%"></span><span class="mark" style="left:33%"></span></div>
+      </div>
+      <div class="canvas-holder">
+        <canvas id="cv" width="572" height="572" aria-label="Arena. Click a tile to move, click the Leviathan to attack."></canvas>
+        <div class="overlay" id="overlay">
+          <div class="card" id="overlayCard"></div>
+        </div>
+      </div>
+      <div class="strip-box">
+        <div class="strip-head"><span>Last 40 ticks<span class="metro" id="metro"></span></span><span id="tickNo">Tick 0</span></div>
+        <div class="strip" id="strip"></div>
+        <div class="legend">
+          <span><b style="background:var(--good)"></b>Attack</span>
+          <span><b style="background:var(--info)"></b>Moved on a cooldown tick</span>
+          <span><b style="background:#6d5f4b"></b>Waiting on cooldown</span>
+          <span><b style="background:var(--bad)"></b>Lost tick (weapon was ready)</span>
+          <span><b style="background:var(--orange);border-radius:50%"></b>Hit by debris</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="stone">
+      <div>
+        <div class="hp"><span class="orb" id="hpOrb">99</span><span>Hitpoints</span></div>
+      </div>
+      <div>
+        <h3>Setup</h3>
+        <div class="field">
+          <label for="weapon">Weapon (rapid)</label>
+          <select id="weapon">
+            <option value="bp">Toxic blowpipe · 2t</option>
+            <option value="bowfa" selected>Bow of faerdhinen · 4t</option>
+            <option value="zcb">Zaryte crossbow · 5t</option>
+            <option value="tbow">Twisted bow · 5t</option>
+          </select>
+          <span class="wpn" id="wpnInfo"></span>
+        </div>
+        <div class="field">
+          <label for="speed">Game speed</label>
+          <select id="speed">
+            <option value="600" selected>Real time (600 ms/tick)</option>
+            <option value="900">Slow (900 ms/tick)</option>
+            <option value="1200">Learning (1200 ms/tick)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="warn">Debris warning</label>
+          <select id="warn">
+            <option value="4">4 ticks (easy)</option>
+            <option value="3" selected>3 ticks</option>
+            <option value="2">2 ticks (hard)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="bossHp">Boss hitpoints</label>
+          <select id="bossHp">
+            <option value="300">300 (short drill)</option>
+            <option value="600" selected>600</option>
+            <option value="900">900 (full length)</option>
+          </select>
+        </div>
+        <label class="check"><input type="checkbox" id="godmode"> Can't die (practice)</label>
+        <label class="check"><input type="checkbox" id="showRange" checked> Show weapon range</label>
+        <label class="check"><input type="checkbox" id="volleys" checked> Show boss volleys</label>
+        <label class="check"><input type="checkbox" id="sound"> Tick sound</label>
+      </div>
+      <div>
+        <h3>This fight</h3>
+        <div class="stats">
+          <span>Attacks</span><span id="sAtk">0</span>
+          <span>Lost ticks</span><span id="sLost">0</span>
+          <span>Uptime</span><span id="sUp">–</span>
+          <span>Debris hits</span><span id="sHits">0</span>
+          <span>Damage taken</span><span id="sTaken">0</span>
+          <span>Phase</span><span id="sPhase">1</span>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="btn" id="startBtn" type="button">Start</button>
+        <button class="btn" id="pauseBtn" type="button">Pause</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="stone guide">
+    <h2>What you're drilling</h2>
+    <ol>
+      <li><strong>Your weapon timer keeps running while you move.</strong> After an attack, a 4-tick bow has 3 free ticks. Step out of a shadow on one of those, then click the Leviathan again, and the next shot still fires on time.</li>
+      <li><strong>Never move on your attack tick.</strong> A move click that lands on the tick your weapon is ready replaces the attack, and the strip turns red.</li>
+      <li><strong>The last click in a tick wins.</strong> Clicking a tile and then the boss inside the same 0.6 s means you only attack. Plan the move one tick earlier.</li>
+      <li><strong>You run 2 tiles per tick.</strong> A 3×3 drop centred on you needs a 2-tile run or a diagonal step. Running back into range costs a tick before you can fire.</li>
+      <li><strong>Phases speed up.</strong> Debris falls every 10, 8, then 6 ticks as the Leviathan drops below 66% and 33%. Each threshold stuns it for 8 ticks with no debris and +25% damage, so stand still and fire.</li>
+    </ol>
+    <p>Movement is simplified to straight-line steps, and prayers are left out for now. Boss volleys are shown so you can see the rhythm, but they don't deal damage yet. Controls: click or tap a tile to move, click the Leviathan to attack, <kbd>Space</kbd> pauses, <kbd>R</kbd> restarts.</p>
+  </section>
+</div>
+
+<script>
+(() => {
+  const COLS = 13, ROWS = 13;
+  const BOSS = { x: 4, y: 0, w: 5, h: 5 };
+  const WEAPONS = {
+    bp:    { name: "Toxic blowpipe",    speed: 2, range: 5,  max: 30, color: "#7cd36b" },
+    bowfa: { name: "Bow of faerdhinen", speed: 4, range: 10, max: 46, color: "#9ad1ff" },
+    zcb:   { name: "Zaryte crossbow",   speed: 5, range: 8,  max: 54, color: "#d9b3ff" },
+    tbow:  { name: "Twisted bow",       speed: 5, range: 10, max: 66, color: "#ffcc66" },
+  };
+  const PHASES = { 1: { debris: 10, volley: 5 }, 2: { debris: 8, volley: 4 }, 3: { debris: 6, volley: 3 } };
+  const STUN_TICKS = 8;
+  const STYLE_COLORS = { magic: "#3d8bff", ranged: "#58d64a", melee: "#ff4a3a" };
+
+  const $ = (id) => document.getElementById(id);
+  const cv = $("cv"), ctx = cv.getContext("2d");
+  const T = cv.width / COLS;
+
+  let S = null;
+  let lastTickAt = 0;
+  let audio = null;
+
+  const cfg = () => ({
+    weapon: WEAPONS[$("weapon").value],
+    tickMs: +$("speed").value,
+    warn: +$("warn").value,
+    bossHp: +$("bossHp").value,
+    god: $("godmode").checked,
+  });
+
+  function newGame() {
+    const c = cfg();
+    S = {
+      c, tick: 0, running: false, paused: false, over: null,
+      p: { x: 6, y: 10, px: 6, py: 10, hp: 99 },
+      target: null, pending: null, cd: 0,
+      boss: { hp: c.bossHp, max: c.bossHp, stun: 0, thresholds: [0.66, 0.33] },
+      debris: [], impacts: [], nextDebris: 6, nextVolley: 4,
+      projs: [], splats: [], hits: [], marker: null, banner: null,
+      strip: [], st: { attacks: 0, lost: 0, hits: 0, taken: 0, fightTicks: 0 },
+    };
+    renderStrip(); updateHud();
+  }
+
+  // ---------- geometry ----------
+  const inBoss = (x, y) => x >= BOSS.x && x < BOSS.x + BOSS.w && y >= BOSS.y && y < BOSS.y + BOSS.h;
+  const inArena = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS;
+  const walkable = (x, y) => inArena(x, y) && y >= BOSS.h; // rows above are the Leviathan's water
+  function distToBoss(x, y) {
+    const cx = Math.max(BOSS.x, Math.min(x, BOSS.x + BOSS.w - 1));
+    const cy = Math.max(BOSS.y, Math.min(y, BOSS.y + BOSS.h - 1));
+    return Math.max(Math.abs(x - cx), Math.abs(y - cy));
+  }
+  function stepToward(p, tx, ty) {
+    const dx = Math.sign(tx - p.x), dy = Math.sign(ty - p.y);
+    if (!dx && !dy) return false;
+    const opts = [[dx, dy], [dx, 0], [0, dy]];
+    for (const [ox, oy] of opts) {
+      if ((ox || oy) && walkable(p.x + ox, p.y + oy)) { p.x += ox; p.y += oy; return true; }
+    }
+    return false;
+  }
+  const phase = () => { const f = S.boss.hp / S.boss.max; return f > 0.66 ? 1 : f > 0.33 ? 2 : 3; };
+  const rnd = (n) => Math.floor(Math.random() * n);
+
+  // ---------- tick ----------
+  function tick() {
+    const s = S, w = s.c.weapon;
+    s.tick++;
+    s.p.px = s.p.x; s.p.py = s.p.y;
+    if (s.pending) { s.target = s.pending; s.pending = null; }
+
+    const ready = s.cd <= 0;
+    let kind = "idle";
+    if (s.target && s.target.type === "move") {
+      for (let i = 0; i < 2; i++) stepToward(s.p, s.target.x, s.target.y);
+      if (s.p.x === s.target.x && s.p.y === s.target.y) s.target = null;
+      kind = "move";
+    } else if (s.target && s.target.type === "attack") {
+      const d = distToBoss(s.p.x, s.p.y);
+      if (d <= w.range) {
+        if (ready) { attack(d); kind = "attack"; } else kind = "wait";
+      } else {
+        for (let i = 0; i < 2 && distToBoss(s.p.x, s.p.y) > w.range; i++) {
+          stepToward(s.p, BOSS.x + 2, BOSS.y + 2);
+        }
+        kind = "move";
+      }
+    } else if (!ready) kind = "wait";
+
+    const lost = ready && kind !== "attack";
+    if (lost) s.st.lost++;
+    if (kind === "attack") s.cd = w.speed;
+    s.cd = Math.max(0, s.cd - 1);
+    s.st.fightTicks++;
+
+    // pending hits on boss
+    for (const h of s.hits) h.t--;
+    for (const h of s.hits.filter((h) => h.t <= 0)) applyBossHit(h.dmg);
+    s.hits = s.hits.filter((h) => h.t > 0);
+
+    // debris
+    let hitThisTick = false;
+    for (const d of s.debris) d.t--;
+    const landed = s.debris.filter((d) => d.t <= 0);
+    s.debris = s.debris.filter((d) => d.t > 0);
+    for (const d of landed) {
+      s.impacts.push({ x: d.x, y: d.y, tick: s.tick });
+      if (d.x === s.p.x && d.y === s.p.y) hitThisTick = true;
+    }
+    if (hitThisTick) {
+      const dmg = 14 + rnd(10);
+      s.st.hits++; s.st.taken += dmg;
+      if (!s.c.god) s.p.hp = Math.max(0, s.p.hp - dmg);
+      s.splats.push({ x: s.p.x, y: s.p.y, dmg, at: performance.now(), boss: false });
+    }
+    s.impacts = s.impacts.filter((i) => s.tick - i.tick < 2);
+
+    const ph = PHASES[phase()];
+    if (s.boss.stun > 0) {
+      s.boss.stun--;
+    } else if (!s.over) {
+      if (--s.nextDebris <= 0) { spawnDebris(); s.nextDebris = ph.debris; }
+      if (--s.nextVolley <= 0) { spawnVolley(); s.nextVolley = ph.volley; }
+    }
+
+    s.strip.push({ kind: lost ? "wasted" : kind, hit: hitThisTick });
+    if (s.strip.length > 40) s.strip.shift();
+
+    if (s.p.hp <= 0 && !s.over) endGame(false);
+    if (audio && $("sound").checked) beep(kind === "attack" ? 880 : 440, kind === "attack" ? 0.06 : 0.03);
+    renderStrip(); updateHud();
+    const m = $("metro"); m.classList.add("flash"); setTimeout(() => m.classList.remove("flash"), 120);
+  }
+
+  function attack(dist) {
+    const s = S, w = s.c.weapon;
+    s.st.attacks++;
+    const delay = 1 + Math.floor((3 + dist) / 6);
+    let dmg = Math.random() < 0.78 ? rnd(w.max + 1) : 0;
+    if (s.boss.stun > 0) dmg = Math.round(dmg * 1.25);
+    s.hits.push({ t: delay, dmg });
+    s.projs.push({ fx: s.p.x, fy: s.p.y, tx: BOSS.x + 2, ty: BOSS.y + 2, start: s.tick, end: s.tick + delay, color: w.color, size: 4 });
+  }
+
+  function applyBossHit(dmg) {
+    const s = S; if (s.over) return;
+    s.boss.hp = Math.max(0, s.boss.hp - dmg);
+    s.splats.push({ x: BOSS.x + 2, y: BOSS.y + 2, dmg, at: performance.now(), boss: true, jitter: rnd(3) - 1 });
+    const f = s.boss.hp / s.boss.max;
+    while (s.boss.thresholds.length && f <= s.boss.thresholds[0] && s.boss.hp > 0) {
+      s.boss.thresholds.shift();
+      s.boss.stun = STUN_TICKS;
+      s.nextDebris = 3; s.nextVolley = 3;
+      s.banner = { text: "The Leviathan is stunned!", at: performance.now() };
+    }
+    if (s.boss.hp <= 0) endGame(true);
+  }
+
+  function spawnDebris() {
+    const s = S, px = s.p.x, py = s.p.y, warn = s.c.warn;
+    const set = new Map();
+    const add = (x, y) => { if (walkable(x, y)) set.set(x + "," + y, { x, y, t: warn, max: warn }); };
+    const pattern = rnd(phase() === 1 ? 2 : 3);
+    if (pattern === 0) {
+      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) add(px + dx, py + dy);
+    } else if (pattern === 1) {
+      add(px, py);
+      const n = 10 + phase() * 4;
+      for (let i = 0; i < n; i++) add(rnd(COLS), BOSS.h + rnd(ROWS - BOSS.h));
+    } else {
+      const horiz = Math.random() < 0.5;
+      for (let i = 0; i < 13; i++) horiz ? add(i, py) : add(px, i);
+      for (let i = 0; i < 5; i++) add(rnd(COLS), BOSS.h + rnd(ROWS - BOSS.h));
+    }
+    s.debris.push(...set.values());
+  }
+
+  function spawnVolley() {
+    if (!$("volleys").checked) return;
+    const s = S, styles = Object.keys(STYLE_COLORS);
+    const style = styles[rnd(3)];
+    s.projs.push({ fx: BOSS.x + 2, fy: BOSS.y + 3, tx: s.p.x, ty: s.p.y, start: s.tick, end: s.tick + 2, color: STYLE_COLORS[style], size: 6, boss: true });
+  }
+
+  function endGame(win) {
+    const s = S; s.over = win ? "win" : "loss"; s.running = false;
+    const st = s.st, w = s.c.weapon;
+    const up = uptime();
+    const grade = !win ? "–" : up >= 97 ? "S" : up >= 90 ? "A" : up >= 80 ? "B" : up >= 65 ? "C" : "D";
+    showOverlay(`
+      <h2>${win ? "The Leviathan is defeated" : "Oh dear, you are dead!"}</h2>
+      ${win ? `<div class="grade">${grade}</div>` : ""}
+      <div class="results">
+        <span>Weapon</span><span>${w.name}</span>
+        <span>Fight length</span><span>${st.fightTicks} ticks (${(st.fightTicks * 0.6).toFixed(1)} s game time)</span>
+        <span>Attacks</span><span>${st.attacks}</span>
+        <span>Lost ticks</span><span>${st.lost}</span>
+        <span>Uptime</span><span>${up}%</span>
+        <span>Debris hits</span><span>${st.hits} (${st.taken} damage)</span>
+      </div>
+      <p>${win ? tipFor(up, st) : "Watch the shadow numbers. Move when they show 2, not 1."}</p>
+      <div><button class="btn" type="button" data-act="start">Fight again</button></div>`);
+  }
+  function tipFor(up, st) {
+    if (st.hits > 3) return "Dodge earlier: take your step on the first free tick after an attack.";
+    if (up < 90) return "Too many red ticks. Re-click the boss right after each step so the next shot fires on its tick.";
+    return "Clean cadence. Try the 2-tick warning or a faster weapon.";
+  }
+  function uptime() {
+    const st = S.st, w = S.c.weapon;
+    if (!st.fightTicks) return 0;
+    const ideal = Math.ceil(st.fightTicks / w.speed);
+    return Math.min(100, Math.round((st.attacks / ideal) * 100));
+  }
+
+  // ---------- input ----------
+  function canvasTile(ev) {
+    const r = cv.getBoundingClientRect();
+    const x = Math.floor(((ev.clientX - r.left) / r.width) * COLS);
+    const y = Math.floor(((ev.clientY - r.top) / r.height) * ROWS);
+    return { x, y };
+  }
+  cv.addEventListener("pointerdown", (ev) => {
+    if (!S.running || S.paused) return;
+    const { x, y } = canvasTile(ev);
+    if (!inArena(x, y)) return;
+    if (inBoss(x, y)) {
+      S.pending = { type: "attack" };
+      S.marker = { x: x + 0.5, y: y + 0.5, red: true, at: performance.now() };
+    } else {
+      S.pending = { type: "move", x, y };
+      S.marker = { x: x + 0.5, y: y + 0.5, red: false, at: performance.now() };
+    }
+  });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.target.tagName === "SELECT" || ev.target.tagName === "INPUT") return;
+    if (ev.code === "Space") { ev.preventDefault(); togglePause(); }
+    if (ev.key === "r" || ev.key === "R") start();
+  });
+
+  // ---------- controls ----------
+  function start() {
+    newGame();
+    if ($("sound").checked) ensureAudio();
+    S.running = true;
+    lastTickAt = performance.now();
+    hideOverlay();
+    S.banner = { text: "Click the Leviathan to attack", at: performance.now() };
+    setControls();
+  }
+  function togglePause() {
+    if (!S.running) return;
+    S.paused = !S.paused;
+    if (S.paused) showOverlay(`<h2>Paused</h2><div><button class="btn" type="button" data-act="resume">Resume</button></div>`);
+    else { hideOverlay(); lastTickAt = performance.now(); }
+    setControls();
+  }
+  function setControls() {
+    const live = S.running;
+    for (const id of ["weapon", "speed", "warn", "bossHp", "godmode"]) $(id).disabled = live;
+    $("startBtn").textContent = live ? "Restart" : "Start";
+    $("pauseBtn").textContent = S.paused ? "Resume" : "Pause";
+  }
+  $("startBtn").onclick = start;
+  $("pauseBtn").onclick = togglePause;
+  $("overlay").addEventListener("click", (ev) => {
+    const act = ev.target.dataset && ev.target.dataset.act;
+    if (act === "start") start();
+    if (act === "resume") togglePause();
+  });
+  $("sound").addEventListener("change", () => { if ($("sound").checked) ensureAudio(); });
+  $("weapon").addEventListener("change", () => { newGame(); updateWeaponInfo(); });
+  for (const id of ["speed", "warn", "bossHp", "godmode"]) $(id).addEventListener("change", newGame);
+  document.addEventListener("visibilitychange", () => { if (document.hidden && S.running && !S.paused) togglePause(); });
+
+  function showOverlay(html) { $("overlayCard").innerHTML = html; $("overlay").hidden = false; }
+  function hideOverlay() { $("overlay").hidden = true; }
+  function updateWeaponInfo() {
+    const w = WEAPONS[$("weapon").value];
+    $("wpnInfo").textContent = `Attacks every ${w.speed} ticks (${(w.speed * 0.6).toFixed(1)} s), range ${w.range} tiles.`;
+  }
+
+  function ensureAudio() {
+    try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) { audio = null; }
+  }
+  function beep(freq, vol) {
+    try {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.frequency.value = freq; o.type = "square";
+      g.gain.setValueAtTime(vol, audio.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.07);
+      o.connect(g).connect(audio.destination); o.start(); o.stop(audio.currentTime + 0.08);
+    } catch (e) {}
+  }
+
+  // ---------- HUD ----------
+  function renderStrip() {
+    const el = $("strip");
+    const cells = [];
+    const pad = 40 - S.strip.length;
+    for (let i = 0; i < pad; i++) cells.push("<i></i>");
+    for (const c of S.strip) cells.push(`<i class="${c.kind === "idle" ? "" : c.kind}${c.hit ? " hit" : ""}"></i>`);
+    el.innerHTML = cells.join("");
+  }
+  function updateHud() {
+    const s = S, b = s.boss;
+    $("bossFill").style.width = (b.hp / b.max) * 100 + "%";
+    $("bossHpText").textContent = `${b.hp} / ${b.max}`;
+    $("hpOrb").textContent = s.p.hp;
+    $("sAtk").textContent = s.st.attacks;
+    $("sLost").textContent = s.st.lost;
+    $("sUp").textContent = s.st.fightTicks ? uptime() + "%" : "–";
+    $("sHits").textContent = s.st.hits;
+    $("sTaken").textContent = s.st.taken;
+    $("sPhase").textContent = b.stun > 0 ? `${phase()} · stunned ${b.stun}t` : phase();
+    $("tickNo").textContent = "Tick " + s.tick;
+  }
+
+  // ---------- drawing ----------
+  function draw(now) {
+    const s = S;
+    const frac = s.running && !s.paused ? Math.min(1, (now - lastTickAt) / s.c.tickMs) : 1;
+    ctx.clearRect(0, 0, cv.width, cv.height);
+
+    // floor
+    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+      ctx.fillStyle = (x + y) % 2 ? "#2b2a25" : "#302e28";
+      ctx.fillRect(x * T, y * T, T, T);
+    }
+    // water behind boss
+    const grd = ctx.createLinearGradient(0, 0, 0, BOSS.h * T);
+    grd.addColorStop(0, "#0b2a33"); grd.addColorStop(1, "#123a40");
+    ctx.fillStyle = grd; ctx.fillRect(0, 0, cv.width, BOSS.h * T);
+    ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1;
+    for (let i = 0; i <= COLS; i++) { ctx.beginPath(); ctx.moveTo(i * T + .5, BOSS.h * T); ctx.lineTo(i * T + .5, cv.height); ctx.stroke(); }
+    for (let i = BOSS.h; i <= ROWS; i++) { ctx.beginPath(); ctx.moveTo(0, i * T + .5); ctx.lineTo(cv.width, i * T + .5); ctx.stroke(); }
+    // ripples
+    ctx.strokeStyle = "rgba(120,200,210,.12)";
+    for (let i = 0; i < 6; i++) {
+      const yy = ((now / 40 + i * 37) % (BOSS.h * T));
+      ctx.beginPath(); ctx.moveTo((i * 97) % cv.width, yy); ctx.lineTo((i * 97) % cv.width + 40, yy); ctx.stroke();
+    }
+
+    // range overlay
+    if ($("showRange").checked) {
+      const r = s.c.weapon.range;
+      ctx.fillStyle = "rgba(255,255,0,.05)";
+      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+        if (walkable(x, y) && distToBoss(x, y) <= r) ctx.fillRect(x * T, y * T, T, T);
+      }
+      ctx.strokeStyle = "rgba(255,255,0,.35)"; ctx.lineWidth = 1;
+      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+        if (!walkable(x, y) || distToBoss(x, y) > r) continue;
+        if (!(walkable(x, y + 1) && distToBoss(x, y + 1) <= r) && y + 1 < ROWS) { ctx.beginPath(); ctx.moveTo(x * T, (y + 1) * T); ctx.lineTo((x + 1) * T, (y + 1) * T); ctx.stroke(); }
+        if (!(walkable(x + 1, y) && distToBoss(x + 1, y) <= r) && x + 1 < COLS && !inBoss(x + 1, y)) { ctx.beginPath(); ctx.moveTo((x + 1) * T, y * T); ctx.lineTo((x + 1) * T, (y + 1) * T); ctx.stroke(); }
+        if (!(walkable(x - 1, y) && distToBoss(x - 1, y) <= r) && x > 0 && !inBoss(x - 1, y)) { ctx.beginPath(); ctx.moveTo(x * T, y * T); ctx.lineTo(x * T, (y + 1) * T); ctx.stroke(); }
+      }
+    }
+
+    // destination tile
+    if (s.target && s.target.type === "move") {
+      ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 2;
+      ctx.strokeRect(s.target.x * T + 2, s.target.y * T + 2, T - 4, T - 4);
+    }
+
+    // debris shadows
+    for (const d of s.debris) {
+      const k = 1 - (d.t - frac) / (d.max + 1);
+      ctx.fillStyle = `rgba(0,0,0,${0.25 + 0.5 * k})`;
+      ctx.beginPath(); ctx.ellipse(d.x * T + T / 2, d.y * T + T / 2, T * (0.25 + 0.2 * k), T * (0.18 + 0.14 * k), 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = d.t === 1 ? "#ff981f" : "#ffff00";
+      ctx.font = `600 ${Math.round(T * 0.38)}px "Pixelify Sans", monospace`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(d.t, d.x * T + T / 2, d.y * T + T / 2 + 1);
+      // falling rock on the last tick
+      if (d.t === 1) {
+        const fy = d.y * T + T / 2 - (1 - frac) * T * 1.6;
+        ctx.fillStyle = "#6e6252";
+        ctx.beginPath(); ctx.arc(d.x * T + T / 2, fy, T * 0.22, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#000"; ctx.stroke();
+      }
+    }
+    // landed rocks
+    for (const im of s.impacts) {
+      const age = s.tick - im.tick + frac;
+      ctx.globalAlpha = Math.max(0, 1 - age / 2);
+      ctx.fillStyle = "#5c5244";
+      for (let i = 0; i < 4; i++) {
+        const a = i * 1.7 + im.x, r = T * (0.12 + age * 0.12);
+        ctx.beginPath(); ctx.arc(im.x * T + T / 2 + Math.cos(a) * r, im.y * T + T / 2 + Math.sin(a) * r, T * 0.09, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.fillStyle = "#7a6c58";
+      ctx.beginPath(); ctx.arc(im.x * T + T / 2, im.y * T + T / 2, T * 0.2, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    drawBoss(now);
+
+    // player
+    const px = (s.p.px + (s.p.x - s.p.px) * frac) * T + T / 2;
+    const py = (s.p.py + (s.p.y - s.p.py) * frac) * T + T / 2;
+    drawPlayer(px, py);
+
+    // projectiles
+    s.projs = s.projs.filter((p) => s.tick < p.end + 1);
+    for (const p of s.projs) {
+      const k = (s.tick + frac - p.start) / (p.end - p.start);
+      if (k < 0 || k > 1) continue;
+      const x = (p.fx + (p.tx - p.fx) * k) * T + T / 2;
+      const y = (p.fy + (p.ty - p.fy) * k) * T + T / 2 - Math.sin(k * Math.PI) * T * 0.6;
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(x, y, p.size * (T / 44), 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#000"; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // hitsplats
+    s.splats = s.splats.filter((h) => now - h.at < 1000);
+    for (const h of s.splats) {
+      const x = h.x * T + T / 2 + (h.jitter || 0) * T * 0.5, y = h.y * T + T / 2 - (h.boss ? 0 : T * 0.1);
+      drawSplat(x, y, h.dmg);
+    }
+
+    // click marker
+    if (s.marker) {
+      const age = (now - s.marker.at) / 400;
+      if (age < 1) {
+        ctx.strokeStyle = s.marker.red ? "#ff2a1a" : "#ffff00"; ctx.lineWidth = 3;
+        const r = T * 0.22 * (1 - age * 0.4), mx = s.marker.x * T, my = s.marker.y * T;
+        ctx.beginPath(); ctx.moveTo(mx - r, my - r); ctx.lineTo(mx + r, my + r); ctx.moveTo(mx + r, my - r); ctx.lineTo(mx - r, my + r); ctx.stroke();
+      }
+    }
+
+    // banner
+    if (s.banner && now - s.banner.at < 2200) {
+      ctx.font = `600 ${Math.round(T * 0.5)}px "Pixelify Sans", monospace`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "#000"; ctx.fillText(s.banner.text, cv.width / 2 + 2, BOSS.h * T + T * 0.7 + 2);
+      ctx.fillStyle = "#ffff00"; ctx.fillText(s.banner.text, cv.width / 2, BOSS.h * T + T * 0.7);
+    }
+  }
+
+  function drawBoss(now) {
+    const s = S;
+    const cx = (BOSS.x + BOSS.w / 2) * T, cy = (BOSS.y + BOSS.h / 2) * T;
+    const stunned = s.boss.stun > 0;
+    const bob = stunned ? 0 : Math.sin(now / 500) * T * 0.08;
+    // tendrils
+    ctx.strokeStyle = "#173a36"; ctx.lineWidth = T * 0.28; ctx.lineCap = "round";
+    for (let i = 0; i < 6; i++) {
+      const a = Math.PI * (0.15 + i * 0.14) + Math.sin(now / 700 + i) * (stunned ? 0.02 : 0.12);
+      ctx.beginPath(); ctx.moveTo(cx, cy + bob);
+      ctx.quadraticCurveTo(cx + Math.cos(a) * T * 2.2, cy + Math.sin(a) * T * 1.3, cx + Math.cos(a) * T * 2.6, cy + Math.sin(a) * T * 2.3);
+      ctx.stroke();
+    }
+    // shell
+    ctx.fillStyle = "#1f4a45"; ctx.strokeStyle = "#000"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.ellipse(cx, cy + bob, T * 2.2, T * 1.9, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#2c625a";
+    for (let i = -2; i <= 2; i++) {
+      ctx.beginPath(); ctx.ellipse(cx + i * T * 0.75, cy - T * 0.5 + bob + Math.abs(i) * T * 0.25, T * 0.35, T * 0.6, i * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+    // spikes
+    ctx.fillStyle = "#c9c0a5";
+    for (let i = -3; i <= 3; i++) {
+      const bx = cx + i * T * 0.55, by = cy - T * 1.6 + bob + Math.abs(i) * T * 0.22;
+      ctx.beginPath(); ctx.moveTo(bx - T * 0.14, by + T * 0.15); ctx.lineTo(bx, by - T * 0.4); ctx.lineTo(bx + T * 0.14, by + T * 0.15); ctx.closePath(); ctx.fill(); ctx.stroke();
+    }
+    // face
+    ctx.fillStyle = "#0e2522";
+    ctx.beginPath(); ctx.ellipse(cx, cy + T * 0.75 + bob, T * 1.2, T * 0.75, 0, 0, Math.PI * 2); ctx.fill();
+    for (const side of [-1, 1]) {
+      ctx.fillStyle = stunned ? "#777" : "#ffd23a";
+      ctx.beginPath(); ctx.ellipse(cx + side * T * 0.55, cy + T * 0.55 + bob, T * 0.2, T * 0.14, side * 0.4, 0, Math.PI * 2); ctx.fill();
+      if (!stunned) { ctx.fillStyle = "#000"; ctx.fillRect(cx + side * T * 0.55 - 1.5, cy + T * 0.45 + bob, 3, T * 0.2); }
+    }
+    ctx.fillStyle = "#e9e2cc";
+    for (let i = -3; i <= 3; i++) {
+      ctx.beginPath(); ctx.moveTo(cx + i * T * 0.22 - T * 0.07, cy + T * 1.05 + bob); ctx.lineTo(cx + i * T * 0.22, cy + T * 1.3 + bob); ctx.lineTo(cx + i * T * 0.22 + T * 0.07, cy + T * 1.05 + bob); ctx.fill();
+    }
+    if (stunned) {
+      ctx.fillStyle = "#ffff00";
+      for (let i = 0; i < 3; i++) {
+        const a = now / 300 + i * 2.1;
+        star(cx + Math.cos(a) * T * 1.1, cy - T * 2 + Math.sin(a) * T * 0.25, T * 0.16);
+      }
+    }
+    ctx.lineCap = "butt";
+  }
+  function star(x, y, r) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) {
+      const a = (i * Math.PI) / 5 - Math.PI / 2, rr = i % 2 ? r * 0.45 : r;
+      ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+    }
+    ctx.closePath(); ctx.fill();
+  }
+  function drawPlayer(x, y) {
+    const s = S, w = s.c.weapon;
+    ctx.strokeStyle = "#000"; ctx.lineWidth = 2;
+    ctx.fillStyle = "rgba(0,0,0,.3)"; ctx.beginPath(); ctx.ellipse(x, y + T * 0.32, T * 0.25, T * 0.08, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#3a5f8f"; ctx.fillRect(x - T * 0.15, y - T * 0.1, T * 0.3, T * 0.38); ctx.strokeRect(x - T * 0.15, y - T * 0.1, T * 0.3, T * 0.38);
+    ctx.fillStyle = "#e0b48a"; ctx.beginPath(); ctx.arc(x, y - T * 0.22, T * 0.13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = w.color; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x + T * 0.18, y - T * 0.25); ctx.lineTo(x + T * 0.3, y + T * 0.2); ctx.stroke();
+    // hp bar when hurt
+    if (s.p.hp < 99) {
+      const bw = T * 0.7;
+      ctx.fillStyle = "#e2402f"; ctx.fillRect(x - bw / 2, y - T * 0.55, bw, 5);
+      ctx.fillStyle = "#48c048"; ctx.fillRect(x - bw / 2, y - T * 0.55, bw * (s.p.hp / 99), 5);
+    }
+    // cooldown pips
+    const pips = w.speed, left = S.cd;
+    for (let i = 0; i < pips; i++) {
+      ctx.fillStyle = i < pips - left ? "#ffff00" : "#3b3226";
+      ctx.fillRect(x - (pips * 7) / 2 + i * 7, y + T * 0.42, 5, 4);
+    }
+  }
+  function drawSplat(x, y, dmg) {
+    const r = T * 0.24;
+    ctx.fillStyle = dmg > 0 ? "#b5160b" : "#2a5fd0";
+    ctx.strokeStyle = "#000"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < 12; i++) {
+      const a = (i * Math.PI) / 6, rr = i % 2 ? r * 0.82 : r;
+      ctx.lineTo(x + Math.cos(a) * rr * 1.15, y + Math.sin(a) * rr);
+    }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.font = `600 ${Math.round(T * 0.32)}px "Pixelify Sans", monospace`;
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillStyle = "#000"; ctx.fillText(dmg, x + 1, y + 2);
+    ctx.fillStyle = "#fff"; ctx.fillText(dmg, x, y + 1);
+  }
+
+  // ---------- loop ----------
+  function loop(now) {
+    if (S.running && !S.paused) {
+      if (now - lastTickAt > S.c.tickMs * 4) lastTickAt = now - S.c.tickMs;
+      while (now - lastTickAt >= S.c.tickMs && S.running) { lastTickAt += S.c.tickMs; tick(); }
+    }
+    draw(now);
+    requestAnimationFrame(loop);
+  }
+
+  newGame();
+  updateWeaponInfo();
+  showOverlay(`
+    <h2>The Leviathan</h2>
+    <p>Debris shadows count down in ticks. Step off before they hit 0, and get your next attack out on time.</p>
+    <p style="color:var(--muted)">Click a tile to move. Click the Leviathan to attack.</p>
+    <div><button class="btn" type="button" data-act="start">Start fight</button></div>`);
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
