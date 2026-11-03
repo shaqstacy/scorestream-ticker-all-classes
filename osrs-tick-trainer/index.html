@@ -122,13 +122,22 @@ select {
 kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px solid var(--edge); padding: 0 5px; color: var(--yellow); }
 @media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
 </style>
+<style>
+.strip i.cast { background: #a35bd6; }
+.spell { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; }
+.spell .rune { width: 26px; height: 26px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #c58cff, #3c1460); border: 2px solid #000; flex: none; }
+.spell.armed { border-color: var(--yellow); background: #4a2f5e; }
+.spell small { display: block; font: 12px var(--body); color: var(--muted); }
+.cue { font: 14px var(--display); color: var(--yellow); min-height: 1.4em; text-shadow: 1px 1px 0 #000; }
+.fixed { font-size: 13px; color: var(--muted); }
+</style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
       <h1>Leviathan Tick Trainer</h1>
-      <p class="sub">Keep your attack cadence while dodging falling debris. One game tick = 0.6 seconds.</p>
+      <p class="sub">Every action resolves on a 0.6 s game tick, the same as OSRS. Stun, dodge, and keep your weapon firing.</p>
     </div>
     <div class="bosses" role="group" aria-label="Boss">
       <button class="chip on" type="button" aria-pressed="true">Leviathan</button>
@@ -141,11 +150,12 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
   <div class="game">
     <section class="stone arena-box">
       <div class="bossbar">
-        <div class="row"><span id="bossName">The Leviathan</span><span id="bossHpText">600 / 600</span></div>
-        <div class="bar" id="bossBar"><i id="bossFill"></i><span class="mark" style="left:66%"></span><span class="mark" style="left:33%"></span></div>
+        <div class="row"><span id="bossName">The Leviathan</span><span id="bossHpText">900 / 900</span></div>
+        <div class="bar" id="bossBar"><i id="bossFill"></i><span class="mark" style="left:20%" title="Enrage at 20%"></span></div>
       </div>
+      <div class="cue" id="cue" aria-live="polite"></div>
       <div class="canvas-holder">
-        <canvas id="cv" width="572" height="572" aria-label="Arena. Click a tile to move, click the Leviathan to attack."></canvas>
+        <canvas id="cv" width="600" height="600" aria-label="Arena. Click a tile to move, click the Leviathan to attack."></canvas>
         <div class="overlay" id="overlay">
           <div class="card" id="overlayCard"></div>
         </div>
@@ -155,20 +165,32 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
         <div class="strip" id="strip"></div>
         <div class="legend">
           <span><b style="background:var(--good)"></b>Attack</span>
+          <span><b style="background:#a35bd6"></b>Shadow spell</span>
           <span><b style="background:var(--info)"></b>Moved on a cooldown tick</span>
           <span><b style="background:#6d5f4b"></b>Waiting on cooldown</span>
           <span><b style="background:var(--bad)"></b>Lost tick (weapon was ready)</span>
-          <span><b style="background:var(--orange);border-radius:50%"></b>Hit by debris</span>
+          <span><b style="background:var(--orange);border-radius:50%"></b>Took damage</span>
         </div>
       </div>
     </section>
 
     <aside class="stone">
-      <div>
-        <div class="hp"><span class="orb" id="hpOrb">99</span><span>Hitpoints</span></div>
-      </div>
+      <div class="hp"><span class="orb" id="hpOrb">99</span><span>Hitpoints</span></div>
+      <button class="btn spell" id="spellBtn" type="button" aria-pressed="false">
+        <span class="rune"></span><span>Shadow Barrage<small>Select, then click the boss. Stuns for 15 ticks. Key: F</small></span>
+      </button>
       <div>
         <h3>Setup</h3>
+        <div class="field">
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="full" selected>Full fight (900 HP)</option>
+            <option value="short">Short fight (450 HP)</option>
+            <option value="enrage">Enrage only (starts at 180 HP)</option>
+            <option value="lightning">Lightning drill</option>
+            <option value="lightningEnr">Lightning drill (enraged)</option>
+          </select>
+        </div>
         <div class="field">
           <label for="weapon">Weapon (rapid)</label>
           <select id="weapon">
@@ -180,32 +202,16 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
           <span class="wpn" id="wpnInfo"></span>
         </div>
         <div class="field">
-          <label for="speed">Game speed</label>
-          <select id="speed">
-            <option value="600" selected>Real time (600 ms/tick)</option>
-            <option value="900">Slow (900 ms/tick)</option>
-            <option value="1200">Learning (1200 ms/tick)</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="warn">Debris warning</label>
+          <label for="warn">Rock shadow warning</label>
           <select id="warn">
-            <option value="4">4 ticks (easy)</option>
-            <option value="3" selected>3 ticks</option>
-            <option value="2">2 ticks (hard)</option>
+            <option value="3">3 ticks (easier)</option>
+            <option value="2" selected>2 ticks</option>
           </select>
         </div>
-        <div class="field">
-          <label for="bossHp">Boss hitpoints</label>
-          <select id="bossHp">
-            <option value="300">300 (short drill)</option>
-            <option value="600" selected>600</option>
-            <option value="900">900 (full length)</option>
-          </select>
-        </div>
+        <p class="fixed">Game tick: 0.6 s, fixed.</p>
         <label class="check"><input type="checkbox" id="godmode"> Can't die (practice)</label>
         <label class="check"><input type="checkbox" id="showRange" checked> Show weapon range</label>
-        <label class="check"><input type="checkbox" id="volleys" checked> Show boss volleys</label>
+        <label class="check"><input type="checkbox" id="trueTile" checked> Show true tile</label>
         <label class="check"><input type="checkbox" id="sound"> Tick sound</label>
       </div>
       <div>
@@ -214,9 +220,10 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
           <span>Attacks</span><span id="sAtk">0</span>
           <span>Lost ticks</span><span id="sLost">0</span>
           <span>Uptime</span><span id="sUp">–</span>
-          <span>Debris hits</span><span id="sHits">0</span>
+          <span>Stuns</span><span id="sStun">0</span>
+          <span>Lightning hits</span><span id="sLight">0</span>
           <span>Damage taken</span><span id="sTaken">0</span>
-          <span>Phase</span><span id="sPhase">1</span>
+          <span>State</span><span id="sPhase">–</span>
         </div>
       </div>
       <div class="buttons">
@@ -227,257 +234,478 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
   </div>
 
   <section class="stone guide">
-    <h2>What you're drilling</h2>
+    <h2>How the fight runs</h2>
     <ol>
-      <li><strong>Your weapon timer keeps running while you move.</strong> After an attack, a 4-tick bow has 3 free ticks. Step out of a shadow on one of those, then click the Leviathan again, and the next shot still fires on time.</li>
-      <li><strong>Never move on your attack tick.</strong> A move click that lands on the tick your weapon is ready replaces the attack, and the strip turns red.</li>
-      <li><strong>The last click in a tick wins.</strong> Clicking a tile and then the boss inside the same 0.6 s means you only attack. Plan the move one tick earlier.</li>
-      <li><strong>You run 2 tiles per tick.</strong> A 3×3 drop centred on you needs a 2-tile run or a diagonal step. Running back into range costs a tick before you can fire.</li>
-      <li><strong>Phases speed up.</strong> Debris falls every 10, 8, then 6 ticks as the Leviathan drops below 66% and 33%. Each threshold stuns it for 8 ticks with no debris and +25% damage, so stand still and fire.</li>
+      <li><strong>Volleys.</strong> The Leviathan fires a volley of orbs from its pool while rocks fall on you. Rock shadows count down in ticks; step off before they reach 0.</li>
+      <li><strong>Stun before the volley ends.</strong> Select Shadow Barrage (<kbd>F</kbd>) and click the boss. If the volley finishes first, boulders drop in a plus shape centred on you.</li>
+      <li><strong>Hit the wound.</strong> A stun lasts 15 ticks. Run around the pool to its back (the north side) and attack the glowing wound for boosted damage.</li>
+      <li><strong>Specials alternate after each stun.</strong> Lightning chases you around the pool one tile per tick. You run two, so each tick you stand still to attack costs one tile of lead. In the smoke blast, debris lands around you and stays; stand so a rock sits between you and the boss before the blast.</li>
+      <li><strong>Enrage at 180 HP.</strong> Orbs come every 2 ticks and the abyssal pathfinder appears. Stay inside its purple area: outside it, orbs hit you. Enraged lightning moves 3 tiles every 2 ticks, so you get fewer free ticks.</li>
+      <li><strong>Tick rules.</strong> Your weapon timer keeps counting while you move. A move click on your attack tick replaces the attack. The last click in a tick wins.</li>
     </ol>
-    <p>Movement is simplified to straight-line steps, and prayers are left out for now. Boss volleys are shown so you can see the rhythm, but they don't deal damage yet. Controls: click or tap a tile to move, click the Leviathan to attack, <kbd>Space</kbd> pauses, <kbd>R</kbd> restarts.</p>
+    <p>Prayers aren't in yet, so orbs assume perfect prayer outside of enrage. Controls: click or tap a tile to move, click the Leviathan to attack, <kbd>F</kbd> selects the shadow spell, <kbd>Space</kbd> pauses, <kbd>R</kbd> restarts.</p>
   </section>
 </div>
 
 <script>
 (() => {
-  const COLS = 13, ROWS = 13;
-  const BOSS = { x: 4, y: 0, w: 5, h: 5 };
+  const TICK_MS = 600;
+  const N = 15;
+  const POOL = { x: 4, y: 4, w: 7, h: 7 };
+  const BOSS = { x: 5, y: 5, w: 5, h: 5 };
+  const BC = { x: 7, y: 7 };
   const WEAPONS = {
-    bp:    { name: "Toxic blowpipe",    speed: 2, range: 5,  max: 30, color: "#7cd36b" },
-    bowfa: { name: "Bow of faerdhinen", speed: 4, range: 10, max: 46, color: "#9ad1ff" },
-    zcb:   { name: "Zaryte crossbow",   speed: 5, range: 8,  max: 54, color: "#d9b3ff" },
-    tbow:  { name: "Twisted bow",       speed: 5, range: 10, max: 66, color: "#ffcc66" },
+    bp:    { name: "Toxic blowpipe",    speed: 2, range: 5,  max: 35, color: "#7cd36b" },
+    bowfa: { name: "Bow of faerdhinen", speed: 4, range: 10, max: 50, color: "#9ad1ff" },
+    zcb:   { name: "Zaryte crossbow",   speed: 5, range: 8,  max: 56, color: "#d9b3ff" },
+    tbow:  { name: "Twisted bow",       speed: 5, range: 10, max: 70, color: "#ffcc66" },
   };
-  const PHASES = { 1: { debris: 10, volley: 5 }, 2: { debris: 8, volley: 4 }, 3: { debris: 6, volley: 3 } };
-  const STUN_TICKS = 8;
+  const SPELL = { speed: 5, range: 10, max: 30, color: "#b06cff" };
+  const STUN_TICKS = 15, ENRAGE_HP = 180;
   const STYLE_COLORS = { magic: "#3d8bff", ranged: "#58d64a", melee: "#ff4a3a" };
 
   const $ = (id) => document.getElementById(id);
   const cv = $("cv"), ctx = cv.getContext("2d");
-  const T = cv.width / COLS;
+  const T = cv.width / N;
+  const rnd = (n) => Math.floor(Math.random() * n);
+  const key = (x, y) => x + "," + y;
 
-  let S = null;
-  let lastTickAt = 0;
-  let audio = null;
-
-  const cfg = () => ({
-    weapon: WEAPONS[$("weapon").value],
-    tickMs: +$("speed").value,
-    warn: +$("warn").value,
-    bossHp: +$("bossHp").value,
-    god: $("godmode").checked,
-  });
-
-  function newGame() {
-    const c = cfg();
-    S = {
-      c, tick: 0, running: false, paused: false, over: null,
-      p: { x: 6, y: 10, px: 6, py: 10, hp: 99 },
-      target: null, pending: null, cd: 0,
-      boss: { hp: c.bossHp, max: c.bossHp, stun: 0, thresholds: [0.66, 0.33] },
-      debris: [], impacts: [], nextDebris: 6, nextVolley: 4,
-      projs: [], splats: [], hits: [], marker: null, banner: null,
-      strip: [], st: { attacks: 0, lost: 0, hits: 0, taken: 0, fightTicks: 0 },
-    };
-    renderStrip(); updateHud();
-  }
+  let S = null, lastTickAt = 0, audio = null;
 
   // ---------- geometry ----------
-  const inBoss = (x, y) => x >= BOSS.x && x < BOSS.x + BOSS.w && y >= BOSS.y && y < BOSS.y + BOSS.h;
-  const inArena = (x, y) => x >= 0 && y >= 0 && x < COLS && y < ROWS;
-  const walkable = (x, y) => inArena(x, y) && y >= BOSS.h; // rows above are the Leviathan's water
+  const inArena = (x, y) => x >= 0 && y >= 0 && x < N && y < N;
+  const inPool = (x, y) => x >= POOL.x && x < POOL.x + POOL.w && y >= POOL.y && y < POOL.y + POOL.h;
+  const open = (x, y) => inArena(x, y) && !inPool(x, y);
+  const walkable = (x, y) => open(x, y) && !(S && S.rocks.has(key(x, y)));
   function distToBoss(x, y) {
     const cx = Math.max(BOSS.x, Math.min(x, BOSS.x + BOSS.w - 1));
     const cy = Math.max(BOSS.y, Math.min(y, BOSS.y + BOSS.h - 1));
     return Math.max(Math.abs(x - cx), Math.abs(y - cy));
   }
-  function stepToward(p, tx, ty) {
-    const dx = Math.sign(tx - p.x), dy = Math.sign(ty - p.y);
-    if (!dx && !dy) return false;
-    const opts = [[dx, dy], [dx, 0], [0, dy]];
-    for (const [ox, oy] of opts) {
-      if ((ox || oy) && walkable(p.x + ox, p.y + oy)) { p.x += ox; p.y += oy; return true; }
+  const DIRS = [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [1, -1], [-1, 1], [1, 1]];
+  // Breadth-first path from (sx,sy) to the first tile matching goal. Diagonals can't cut corners.
+  function bfs(sx, sy, goal, pass = walkable) {
+    if (goal(sx, sy)) return [];
+    const prev = new Map([[key(sx, sy), null]]);
+    const q = [[sx, sy]];
+    while (q.length) {
+      const [x, y] = q.shift();
+      for (const [dx, dy] of DIRS) {
+        const nx = x + dx, ny = y + dy, k = key(nx, ny);
+        if (prev.has(k) || !pass(nx, ny)) continue;
+        if (dx && dy && (!pass(x + dx, y) || !pass(x, y + dy))) continue;
+        prev.set(k, [x, y]);
+        if (goal(nx, ny)) {
+          const path = [[nx, ny]];
+          let c = [x, y];
+          while (c && !(c[0] === sx && c[1] === sy)) { path.unshift(c); c = prev.get(key(c[0], c[1])); }
+          return path.map(([x, y]) => ({ x, y }));
+        }
+        q.push([nx, ny]);
+      }
     }
-    return false;
+    return null;
   }
-  const phase = () => { const f = S.boss.hp / S.boss.max; return f > 0.66 ? 1 : f > 0.33 ? 2 : 3; };
-  const rnd = (n) => Math.floor(Math.random() * n);
+  const behind = (x, y) => y < POOL.y; // north side = the Leviathan's back
+
+  // ---------- setup ----------
+  const MODES = {
+    full:         { hp: 900, start: 900 },
+    short:        { hp: 450, start: 450 },
+    enrage:       { hp: 900, start: ENRAGE_HP },
+    lightning:    { hp: 900, start: 900, drill: true, enr: false },
+    lightningEnr: { hp: 900, start: 900, drill: true, enr: true },
+  };
+  function newGame() {
+    const mode = MODES[$("mode").value];
+    S = {
+      mode, weapon: WEAPONS[$("weapon").value], warn: +$("warn").value, god: $("godmode").checked,
+      tick: 0, running: false, paused: false, over: null,
+      p: { x: 7, y: 13, hp: 99, anim: [], immune: 0 },
+      target: null, pending: null, cd: 0, armed: false,
+      boss: { hp: mode.start, max: mode.hp, stun: 0, enraged: false },
+      phase: "volley", volley: null, special: null, nextSpecial: Math.random() < 0.5 ? "lightning" : "smoke", wait: 4,
+      rockTimer: 5, debris: [], rocks: new Set(), impacts: [], lightning: null, smoke: null, pathfinder: null,
+      projs: [], splats: [], hits: [], marker: null, banner: null, flash: null,
+      strip: [], st: { attacks: 0, lost: 0, stuns: 0, lightHits: 0, taken: 0, ticks: 0, lightTicks: 0, lightAttacks: 0 },
+    };
+    if (mode.drill) { S.boss.enraged = mode.enr; S.phase = "wait"; S.wait = 3; S.nextSpecial = "lightning"; }
+    if (mode.start <= ENRAGE_HP) enrage(true);
+    $("bossFill").style.transition = "none";
+    renderStrip(); updateHud(); setCue("");
+    requestAnimationFrame(() => { $("bossFill").style.transition = ""; });
+  }
 
   // ---------- tick ----------
   function tick() {
-    const s = S, w = s.c.weapon;
-    s.tick++;
-    s.p.px = s.p.x; s.p.py = s.p.y;
+    const s = S;
+    s.tick++; s.st.ticks++;
     if (s.pending) { s.target = s.pending; s.pending = null; }
+    const startX = s.p.x, startY = s.p.y;
+    s.p.anim = [{ x: startX, y: startY }];
 
     const ready = s.cd <= 0;
-    let kind = "idle";
-    if (s.target && s.target.type === "move") {
-      for (let i = 0; i < 2; i++) stepToward(s.p, s.target.x, s.target.y);
-      if (s.p.x === s.target.x && s.p.y === s.target.y) s.target = null;
-      kind = "move";
-    } else if (s.target && s.target.type === "attack") {
-      const d = distToBoss(s.p.x, s.p.y);
-      if (d <= w.range) {
-        if (ready) { attack(d); kind = "attack"; } else kind = "wait";
-      } else {
-        for (let i = 0; i < 2 && distToBoss(s.p.x, s.p.y) > w.range; i++) {
-          stepToward(s.p, BOSS.x + 2, BOSS.y + 2);
-        }
+    let kind = ready ? "idle" : "wait";
+    const t = s.target;
+    if (t && t.type === "move") {
+      const path = bfs(s.p.x, s.p.y, (x, y) => x === t.x && y === t.y);
+      if (path && path.length) {
+        for (const step of path.slice(0, 2)) { s.p.x = step.x; s.p.y = step.y; s.p.anim.push(step); }
         kind = "move";
       }
-    } else if (!ready) kind = "wait";
-
-    const lost = ready && kind !== "attack";
+      if (!path || path.length <= 2) s.target = null;
+    } else if (t && (t.type === "attack" || t.type === "cast")) {
+      const range = t.type === "cast" ? SPELL.range : s.weapon.range;
+      const d = distToBoss(s.p.x, s.p.y);
+      if (d <= range) {
+        if (ready) {
+          if (t.type === "cast") { castSpell(d); kind = "cast"; s.target = { type: "attack" }; }
+          else { attack(d); kind = "attack"; }
+        }
+      } else {
+        const path = bfs(s.p.x, s.p.y, (x, y) => distToBoss(x, y) <= range);
+        if (path && path.length) {
+          for (const step of path.slice(0, 2)) { s.p.x = step.x; s.p.y = step.y; s.p.anim.push(step); }
+          kind = "move";
+        }
+      }
+    }
+    const lost = ready && kind !== "attack" && kind !== "cast";
     if (lost) s.st.lost++;
-    if (kind === "attack") s.cd = w.speed;
+    if (s.phase === "special" && s.special === "lightning") { s.st.lightTicks++; if (kind === "attack") s.st.lightAttacks++; }
     s.cd = Math.max(0, s.cd - 1);
-    s.st.fightTicks++;
+    if (s.p.immune > 0) s.p.immune--;
 
-    // pending hits on boss
+    // damage landing on the boss
     for (const h of s.hits) h.t--;
-    for (const h of s.hits.filter((h) => h.t <= 0)) applyBossHit(h.dmg);
+    for (const h of s.hits.filter((h) => h.t <= 0)) applyBossHit(h);
     s.hits = s.hits.filter((h) => h.t > 0);
 
-    // debris
-    let hitThisTick = false;
-    for (const d of s.debris) d.t--;
-    const landed = s.debris.filter((d) => d.t <= 0);
-    s.debris = s.debris.filter((d) => d.t > 0);
-    for (const d of landed) {
-      s.impacts.push({ x: d.x, y: d.y, tick: s.tick });
-      if (d.x === s.p.x && d.y === s.p.y) hitThisTick = true;
-    }
-    if (hitThisTick) {
-      const dmg = 14 + rnd(10);
-      s.st.hits++; s.st.taken += dmg;
-      if (!s.c.god) s.p.hp = Math.max(0, s.p.hp - dmg);
-      s.splats.push({ x: s.p.x, y: s.p.y, dmg, at: performance.now(), boss: false });
-    }
+    let hurt = 0;
+    hurt += landDebris();
+    hurt += runLightning();
+    hurt += runSmoke();
+    hurt += runBoss();
+    hurt += landOrbs();
+
     s.impacts = s.impacts.filter((i) => s.tick - i.tick < 2);
-
-    const ph = PHASES[phase()];
-    if (s.boss.stun > 0) {
-      s.boss.stun--;
-    } else if (!s.over) {
-      if (--s.nextDebris <= 0) { spawnDebris(); s.nextDebris = ph.debris; }
-      if (--s.nextVolley <= 0) { spawnVolley(); s.nextVolley = ph.volley; }
-    }
-
-    s.strip.push({ kind: lost ? "wasted" : kind, hit: hitThisTick });
+    s.strip.push({ kind: lost ? "wasted" : kind, hit: hurt > 0 });
     if (s.strip.length > 40) s.strip.shift();
-
     if (s.p.hp <= 0 && !s.over) endGame(false);
-    if (audio && $("sound").checked) beep(kind === "attack" ? 880 : 440, kind === "attack" ? 0.06 : 0.03);
+    if (audio && $("sound").checked) beep(kind === "attack" || kind === "cast" ? 880 : 440, kind === "attack" ? 0.06 : 0.03);
     renderStrip(); updateHud();
     const m = $("metro"); m.classList.add("flash"); setTimeout(() => m.classList.remove("flash"), 120);
   }
 
-  function attack(dist) {
-    const s = S, w = s.c.weapon;
-    s.st.attacks++;
-    const delay = 1 + Math.floor((3 + dist) / 6);
-    let dmg = Math.random() < 0.78 ? rnd(w.max + 1) : 0;
-    if (s.boss.stun > 0) dmg = Math.round(dmg * 1.25);
-    s.hits.push({ t: delay, dmg });
-    s.projs.push({ fx: s.p.x, fy: s.p.y, tx: BOSS.x + 2, ty: BOSS.y + 2, start: s.tick, end: s.tick + delay, color: w.color, size: 4 });
+  function damagePlayer(dmg) {
+    const s = S;
+    s.st.taken += dmg;
+    if (!s.god) s.p.hp = Math.max(0, s.p.hp - dmg);
+    s.splats.push({ x: s.p.x, y: s.p.y, dmg, at: performance.now(), j: (rnd(3) - 1) * 0.3 });
+    return dmg;
   }
 
-  function applyBossHit(dmg) {
+  // ---------- player actions ----------
+  function attack(dist) {
+    const s = S, w = s.weapon;
+    s.st.attacks++;
+    s.cd = w.speed;
+    const wound = s.boss.stun > 0 && behind(s.p.x, s.p.y);
+    const inPf = s.pathfinder && inPathfinder(s.p.x, s.p.y);
+    const acc = wound || inPf ? 0.97 : 0.85;
+    let dmg = Math.random() < acc ? rnd(w.max + 1) : 0;
+    if (wound) dmg = Math.max(Math.round(w.max * 0.4), Math.round(dmg * 1.5));
+    const delay = 1 + Math.floor((3 + dist) / 6);
+    s.hits.push({ t: delay, dmg, wound });
+    s.projs.push({ fx: s.p.x, fy: s.p.y, tx: BC.x, ty: wound ? BOSS.y : BC.y, start: s.tick, end: s.tick + delay, color: w.color, size: 4 });
+  }
+  function castSpell(dist) {
+    const s = S;
+    s.st.attacks++;
+    s.cd = SPELL.speed;
+    s.armed = false; setArmed(false);
+    const delay = 1 + Math.floor((1 + dist) / 3);
+    const dmg = Math.random() < 0.85 ? rnd(SPELL.max + 1) : 0;
+    s.hits.push({ t: delay, dmg, stun: true });
+    s.projs.push({ fx: s.p.x, fy: s.p.y, tx: BC.x, ty: BC.y, start: s.tick, end: s.tick + delay, color: SPELL.color, size: 7 });
+  }
+  function applyBossHit(h) {
     const s = S; if (s.over) return;
-    s.boss.hp = Math.max(0, s.boss.hp - dmg);
-    s.splats.push({ x: BOSS.x + 2, y: BOSS.y + 2, dmg, at: performance.now(), boss: true, jitter: rnd(3) - 1 });
-    const f = s.boss.hp / s.boss.max;
-    while (s.boss.thresholds.length && f <= s.boss.thresholds[0] && s.boss.hp > 0) {
-      s.boss.thresholds.shift();
-      s.boss.stun = STUN_TICKS;
-      s.nextDebris = 3; s.nextVolley = 3;
-      s.banner = { text: "The Leviathan is stunned!", at: performance.now() };
-    }
+    if (!s.mode.drill) s.boss.hp = Math.max(0, s.boss.hp - h.dmg);
+    s.splats.push({ x: BC.x, y: h.wound ? BOSS.y : BC.y, dmg: h.dmg, at: performance.now(), j: (rnd(3) - 1) * 0.5, boss: true });
+    if (h.stun) tryStun();
+    if (!s.boss.enraged && s.boss.hp <= ENRAGE_HP && s.boss.hp > 0) enrage(false);
     if (s.boss.hp <= 0) endGame(true);
   }
-
-  function spawnDebris() {
-    const s = S, px = s.p.x, py = s.p.y, warn = s.c.warn;
-    const set = new Map();
-    const add = (x, y) => { if (walkable(x, y)) set.set(x + "," + y, { x, y, t: warn, max: warn }); };
-    const pattern = rnd(phase() === 1 ? 2 : 3);
-    if (pattern === 0) {
-      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) add(px + dx, py + dy);
-    } else if (pattern === 1) {
-      add(px, py);
-      const n = 10 + phase() * 4;
-      for (let i = 0; i < n; i++) add(rnd(COLS), BOSS.h + rnd(ROWS - BOSS.h));
-    } else {
-      const horiz = Math.random() < 0.5;
-      for (let i = 0; i < 13; i++) horiz ? add(i, py) : add(px, i);
-      for (let i = 0; i < 5; i++) add(rnd(COLS), BOSS.h + rnd(ROWS - BOSS.h));
+  function tryStun() {
+    const s = S;
+    if (s.mode.drill) { setBanner("No stuns in the lightning drill"); return; }
+    if (s.boss.stun > 0 || s.phase === "special") { setBanner("The Leviathan resists the shadows"); return; }
+    s.boss.stun = STUN_TICKS; s.st.stuns++;
+    s.phase = "stunned"; s.volley = null;
+    setBanner("Stunned! Get behind it and hit the wound");
+  }
+  function enrage(silent) {
+    const s = S;
+    s.boss.enraged = true;
+    s.pathfinder = { x: 7, y: 12, wp: 0, move: 0 };
+    if (!silent) {
+      setBanner("The Leviathan roars and enrages!");
+      dropRocks(scatterAround(s.p.x, s.p.y, 8, 3), "rock");
     }
-    s.debris.push(...set.values());
   }
 
-  function spawnVolley() {
-    if (!$("volleys").checked) return;
-    const s = S, styles = Object.keys(STYLE_COLORS);
-    const style = styles[rnd(3)];
-    s.projs.push({ fx: BOSS.x + 2, fy: BOSS.y + 3, tx: s.p.x, ty: s.p.y, start: s.tick, end: s.tick + 2, color: STYLE_COLORS[style], size: 6, boss: true });
+  // ---------- boss behaviour ----------
+  function volleySpeed() { const f = S.boss.hp / S.boss.max; return S.boss.enraged ? 2 : f > 0.5 ? 4 : 3; }
+  function runBoss() {
+    const s = S;
+    if (s.over) return 0;
+    if (s.pathfinder) movePathfinder();
+    if (s.phase === "stunned") {
+      if (--s.boss.stun <= 0) startSpecial();
+      return 0;
+    }
+    if (s.phase === "special") return 0;
+    if (s.phase === "wait") {
+      if (--s.wait <= 0) {
+        if (s.mode.drill) startSpecial(); else startVolley();
+      }
+      return 0;
+    }
+    if (s.phase === "volley") {
+      const v = s.volley || (s.volley = { left: s.boss.enraged ? 14 : 10, next: 2 });
+      if (--v.next <= 0) {
+        fireOrb();
+        v.left--; v.next = volleySpeed();
+        if (v.left <= 0) {
+          s.volley = null;
+          setBanner("The volley ends. Boulders!");
+          dropRocks(plus(s.p.x, s.p.y), "rock");
+          s.phase = "wait"; s.wait = s.warn + 4;
+          return 0;
+        }
+      }
+      if (--s.rockTimer <= 0) {
+        dropRocks([[s.p.x, s.p.y], ...scatterAround(s.p.x, s.p.y, 3, 3)], "rock");
+        s.rockTimer = s.boss.enraged ? 5 : 7;
+      }
+    }
+    return 0;
+  }
+  function startVolley() { S.phase = "volley"; S.volley = null; }
+  function startSpecial() {
+    const s = S;
+    s.phase = "special"; s.boss.stun = 0;
+    const which = s.mode.drill ? "lightning" : s.nextSpecial;
+    s.nextSpecial = which === "lightning" ? "smoke" : "lightning";
+    s.special = which;
+    if (which === "lightning") startLightning(); else startSmoke();
+  }
+  function endSpecial() {
+    const s = S;
+    s.special = null; s.lightning = null; s.smoke = null;
+    s.phase = "wait"; s.wait = s.mode.drill ? 4 : 3;
+    setCue("");
+  }
+  function fireOrb() {
+    const s = S;
+    const styles = s.boss.enraged ? ["magic", "ranged"] : ["magic", "ranged", "melee"];
+    const style = styles[rnd(styles.length)];
+    const pierce = s.boss.enraged && !inPathfinder(s.p.x, s.p.y);
+    s.projs.push({ fx: BC.x, fy: BC.y, tx: s.p.x, ty: s.p.y, start: s.tick, end: s.tick + 2, color: STYLE_COLORS[style], size: 6, orb: true, pierce: s.boss.enraged });
+  }
+  function landOrbs() {
+    const s = S; let dmg = 0;
+    for (const p of s.projs) {
+      if (p.orb && p.end === s.tick && p.pierce && !inPathfinder(s.p.x, s.p.y)) dmg += damagePlayer(6 + rnd(10));
+    }
+    return dmg;
   }
 
+  // ---------- rocks ----------
+  function scatterAround(x, y, n, r) {
+    const out = [];
+    for (let i = 0; i < n * 4 && out.length < n; i++) {
+      const tx = x + rnd(r * 2 + 1) - r, ty = y + rnd(r * 2 + 1) - r;
+      if (open(tx, ty) && !(tx === x && ty === y)) out.push([tx, ty]);
+    }
+    return out;
+  }
+  function plus(x, y) {
+    const out = [[x, y]];
+    for (let k = 1; k <= 3; k++) out.push([x + k, y], [x - k, y], [x, y + k], [x, y - k]);
+    return out;
+  }
+  function dropRocks(tiles, type) {
+    const s = S, seen = new Set(s.debris.map((d) => key(d.x, d.y)));
+    for (const [x, y] of tiles) {
+      if (!open(x, y) || seen.has(key(x, y))) continue;
+      seen.add(key(x, y));
+      s.debris.push({ x, y, t: s.warn + 1, max: s.warn + 1, type });
+    }
+  }
+  function landDebris() {
+    const s = S; let dmg = 0;
+    for (const d of s.debris) d.t--;
+    const landed = s.debris.filter((d) => d.t <= 0);
+    s.debris = s.debris.filter((d) => d.t > 0);
+    let hit = false;
+    for (const d of landed) {
+      if (d.type === "smoke") s.rocks.add(key(d.x, d.y));
+      else s.impacts.push({ x: d.x, y: d.y, tick: s.tick });
+      if (d.x === s.p.x && d.y === s.p.y) hit = true;
+    }
+    if (hit) dmg += damagePlayer(12 + rnd(14));
+    // a rock that lands on you pushes you off it
+    if (s.rocks.has(key(s.p.x, s.p.y))) {
+      const free = DIRS.map(([dx, dy]) => [s.p.x + dx, s.p.y + dy]).find(([x, y]) => walkable(x, y));
+      if (free) { s.p.x = free[0]; s.p.y = free[1]; s.p.anim.push({ x: free[0], y: free[1] }); }
+    }
+    return dmg;
+  }
+
+  // ---------- lightning ----------
+  function startLightning() {
+    const s = S;
+    // the current starts at the pool edge, a few tiles away from you
+    let best = null, bestD = 1e9;
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+      if (!open(x, y)) continue;
+      const nearPool = x >= POOL.x - 1 && x <= POOL.x + POOL.w && y >= POOL.y - 1 && y <= POOL.y + POOL.h;
+      const d = Math.max(Math.abs(x - s.p.x), Math.abs(y - s.p.y));
+      if (nearPool && d >= 4 && d < bestD) { best = { x, y }; bestD = d; }
+    }
+    s.lightning = { head: best || { x: 3, y: 3 }, trail: [], left: s.boss.enraged ? 26 : 22, charge: 2, acc: 0 };
+    setBanner("Lightning! Keep running ahead of the current");
+    setCue("Lightning: run 2 tiles a tick, attack only when you have a 2-tile lead");
+  }
+  function runLightning() {
+    const s = S, L = s.lightning;
+    if (!L) return 0;
+    if (L.charge > 0) { L.charge--; return 0; }
+    // normal: 1 tile per tick. enraged: 3 tiles every 2 ticks.
+    const steps = s.boss.enraged ? (L.acc++ % 2 ? 2 : 1) : 1;
+    for (let i = 0; i < steps; i++) {
+      if (L.head.x === s.p.x && L.head.y === s.p.y) break;
+      const path = bfs(L.head.x, L.head.y, (x, y) => x === s.p.x && y === s.p.y, open);
+      if (!path || !path.length) break;
+      L.trail.push({ x: L.head.x, y: L.head.y, t: s.tick });
+      L.head = path[0];
+    }
+    L.trail = L.trail.filter((p) => s.tick - p.t < (s.boss.enraged ? 3 : 2));
+    let dmg = 0;
+    const onTrail = L.trail.some((p) => p.x === s.p.x && p.y === s.p.y);
+    if ((L.head.x === s.p.x && L.head.y === s.p.y) || onTrail) {
+      if (s.p.immune <= 0) { dmg = damagePlayer(15 + rnd(11)); s.st.lightHits++; s.p.immune = 1; }
+    }
+    if (--L.left <= 0) { endSpecial(); setBanner("The lightning fades"); }
+    return dmg;
+  }
+
+  // ---------- smoke blast ----------
+  function startSmoke() {
+    const s = S;
+    const tiles = [[s.p.x, s.p.y], ...scatterAround(s.p.x, s.p.y, 10, 2)];
+    dropRocks(tiles, "smoke");
+    s.smoke = { blastIn: s.warn + 1 + 5, clearIn: s.warn + 1 + 8 };
+    setBanner("Debris falls! Hide behind it before the smoke blast");
+    setCue("Smoke blast: put a rock between you and the Leviathan");
+  }
+  function shielded(x, y) {
+    // walk a straight line from you toward the boss; any rock on it blocks the blast
+    const steps = Math.max(Math.abs(BC.x - x), Math.abs(BC.y - y));
+    for (let i = 1; i <= steps; i++) {
+      const tx = Math.round(x + ((BC.x - x) * i) / steps), ty = Math.round(y + ((BC.y - y) * i) / steps);
+      if (inPool(tx, ty)) return false;
+      if (S.rocks.has(key(tx, ty))) return true;
+    }
+    return false;
+  }
+  function runSmoke() {
+    const s = S, sm = s.smoke;
+    if (!sm) return 0;
+    let dmg = 0;
+    if (--sm.blastIn === 0) {
+      s.flash = { at: performance.now() };
+      if (shielded(s.p.x, s.p.y)) setBanner("Safe behind the debris");
+      else { dmg = damagePlayer(30 + rnd(30)); setBanner("Caught in the smoke blast"); }
+    } else if (sm.blastIn > 0 && sm.blastIn <= 3) setCue(`Smoke blast in ${sm.blastIn}`);
+    if (--sm.clearIn <= 0) { s.rocks.clear(); endSpecial(); }
+    return dmg;
+  }
+
+  // ---------- pathfinder ----------
+  const PF_WAYPOINTS = [[2, 12], [12, 12], [12, 2], [2, 2]];
+  function movePathfinder() {
+    const pf = S.pathfinder;
+    if (++pf.move % 2) return;
+    const [wx, wy] = PF_WAYPOINTS[pf.wp];
+    if (pf.x === wx && pf.y === wy) { pf.wp = (pf.wp + 1) % 4; return; }
+    pf.x += Math.sign(wx - pf.x); pf.y += Math.sign(wy - pf.y);
+  }
+  const inPathfinder = (x, y) => !!S.pathfinder && Math.abs(x - S.pathfinder.x) <= 2 && Math.abs(y - S.pathfinder.y) <= 2;
+
+  // ---------- end ----------
   function endGame(win) {
     const s = S; s.over = win ? "win" : "loss"; s.running = false;
-    const st = s.st, w = s.c.weapon;
-    const up = uptime();
-    const grade = !win ? "–" : up >= 97 ? "S" : up >= 90 ? "A" : up >= 80 ? "B" : up >= 65 ? "C" : "D";
+    const st = s.st, up = uptime();
+    const grade = !win ? "–" : up >= 95 && st.taken < 60 ? "S" : up >= 88 ? "A" : up >= 78 ? "B" : up >= 65 ? "C" : "D";
     showOverlay(`
       <h2>${win ? "The Leviathan is defeated" : "Oh dear, you are dead!"}</h2>
       ${win ? `<div class="grade">${grade}</div>` : ""}
-      <div class="results">
-        <span>Weapon</span><span>${w.name}</span>
-        <span>Fight length</span><span>${st.fightTicks} ticks (${(st.fightTicks * 0.6).toFixed(1)} s game time)</span>
-        <span>Attacks</span><span>${st.attacks}</span>
-        <span>Lost ticks</span><span>${st.lost}</span>
-        <span>Uptime</span><span>${up}%</span>
-        <span>Debris hits</span><span>${st.hits} (${st.taken} damage)</span>
-      </div>
-      <p>${win ? tipFor(up, st) : "Watch the shadow numbers. Move when they show 2, not 1."}</p>
+      <div class="results">${resultRows()}</div>
+      <p>${win ? tipFor(up, st) : "Watch the shadow numbers and the lightning's lead. Move a tick earlier."}</p>
       <div><button class="btn" type="button" data-act="start">Fight again</button></div>`);
+    setControls();
+  }
+  function resultRows() {
+    const s = S, st = s.st;
+    const rows = [
+      ["Weapon", s.weapon.name],
+      ["Fight length", `${st.ticks} ticks (${(st.ticks * 0.6).toFixed(1)} s)`],
+      ["Attacks", st.attacks], ["Lost ticks", st.lost], ["Uptime", uptime() + "%"],
+      ["Stuns", st.stuns], ["Lightning hits", st.lightHits], ["Damage taken", st.taken],
+    ];
+    if (st.lightTicks) rows.splice(5, 0, ["Attacks in lightning", `${st.lightAttacks} in ${st.lightTicks} ticks`]);
+    return rows.map(([a, b]) => `<span>${a}</span><span>${b}</span>`).join("");
   }
   function tipFor(up, st) {
-    if (st.hits > 3) return "Dodge earlier: take your step on the first free tick after an attack.";
-    if (up < 90) return "Too many red ticks. Re-click the boss right after each step so the next shot fires on its tick.";
-    return "Clean cadence. Try the 2-tick warning or a faster weapon.";
+    if (st.lightHits > 2) return "Lightning is catching you. Only attack when the current is at least 2 tiles behind.";
+    if (st.stuns === 0) return "You never stunned. Use Shadow Barrage early in each volley to skip the boulders.";
+    if (up < 85) return "Too many red ticks. Re-click the boss right after each step so the next shot fires on its tick.";
+    return "Clean. Try the 2-tick shadows, the enraged lightning drill, or a faster weapon.";
   }
   function uptime() {
-    const st = S.st, w = S.c.weapon;
-    if (!st.fightTicks) return 0;
-    const ideal = Math.ceil(st.fightTicks / w.speed);
-    return Math.min(100, Math.round((st.attacks / ideal) * 100));
+    const st = S.st;
+    if (!st.ticks) return 0;
+    return Math.min(100, Math.round((st.attacks / Math.ceil(st.ticks / S.weapon.speed)) * 100));
   }
 
   // ---------- input ----------
-  function canvasTile(ev) {
-    const r = cv.getBoundingClientRect();
-    const x = Math.floor(((ev.clientX - r.left) / r.width) * COLS);
-    const y = Math.floor(((ev.clientY - r.top) / r.height) * ROWS);
-    return { x, y };
-  }
   cv.addEventListener("pointerdown", (ev) => {
     if (!S.running || S.paused) return;
-    const { x, y } = canvasTile(ev);
+    const r = cv.getBoundingClientRect();
+    const x = Math.floor(((ev.clientX - r.left) / r.width) * N);
+    const y = Math.floor(((ev.clientY - r.top) / r.height) * N);
     if (!inArena(x, y)) return;
-    if (inBoss(x, y)) {
-      S.pending = { type: "attack" };
-      S.marker = { x: x + 0.5, y: y + 0.5, red: true, at: performance.now() };
+    const now = performance.now();
+    if (inPool(x, y)) {
+      S.pending = { type: S.armed ? "cast" : "attack" };
+      S.marker = { x: x + 0.5, y: y + 0.5, red: true, at: now };
     } else {
       S.pending = { type: "move", x, y };
-      S.marker = { x: x + 0.5, y: y + 0.5, red: false, at: performance.now() };
+      S.armed = false; setArmed(false);
+      S.marker = { x: x + 0.5, y: y + 0.5, red: false, at: now };
     }
   });
+  function setArmed(on) { $("spellBtn").classList.toggle("armed", on); $("spellBtn").setAttribute("aria-pressed", on); }
+  function toggleSpell() { if (!S.running) return; S.armed = !S.armed; setArmed(S.armed); }
+  $("spellBtn").onclick = toggleSpell;
   document.addEventListener("keydown", (ev) => {
     if (ev.target.tagName === "SELECT" || ev.target.tagName === "INPUT") return;
     if (ev.code === "Space") { ev.preventDefault(); togglePause(); }
     if (ev.key === "r" || ev.key === "R") start();
+    if (ev.key === "f" || ev.key === "F") toggleSpell();
   });
 
   // ---------- controls ----------
@@ -487,7 +715,7 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
     S.running = true;
     lastTickAt = performance.now();
     hideOverlay();
-    S.banner = { text: "Click the Leviathan to attack", at: performance.now() };
+    setBanner(S.mode.drill ? "Lightning drill: attack while staying ahead" : "Click the Leviathan to attack");
     setControls();
   }
   function togglePause() {
@@ -499,7 +727,7 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
   }
   function setControls() {
     const live = S.running;
-    for (const id of ["weapon", "speed", "warn", "bossHp", "godmode"]) $(id).disabled = live;
+    for (const id of ["mode", "weapon", "warn", "godmode"]) $(id).disabled = live;
     $("startBtn").textContent = live ? "Restart" : "Start";
     $("pauseBtn").textContent = S.paused ? "Resume" : "Pause";
   }
@@ -512,16 +740,17 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
   });
   $("sound").addEventListener("change", () => { if ($("sound").checked) ensureAudio(); });
   $("weapon").addEventListener("change", () => { newGame(); updateWeaponInfo(); });
-  for (const id of ["speed", "warn", "bossHp", "godmode"]) $(id).addEventListener("change", newGame);
+  for (const id of ["mode", "warn", "godmode"]) $(id).addEventListener("change", newGame);
   document.addEventListener("visibilitychange", () => { if (document.hidden && S.running && !S.paused) togglePause(); });
 
   function showOverlay(html) { $("overlayCard").innerHTML = html; $("overlay").hidden = false; }
   function hideOverlay() { $("overlay").hidden = true; }
+  function setBanner(text) { S.banner = { text, at: performance.now() }; }
+  function setCue(text) { $("cue").textContent = text; }
   function updateWeaponInfo() {
     const w = WEAPONS[$("weapon").value];
-    $("wpnInfo").textContent = `Attacks every ${w.speed} ticks (${(w.speed * 0.6).toFixed(1)} s), range ${w.range} tiles.`;
+    $("wpnInfo").textContent = `Attacks every ${w.speed} ticks (${(w.speed * 0.6).toFixed(1)} s), range ${w.range}.`;
   }
-
   function ensureAudio() {
     try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); audio.resume(); } catch (e) { audio = null; }
   }
@@ -537,132 +766,150 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
 
   // ---------- HUD ----------
   function renderStrip() {
-    const el = $("strip");
     const cells = [];
-    const pad = 40 - S.strip.length;
-    for (let i = 0; i < pad; i++) cells.push("<i></i>");
+    for (let i = 0; i < 40 - S.strip.length; i++) cells.push("<i></i>");
     for (const c of S.strip) cells.push(`<i class="${c.kind === "idle" ? "" : c.kind}${c.hit ? " hit" : ""}"></i>`);
-    el.innerHTML = cells.join("");
+    $("strip").innerHTML = cells.join("");
+  }
+  function stateLabel() {
+    const s = S;
+    if (s.phase === "stunned") return `Stunned ${s.boss.stun}t`;
+    if (s.phase === "special") return s.special === "lightning" ? `Lightning ${s.lightning ? s.lightning.left : 0}t` : "Smoke blast";
+    if (s.phase === "volley") return s.boss.enraged ? "Enraged volley" : `Volley · ${volleySpeed()}t`;
+    return s.boss.enraged ? "Enraged" : "Recovering";
   }
   function updateHud() {
     const s = S, b = s.boss;
     $("bossFill").style.width = (b.hp / b.max) * 100 + "%";
-    $("bossHpText").textContent = `${b.hp} / ${b.max}`;
+    $("bossHpText").textContent = s.mode.drill ? "Drill" : `${b.hp} / ${b.max}`;
     $("hpOrb").textContent = s.p.hp;
     $("sAtk").textContent = s.st.attacks;
     $("sLost").textContent = s.st.lost;
-    $("sUp").textContent = s.st.fightTicks ? uptime() + "%" : "–";
-    $("sHits").textContent = s.st.hits;
+    $("sUp").textContent = s.st.ticks ? uptime() + "%" : "–";
+    $("sStun").textContent = s.st.stuns;
+    $("sLight").textContent = s.st.lightHits;
     $("sTaken").textContent = s.st.taken;
-    $("sPhase").textContent = b.stun > 0 ? `${phase()} · stunned ${b.stun}t` : phase();
+    $("sPhase").textContent = s.running || s.over ? stateLabel() : "–";
     $("tickNo").textContent = "Tick " + s.tick;
   }
 
   // ---------- drawing ----------
+  const tileCenter = (v) => v * T + T / 2;
+  function animPos(frac) {
+    const a = S.p.anim;
+    if (a.length < 2) return { x: S.p.x, y: S.p.y };
+    const segs = a.length - 1, f = frac * segs, i = Math.min(segs - 1, Math.floor(f)), k = f - i;
+    return { x: a[i].x + (a[i + 1].x - a[i].x) * k, y: a[i].y + (a[i + 1].y - a[i].y) * k };
+  }
   function draw(now) {
     const s = S;
-    const frac = s.running && !s.paused ? Math.min(1, (now - lastTickAt) / s.c.tickMs) : 1;
+    const frac = s.running && !s.paused ? Math.min(1, (now - lastTickAt) / TICK_MS) : 1;
     ctx.clearRect(0, 0, cv.width, cv.height);
 
-    // floor
-    for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
       ctx.fillStyle = (x + y) % 2 ? "#2b2a25" : "#302e28";
       ctx.fillRect(x * T, y * T, T, T);
     }
-    // water behind boss
-    const grd = ctx.createLinearGradient(0, 0, 0, BOSS.h * T);
-    grd.addColorStop(0, "#0b2a33"); grd.addColorStop(1, "#123a40");
-    ctx.fillStyle = grd; ctx.fillRect(0, 0, cv.width, BOSS.h * T);
     ctx.strokeStyle = "rgba(0,0,0,.35)"; ctx.lineWidth = 1;
-    for (let i = 0; i <= COLS; i++) { ctx.beginPath(); ctx.moveTo(i * T + .5, BOSS.h * T); ctx.lineTo(i * T + .5, cv.height); ctx.stroke(); }
-    for (let i = BOSS.h; i <= ROWS; i++) { ctx.beginPath(); ctx.moveTo(0, i * T + .5); ctx.lineTo(cv.width, i * T + .5); ctx.stroke(); }
-    // ripples
-    ctx.strokeStyle = "rgba(120,200,210,.12)";
-    for (let i = 0; i < 6; i++) {
-      const yy = ((now / 40 + i * 37) % (BOSS.h * T));
-      ctx.beginPath(); ctx.moveTo((i * 97) % cv.width, yy); ctx.lineTo((i * 97) % cv.width + 40, yy); ctx.stroke();
+    for (let i = 0; i <= N; i++) {
+      ctx.beginPath(); ctx.moveTo(i * T + .5, 0); ctx.lineTo(i * T + .5, cv.height); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i * T + .5); ctx.lineTo(cv.width, i * T + .5); ctx.stroke();
+    }
+    // pool
+    const g = ctx.createRadialGradient(BC.x * T + T / 2, BC.y * T + T / 2, T, BC.x * T + T / 2, BC.y * T + T / 2, T * 4.5);
+    g.addColorStop(0, "#14434a"); g.addColorStop(1, "#0a242a");
+    ctx.fillStyle = g; ctx.fillRect(POOL.x * T, POOL.y * T, POOL.w * T, POOL.h * T);
+    ctx.strokeStyle = "#000"; ctx.lineWidth = 3; ctx.strokeRect(POOL.x * T, POOL.y * T, POOL.w * T, POOL.h * T);
+    ctx.strokeStyle = "rgba(120,200,210,.14)"; ctx.lineWidth = 1;
+    for (let i = 0; i < 5; i++) {
+      const r = ((now / 30 + i * 30) % (T * 3.5));
+      ctx.beginPath(); ctx.arc(BC.x * T + T / 2, BC.y * T + T / 2, r, 0, Math.PI * 2); ctx.stroke();
     }
 
-    // range overlay
     if ($("showRange").checked) {
-      const r = s.c.weapon.range;
-      ctx.fillStyle = "rgba(255,255,0,.05)";
-      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
-        if (walkable(x, y) && distToBoss(x, y) <= r) ctx.fillRect(x * T, y * T, T, T);
-      }
-      ctx.strokeStyle = "rgba(255,255,0,.35)"; ctx.lineWidth = 1;
-      for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) {
-        if (!walkable(x, y) || distToBoss(x, y) > r) continue;
-        if (!(walkable(x, y + 1) && distToBoss(x, y + 1) <= r) && y + 1 < ROWS) { ctx.beginPath(); ctx.moveTo(x * T, (y + 1) * T); ctx.lineTo((x + 1) * T, (y + 1) * T); ctx.stroke(); }
-        if (!(walkable(x + 1, y) && distToBoss(x + 1, y) <= r) && x + 1 < COLS && !inBoss(x + 1, y)) { ctx.beginPath(); ctx.moveTo((x + 1) * T, y * T); ctx.lineTo((x + 1) * T, (y + 1) * T); ctx.stroke(); }
-        if (!(walkable(x - 1, y) && distToBoss(x - 1, y) <= r) && x > 0 && !inBoss(x - 1, y)) { ctx.beginPath(); ctx.moveTo(x * T, y * T); ctx.lineTo(x * T, (y + 1) * T); ctx.stroke(); }
+      const r = s.weapon.range;
+      ctx.fillStyle = "rgba(255,255,0,.06)";
+      for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (open(x, y) && distToBoss(x, y) > r) {
+        ctx.fillStyle = "rgba(0,0,0,.28)"; ctx.fillRect(x * T, y * T, T, T);
       }
     }
 
-    // destination tile
+    // pathfinder
+    if (s.pathfinder) {
+      const pf = s.pathfinder;
+      ctx.fillStyle = "rgba(160,80,255,.16)"; ctx.strokeStyle = "rgba(190,120,255,.85)"; ctx.lineWidth = 2;
+      ctx.fillRect((pf.x - 2) * T, (pf.y - 2) * T, 5 * T, 5 * T);
+      ctx.strokeRect((pf.x - 2) * T + 1, (pf.y - 2) * T + 1, 5 * T - 2, 5 * T - 2);
+      ctx.fillStyle = "#c58cff";
+      ctx.beginPath(); ctx.arc(tileCenter(pf.x), tileCenter(pf.y), T * (0.22 + 0.04 * Math.sin(now / 150)), 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#000"; ctx.stroke();
+    }
+
     if (s.target && s.target.type === "move") {
       ctx.strokeStyle = "rgba(255,255,255,.5)"; ctx.lineWidth = 2;
       ctx.strokeRect(s.target.x * T + 2, s.target.y * T + 2, T - 4, T - 4);
     }
 
-    // debris shadows
+    // standing smoke debris
+    for (const k of s.rocks) {
+      const [x, y] = k.split(",").map(Number);
+      drawRock(tileCenter(x), tileCenter(y), T * 0.38);
+    }
+
+    // shadows
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
     for (const d of s.debris) {
       const k = 1 - (d.t - frac) / (d.max + 1);
-      ctx.fillStyle = `rgba(0,0,0,${0.25 + 0.5 * k})`;
-      ctx.beginPath(); ctx.ellipse(d.x * T + T / 2, d.y * T + T / 2, T * (0.25 + 0.2 * k), T * (0.18 + 0.14 * k), 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(0,0,0,${0.3 + 0.5 * k})`;
+      ctx.beginPath(); ctx.ellipse(tileCenter(d.x), tileCenter(d.y), T * (0.25 + 0.2 * k), T * (0.18 + 0.14 * k), 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = d.t === 1 ? "#ff981f" : "#ffff00";
-      ctx.font = `600 ${Math.round(T * 0.38)}px "Pixelify Sans", monospace`;
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText(d.t, d.x * T + T / 2, d.y * T + T / 2 + 1);
-      // falling rock on the last tick
-      if (d.t === 1) {
-        const fy = d.y * T + T / 2 - (1 - frac) * T * 1.6;
-        ctx.fillStyle = "#6e6252";
-        ctx.beginPath(); ctx.arc(d.x * T + T / 2, fy, T * 0.22, 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = "#000"; ctx.stroke();
-      }
+      ctx.font = `600 ${Math.round(T * 0.4)}px "Pixelify Sans", monospace`;
+      ctx.fillText(d.t, tileCenter(d.x), tileCenter(d.y) + 1);
+      if (d.t === 1) drawRock(tileCenter(d.x), tileCenter(d.y) - (1 - frac) * T * 1.6, T * 0.22);
     }
-    // landed rocks
     for (const im of s.impacts) {
       const age = s.tick - im.tick + frac;
       ctx.globalAlpha = Math.max(0, 1 - age / 2);
       ctx.fillStyle = "#5c5244";
       for (let i = 0; i < 4; i++) {
         const a = i * 1.7 + im.x, r = T * (0.12 + age * 0.12);
-        ctx.beginPath(); ctx.arc(im.x * T + T / 2 + Math.cos(a) * r, im.y * T + T / 2 + Math.sin(a) * r, T * 0.09, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(tileCenter(im.x) + Math.cos(a) * r, tileCenter(im.y) + Math.sin(a) * r, T * 0.09, 0, Math.PI * 2); ctx.fill();
       }
-      ctx.fillStyle = "#7a6c58";
-      ctx.beginPath(); ctx.arc(im.x * T + T / 2, im.y * T + T / 2, T * 0.2, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 1;
     }
 
+    // lightning
+    if (s.lightning) drawLightning(s.lightning, now);
+
     drawBoss(now);
 
-    // player
-    const px = (s.p.px + (s.p.x - s.p.px) * frac) * T + T / 2;
-    const py = (s.p.py + (s.p.y - s.p.py) * frac) * T + T / 2;
-    drawPlayer(px, py);
+    const pos = animPos(frac);
+    if ($("trueTile").checked) {
+      ctx.strokeStyle = "#5ff2ff"; ctx.lineWidth = 2;
+      ctx.strokeRect(s.p.x * T + 2, s.p.y * T + 2, T - 4, T - 4);
+    }
+    drawPlayer(tileCenter(pos.x), tileCenter(pos.y));
 
-    // projectiles
     s.projs = s.projs.filter((p) => s.tick < p.end + 1);
     for (const p of s.projs) {
       const k = (s.tick + frac - p.start) / (p.end - p.start);
       if (k < 0 || k > 1) continue;
-      const x = (p.fx + (p.tx - p.fx) * k) * T + T / 2;
-      const y = (p.fy + (p.ty - p.fy) * k) * T + T / 2 - Math.sin(k * Math.PI) * T * 0.6;
+      const x = tileCenter(p.fx + (p.tx - p.fx) * k);
+      const y = tileCenter(p.fy + (p.ty - p.fy) * k) - Math.sin(k * Math.PI) * T * 0.6;
       ctx.fillStyle = p.color;
       ctx.beginPath(); ctx.arc(x, y, p.size * (T / 44), 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = "#000"; ctx.lineWidth = 1; ctx.stroke();
     }
 
-    // hitsplats
-    s.splats = s.splats.filter((h) => now - h.at < 1000);
-    for (const h of s.splats) {
-      const x = h.x * T + T / 2 + (h.jitter || 0) * T * 0.5, y = h.y * T + T / 2 - (h.boss ? 0 : T * 0.1);
-      drawSplat(x, y, h.dmg);
+    if (s.flash) {
+      const a = 1 - (now - s.flash.at) / 700;
+      if (a > 0) { ctx.fillStyle = `rgba(200,200,190,${0.55 * a})`; ctx.fillRect(0, 0, cv.width, cv.height); }
+      else s.flash = null;
     }
 
-    // click marker
+    s.splats = s.splats.filter((h) => now - h.at < 1000);
+    for (const h of s.splats) drawSplat(tileCenter(h.x + (h.j || 0)), tileCenter(h.y), h.dmg);
+
     if (s.marker) {
       const age = (now - s.marker.at) / 400;
       if (age < 1) {
@@ -672,61 +919,92 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
       }
     }
 
-    // banner
-    if (s.banner && now - s.banner.at < 2200) {
+    if (s.banner && now - s.banner.at < 2400) {
       ctx.font = `600 ${Math.round(T * 0.5)}px "Pixelify Sans", monospace`;
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillStyle = "#000"; ctx.fillText(s.banner.text, cv.width / 2 + 2, BOSS.h * T + T * 0.7 + 2);
-      ctx.fillStyle = "#ffff00"; ctx.fillText(s.banner.text, cv.width / 2, BOSS.h * T + T * 0.7);
+      const yb = T * 0.9;
+      ctx.fillStyle = "#000"; ctx.fillText(s.banner.text, cv.width / 2 + 2, yb + 2);
+      ctx.fillStyle = "#ffff00"; ctx.fillText(s.banner.text, cv.width / 2, yb);
+    }
+  }
+
+  function drawRock(x, y, r) {
+    ctx.fillStyle = "#6e6252"; ctx.strokeStyle = "#000"; ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i < 7; i++) {
+      const a = (i / 7) * Math.PI * 2, rr = r * (0.8 + ((i * 37) % 5) / 20);
+      ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr * 0.85);
+    }
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#8a7d69"; ctx.beginPath(); ctx.arc(x - r * 0.25, y - r * 0.25, r * 0.25, 0, Math.PI * 2); ctx.fill();
+  }
+
+  function drawLightning(L, now) {
+    for (const p of L.trail) {
+      ctx.fillStyle = "rgba(255,240,120,.28)";
+      ctx.fillRect(p.x * T + 3, p.y * T + 3, T - 6, T - 6);
+    }
+    const hx = tileCenter(L.head.x), hy = tileCenter(L.head.y);
+    ctx.fillStyle = L.charge > 0 ? "rgba(255,255,180,.25)" : "rgba(255,250,170,.55)";
+    ctx.fillRect(L.head.x * T + 1, L.head.y * T + 1, T - 2, T - 2);
+    ctx.strokeStyle = "#fff6a0"; ctx.lineWidth = 3;
+    for (let b = 0; b < 2; b++) {
+      ctx.beginPath(); ctx.moveTo(hx + (Math.random() - 0.5) * T * 0.3, hy - T * 1.4);
+      for (let i = 1; i <= 4; i++) ctx.lineTo(hx + (Math.random() - 0.5) * T * 0.5, hy - T * 1.4 + (T * 1.4 * i) / 4);
+      ctx.stroke();
     }
   }
 
   function drawBoss(now) {
     const s = S;
-    const cx = (BOSS.x + BOSS.w / 2) * T, cy = (BOSS.y + BOSS.h / 2) * T;
+    const cx = tileCenter(BC.x), cy = tileCenter(BC.y);
     const stunned = s.boss.stun > 0;
     const bob = stunned ? 0 : Math.sin(now / 500) * T * 0.08;
-    // tendrils
-    ctx.strokeStyle = "#173a36"; ctx.lineWidth = T * 0.28; ctx.lineCap = "round";
-    for (let i = 0; i < 6; i++) {
-      const a = Math.PI * (0.15 + i * 0.14) + Math.sin(now / 700 + i) * (stunned ? 0.02 : 0.12);
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#173a36"; ctx.lineWidth = T * 0.28;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + Math.sin(now / 700 + i) * (stunned ? 0.02 : 0.1);
       ctx.beginPath(); ctx.moveTo(cx, cy + bob);
-      ctx.quadraticCurveTo(cx + Math.cos(a) * T * 2.2, cy + Math.sin(a) * T * 1.3, cx + Math.cos(a) * T * 2.6, cy + Math.sin(a) * T * 2.3);
+      ctx.quadraticCurveTo(cx + Math.cos(a) * T * 2.2, cy + Math.sin(a) * T * 1.6, cx + Math.cos(a) * T * 2.9, cy + Math.sin(a) * T * 2.9);
       ctx.stroke();
     }
-    // shell
-    ctx.fillStyle = "#1f4a45"; ctx.strokeStyle = "#000"; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.ellipse(cx, cy + bob, T * 2.2, T * 1.9, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#2c625a";
+    ctx.lineCap = "butt";
+    ctx.fillStyle = s.boss.enraged ? "#4a2a2a" : "#1f4a45"; ctx.strokeStyle = "#000"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.ellipse(cx, cy + bob, T * 2.3, T * 2.2, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = s.boss.enraged ? "#6b3a36" : "#2c625a";
     for (let i = -2; i <= 2; i++) {
-      ctx.beginPath(); ctx.ellipse(cx + i * T * 0.75, cy - T * 0.5 + bob + Math.abs(i) * T * 0.25, T * 0.35, T * 0.6, i * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(cx + i * T * 0.78, cy - T * 0.6 + bob + Math.abs(i) * T * 0.3, T * 0.36, T * 0.75, i * 0.25, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
     }
-    // spikes
     ctx.fillStyle = "#c9c0a5";
     for (let i = -3; i <= 3; i++) {
-      const bx = cx + i * T * 0.55, by = cy - T * 1.6 + bob + Math.abs(i) * T * 0.22;
+      const bx = cx + i * T * 0.58, by = cy - T * 1.75 + bob + Math.abs(i) * T * 0.25;
       ctx.beginPath(); ctx.moveTo(bx - T * 0.14, by + T * 0.15); ctx.lineTo(bx, by - T * 0.4); ctx.lineTo(bx + T * 0.14, by + T * 0.15); ctx.closePath(); ctx.fill(); ctx.stroke();
     }
-    // face
+    // wound on its back (north side) while stunned
+    if (stunned) {
+      const pulse = 0.6 + 0.4 * Math.sin(now / 120);
+      ctx.fillStyle = `rgba(255,60,40,${pulse})`;
+      ctx.beginPath(); ctx.ellipse(cx, cy - T * 1.95, T * 0.55, T * 0.22, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#000"; ctx.lineWidth = 2; ctx.stroke();
+    }
     ctx.fillStyle = "#0e2522";
-    ctx.beginPath(); ctx.ellipse(cx, cy + T * 0.75 + bob, T * 1.2, T * 0.75, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, cy + T * 0.85 + bob, T * 1.25, T * 0.8, 0, 0, Math.PI * 2); ctx.fill();
     for (const side of [-1, 1]) {
-      ctx.fillStyle = stunned ? "#777" : "#ffd23a";
-      ctx.beginPath(); ctx.ellipse(cx + side * T * 0.55, cy + T * 0.55 + bob, T * 0.2, T * 0.14, side * 0.4, 0, Math.PI * 2); ctx.fill();
-      if (!stunned) { ctx.fillStyle = "#000"; ctx.fillRect(cx + side * T * 0.55 - 1.5, cy + T * 0.45 + bob, 3, T * 0.2); }
+      ctx.fillStyle = stunned ? "#777" : s.boss.enraged ? "#ff5a2a" : "#ffd23a";
+      ctx.beginPath(); ctx.ellipse(cx + side * T * 0.58, cy + T * 0.62 + bob, T * 0.21, T * 0.14, side * 0.4, 0, Math.PI * 2); ctx.fill();
+      if (!stunned) { ctx.fillStyle = "#000"; ctx.fillRect(cx + side * T * 0.58 - 1.5, cy + T * 0.52 + bob, 3, T * 0.2); }
     }
     ctx.fillStyle = "#e9e2cc";
     for (let i = -3; i <= 3; i++) {
-      ctx.beginPath(); ctx.moveTo(cx + i * T * 0.22 - T * 0.07, cy + T * 1.05 + bob); ctx.lineTo(cx + i * T * 0.22, cy + T * 1.3 + bob); ctx.lineTo(cx + i * T * 0.22 + T * 0.07, cy + T * 1.05 + bob); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(cx + i * T * 0.23 - T * 0.07, cy + T * 1.15 + bob); ctx.lineTo(cx + i * T * 0.23, cy + T * 1.42 + bob); ctx.lineTo(cx + i * T * 0.23 + T * 0.07, cy + T * 1.15 + bob); ctx.fill();
     }
     if (stunned) {
       ctx.fillStyle = "#ffff00";
       for (let i = 0; i < 3; i++) {
         const a = now / 300 + i * 2.1;
-        star(cx + Math.cos(a) * T * 1.1, cy - T * 2 + Math.sin(a) * T * 0.25, T * 0.16);
+        star(cx + Math.cos(a) * T * 1.2, cy + T * 0.1 + Math.sin(a) * T * 0.3, T * 0.16);
       }
     }
-    ctx.lineCap = "butt";
   }
   function star(x, y, r) {
     ctx.beginPath();
@@ -737,21 +1015,20 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
     ctx.closePath(); ctx.fill();
   }
   function drawPlayer(x, y) {
-    const s = S, w = s.c.weapon;
+    const s = S, w = s.weapon;
     ctx.strokeStyle = "#000"; ctx.lineWidth = 2;
     ctx.fillStyle = "rgba(0,0,0,.3)"; ctx.beginPath(); ctx.ellipse(x, y + T * 0.32, T * 0.25, T * 0.08, 0, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = "#3a5f8f"; ctx.fillRect(x - T * 0.15, y - T * 0.1, T * 0.3, T * 0.38); ctx.strokeRect(x - T * 0.15, y - T * 0.1, T * 0.3, T * 0.38);
     ctx.fillStyle = "#e0b48a"; ctx.beginPath(); ctx.arc(x, y - T * 0.22, T * 0.13, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = w.color; ctx.lineWidth = 3;
+    ctx.strokeStyle = s.armed ? SPELL.color : w.color; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.moveTo(x + T * 0.18, y - T * 0.25); ctx.lineTo(x + T * 0.3, y + T * 0.2); ctx.stroke();
-    // hp bar when hurt
     if (s.p.hp < 99) {
       const bw = T * 0.7;
-      ctx.fillStyle = "#e2402f"; ctx.fillRect(x - bw / 2, y - T * 0.55, bw, 5);
-      ctx.fillStyle = "#48c048"; ctx.fillRect(x - bw / 2, y - T * 0.55, bw * (s.p.hp / 99), 5);
+      ctx.fillStyle = "#e2402f"; ctx.fillRect(x - bw / 2, y - T * 0.58, bw, 5);
+      ctx.fillStyle = "#48c048"; ctx.fillRect(x - bw / 2, y - T * 0.58, bw * (s.p.hp / 99), 5);
     }
-    // cooldown pips
-    const pips = w.speed, left = S.cd;
+    // weapon timer pips: yellow = ticks elapsed since your last attack
+    const pips = w.speed, left = s.cd;
     for (let i = 0; i < pips; i++) {
       ctx.fillStyle = i < pips - left ? "#ffff00" : "#3b3226";
       ctx.fillRect(x - (pips * 7) / 2 + i * 7, y + T * 0.42, 5, 4);
@@ -773,11 +1050,11 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
     ctx.fillStyle = "#fff"; ctx.fillText(dmg, x, y + 1);
   }
 
-  // ---------- loop ----------
+  // ---------- loop: fixed 600 ms ticks ----------
   function loop(now) {
     if (S.running && !S.paused) {
-      if (now - lastTickAt > S.c.tickMs * 4) lastTickAt = now - S.c.tickMs;
-      while (now - lastTickAt >= S.c.tickMs && S.running) { lastTickAt += S.c.tickMs; tick(); }
+      if (now - lastTickAt > TICK_MS * 4) lastTickAt = now - TICK_MS;
+      while (now - lastTickAt >= TICK_MS && S.running) { lastTickAt += TICK_MS; tick(); }
     }
     draw(now);
     requestAnimationFrame(loop);
@@ -787,8 +1064,8 @@ kbd { font: 13px var(--display); background: var(--panel-deep); border: 1px soli
   updateWeaponInfo();
   showOverlay(`
     <h2>The Leviathan</h2>
-    <p>Debris shadows count down in ticks. Step off before they hit 0, and get your next attack out on time.</p>
-    <p style="color:var(--muted)">Click a tile to move. Click the Leviathan to attack.</p>
+    <p>Stun it with Shadow Barrage before each volley ends, hit the wound on its back, then survive the lightning or the smoke blast.</p>
+    <p style="color:var(--muted)">Click a tile to move. Click the Leviathan to attack. F selects the shadow spell.</p>
     <div><button class="btn" type="button" data-act="start">Start fight</button></div>`);
   requestAnimationFrame(loop);
 })();
