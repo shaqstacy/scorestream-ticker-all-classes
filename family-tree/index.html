@@ -262,6 +262,23 @@ section{padding-block:64px}
 .drawer .dphoto{margin:14px 0;max-width:100%}
 .drawer .dphoto img{width:100%;max-width:260px;height:auto;border-radius:4px;display:block}
 .drawer .dphoto figcaption{font-size:.8rem;color:var(--muted);margin-top:4px}
+.tree-picker{display:grid;gap:10px;margin:0 0 18px}
+.tp-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tp-label{font-family:var(--type);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-width:15.5em}
+@media (max-width:700px){.tp-label{min-width:0;flex-basis:100%}}
+.family-record{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:22px 24px;min-width:0}
+.family-record h3{font-size:1.7rem}
+.family-record .fr-intro{margin:8px 0 18px;max-width:72ch}
+.fr-gens{display:grid;gap:14px}
+.fr-gen{display:grid;grid-template-columns:13em 1fr;gap:12px;align-items:start;border-top:1px dashed var(--line);padding-top:12px}
+.fr-gen h4{margin:4px 0 0;font-family:var(--type);font-weight:400;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.fr-gen h4 small{display:block;color:var(--muted);letter-spacing:.04em;text-transform:none;font-size:.8rem;margin-top:2px}
+.fr-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;margin-top:22px}
+.fr-cols h4{margin:0 0 8px;font-family:var(--type);font-weight:400;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.fr-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.93rem}
+.fr-list .date{color:var(--gold);margin-right:8px}
+.fr-list a{color:var(--ink)}
+@media (max-width:700px){.fr-gen{grid-template-columns:1fr}}
 footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);font-size:.9rem}
 
 /* ---------- drawer ---------- */
@@ -337,10 +354,23 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
           <h2 id="tree-title">Trevor, Sara &amp; Jeremiah</h2>
           <p id="tree-desc">Trevor and Sara form the trunk, with Jeremiah at its root. Trevor’s Stacy, Prichard and Folz families branch to the left; Sara’s Campbell, Hively and Davis families to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.</p>
         </div>
-        <div class="filters" role="group" aria-label="Choose a tree">
+      </div>
+      <div class="tree-picker">
+        <div class="tp-group" role="group" aria-labelledby="tp-ours">
+          <span class="tp-label" id="tp-ours">Our family</span>
           <button class="chip" type="button" data-tree="stacy" aria-pressed="true">Trevor, Sara &amp; Jeremiah</button>
-          <button class="chip" type="button" data-tree="folz" aria-pressed="false">Folz tree</button>
-          <button class="chip" type="button" data-tree="zs" aria-pressed="false">Zoglman &amp; Stallings tree</button>
+          <button class="chip" type="button" data-tree="folz" aria-pressed="false">Gene &amp; Libby Folz</button>
+        </div>
+        <div class="tp-group" role="group" aria-labelledby="tp-gg">
+          <span class="tp-label" id="tp-gg">Trevor’s great-grandparents</span>
+          <button class="chip" type="button" data-tree="stacyriffe" aria-pressed="false"><span class="sw" style="background:var(--teal)"></span>Stacy &amp; Riffe</button>
+          <button class="chip" type="button" data-tree="prichard" aria-pressed="false"><span class="sw" style="background:var(--teal)"></span>Prichard &amp; James</button>
+          <button class="chip" type="button" data-tree="folzmudd" aria-pressed="false"><span class="sw" style="background:var(--sky)"></span>Folz &amp; Mudd</button>
+          <button class="chip" type="button" data-tree="zs" aria-pressed="false"><span class="sw" style="background:var(--sage)"></span>Zoglman &amp; Stallings</button>
+        </div>
+        <div class="tp-group" role="group" aria-labelledby="tp-sara">
+          <span class="tp-label" id="tp-sara">Sara’s grandparents</span>
+          <button class="chip" type="button" data-tree="campbell" aria-pressed="false"><span class="sw" style="background:var(--berry)"></span>Campbell &amp; Hively</button>
         </div>
       </div>
       <div class="tree-shell"><svg id="tree-svg" viewBox="0 0 1000 800" role="group" aria-label="Family tree"></svg></div>
@@ -355,6 +385,8 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <span><i style="border:1.5px dashed var(--muted)"></i>Not yet in the papers</span>
       </div>
       <p class="tree-hint">On a phone, swipe sideways to see the whole tree.</p>
+
+      <div class="family-record" id="family-record" aria-live="polite"></div>
 
       <h3 style="font-size:1.8rem;margin-top:44px">The branches</h3>
       <p class="muted prose" style="margin:6px 0 0">Every family group named in the papers, children in birth order.</p>
@@ -612,15 +644,15 @@ const PEOPLE = [
   // ---------------- FOLZ ----------------
   {id:"charles_f", name:"Charles A. Folz", fam:"F", b:"c. 1916", bFlag:"Online trees give 1916 or 1917, born in Indiana", d:"not yet confirmed", dFlag:"A MyHeritage record shows a Charles Folz dying in Evansville on Nov. 4, 1991, at 75", dp:"Evansville, Indiana", sp:["stella"], role:"Gene’s father", notes:["Father of nine with Stella Mudd. The family was in St. Louis when Gene was born in 1943 and in Evansville by 1951.","Remembered with Stella as the grandparents “Charles and Stella Folz of Evansville” in their grandson Alex’s obituary."], src:["WEB"]},
   {id:"stella", name:"Stella M. (Mudd) Folz", short:"Stella Mudd", fam:"F", b:"Feb. 22, 1919", d:"Sept. 20, 2002", bur:"St. Joseph Catholic Cemetery, Evansville, Indiana", sp:["charles_f"], role:"Gene’s mother", notes:["Mother of nine children, including an infant son, James, who died young.","Mudd is an old Maryland Catholic surname that came west into Kentucky, like the Stallings and Coomes. Whether Stella’s branch followed that road is not yet known."], src:["WEB"]},
-  {id:"gene", name:"Gene Thomas Folz", short:"Gene Folz", fam:"F", b:"June 12, 1943", bp:"St. Louis, Missouri", d:"Oct. 31, 2026", dp:"Deaconess Midtown Hospital, Evansville · age 83", bur:"St. Joseph Catholic Cemetery, Evansville", par:["charles_f","stella"], sp:["c_libby"], role:"Libby’s husband", notes:["Graduated from Mater Dei High School in Evansville in 1961.","Earned a bachelor’s degree in business from the University of Evansville in 1970 and an MBA there in 1976.","Began his career at Bucyrus-Erie in Evansville and finished it at Cablofil in Mascoutah, Illinois.","Married Elizabeth A. Zoglman on May 29, 1965, at Holy Family Catholic Church, Jasper. Married 61 years; father of Annette, Alex, Alison and Amy; seven grandchildren and two great-grandchildren.","Funeral Mass at St. Boniface Catholic Church, Evansville, on Nov. 7, 2026. The family asked for memorials to Special Olympics of Evansville or the St. Vincent de Paul Society at St. Boniface."], src:["WEB"]},
-  {id:"michael_f", name:"Michael L. Folz", fam:"F", b:"Jan. 7, 1951", bp:"Evansville, Indiana", d:"Feb. 17, 2024", dp:"Evansville · age 73", par:["charles_f","stella"], role:"Gene’s brother", notes:["Attended Mater Dei High School, F.J. Reitz High School and USI. Worked for Bristol Myers-Squibb."], src:["WEB"]},
-  {id:"james_f", name:"James Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s infant brother", notes:["Died in infancy; named in Gene’s obituary."], src:["WEB"]},
-  {id:"ed_f", name:"Edward P. “Ed” Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Kathy."], src:["WEB"]},
-  {id:"george_f", name:"George Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Julie."], src:["WEB"]},
-  {id:"tony_f", name:"Tony Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Diane."], src:["WEB"]},
-  {id:"marian_f", name:"Marian J. (Folz) Alvey", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Marion, Kentucky", notes:["Married to Leo Alvey."], src:["WEB"]},
-  {id:"charlotte_f", name:"Charlotte A. (Folz) Sears", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Evansville", notes:["Married to Dave Sears."], src:["WEB"]},
-  {id:"patti_f", name:"Patti (Folz) Haller", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · West Chester, Ohio", notes:["Married to Brad Haller."], src:["WEB"]},
+  {id:"gene", first:"Gene", name:"Gene Thomas Folz", short:"Gene Folz", fam:"F", b:"June 12, 1943", bp:"St. Louis, Missouri", d:"Oct. 31, 2026", dp:"Deaconess Midtown Hospital, Evansville · age 83", bur:"St. Joseph Catholic Cemetery, Evansville", par:["charles_f","stella"], sp:["c_libby"], role:"Libby’s husband", notes:["Graduated from Mater Dei High School in Evansville in 1961.","Earned a bachelor’s degree in business from the University of Evansville in 1970 and an MBA there in 1976.","Began his career at Bucyrus-Erie in Evansville and finished it at Cablofil in Mascoutah, Illinois.","Married Elizabeth A. Zoglman on May 29, 1965, at Holy Family Catholic Church, Jasper. Married 61 years; father of Annette, Alex, Alison and Amy; seven grandchildren and two great-grandchildren.","Funeral Mass at St. Boniface Catholic Church, Evansville, on Nov. 7, 2026. The family asked for memorials to Special Olympics of Evansville or the St. Vincent de Paul Society at St. Boniface."], src:["WEB"]},
+  {id:"michael_f", first:"Michael", name:"Michael L. Folz", fam:"F", b:"Jan. 7, 1951", bp:"Evansville, Indiana", d:"Feb. 17, 2024", dp:"Evansville · age 73", par:["charles_f","stella"], role:"Gene’s brother", notes:["Attended Mater Dei High School, F.J. Reitz High School and USI. Worked for Bristol Myers-Squibb."], src:["WEB"]},
+  {id:"james_f", first:"James", name:"James Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s infant brother", notes:["Died in infancy; named in Gene’s obituary."], src:["WEB"]},
+  {id:"ed_f", first:"Ed", name:"Edward P. “Ed” Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Kathy."], src:["WEB"]},
+  {id:"george_f", first:"George", name:"George Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Julie."], src:["WEB"]},
+  {id:"tony_f", first:"Tony", name:"Tony Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Diane."], src:["WEB"]},
+  {id:"marian_f", first:"Marian", name:"Marian J. (Folz) Alvey", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Marion, Kentucky", notes:["Married to Leo Alvey."], src:["WEB"]},
+  {id:"charlotte_f", first:"Charlotte", name:"Charlotte A. (Folz) Sears", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Evansville", notes:["Married to Dave Sears."], src:["WEB"]},
+  {id:"patti_f", first:"Patti", name:"Patti (Folz) Haller", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · West Chester, Ohio", notes:["Married to Brad Haller."], src:["WEB"]},
   {id:"annette", name:"Annette (Folz) Stacy", short:"Annette Folz", aka:"“Annie”", first:"Annette", fam:"F", par:["gene","c_libby"], sp:["rick"], role:"Trevor’s mother · Huntington, West Virginia", notes:["Gene and Libby Folz’s eldest daughter (listed first among their children). Married Rick Stacy; mother of Trevor, Brandon and Chandler.","Through her, Trevor descends from the Folz, Zoglman and Stallings families."], src:["WEB"]},
   {id:"alex", name:"Alex James Folz", first:"Alex", fam:"F", b:"1968", d:"July 8, 2016", dp:"Chicago, Illinois · age 48", par:["gene","c_libby"], role:"Gene and Libby’s only son", notes:["Lived in Dallas. Married Leslie Jo Ramsey on July 25, 2015.","Died suddenly in Chicago while on vacation with his wife, a year after their wedding."], src:["WEB"]},
   {id:"alison", name:"Alison (Folz) Miller", first:"Alison", fam:"F", par:["gene","c_libby"], role:"Woodstock, Georgia", notes:["Married to Chris Miller."], src:["WEB"]},
@@ -633,8 +665,8 @@ const PEOPLE = [
   {id:"brandon", name:"Brandon Stacy", fam:"T", par:["rick","annette"], role:"Trevor’s brother", src:["USER"]},
   {id:"chandler", name:"Chandler Stacy", fam:"T", par:["rick","annette"], role:"Trevor’s brother", src:["USER"]},
   {id:"rick", name:"Richard Edward “Rick” Stacy", short:"Rick Stacy", aka:"“Ricky” to his parents’ generation", fam:"T", bp:"Oceana, West Virginia", par:["lonnie","delma"], sp:["annette"], role:"Trevor’s father", notes:["Only son of Lonnie “Ticky” Stacy and Delma Jean Prichard; grew up in Oceana, Wyoming County, in the southern West Virginia coalfields, with his sisters Angie and Lori.","Married Annette “Annie” Folz. In 2012 they were living in Lavalette, Wayne County, where they raised Trevor, Brandon and Chandler; they later made their home in Huntington."], src:["USER","WEB","OBIT"]},
-  {id:"lonnie", name:"Lonnie Edward “Ticky” Stacy", short:"Lonnie “Ticky” Stacy", fam:"T", b:"July 14, 1946", bFlag:"His obituary and Find a Grave say Hanover, Wyoming County; his 1966 marriage license gives “Iaeger, McDowell County”", bp:"Hanover, Wyoming County, West Virginia", d:"Jan. 10, 2012", dp:"Raleigh General Hospital, Beckley · age 65", bur:"Palm Memorial Gardens, Matheny, Wyoming County", par:["lonnie_sr","hattie"], sp:["delma"], role:"Rick’s father · Navy veteran and coal auger operator", photo:"portrait", notes:["Known to everyone as “Ticky.” Son of Lonnie Stacy (1919–1981) and Hattie Margaret Riffe Stacy (1925–2011), one of seven children raised in Justice.","U.S. Navy veteran and a retired coal auger operator.","Married Delma Jean Prichard on New Year’s Eve, December 31, 1966, at Oceana. He was 20 and living in Justice; she was 19. They were married 45 years.","Died January 10, 2012, at Raleigh General Hospital of injuries from an automobile accident. Funeral at New Life Church in Jesse, with Rev. Jackie Lester officiating; buried with military rites by the Wyoming County Veterans Honor Guard.","His obituary named his six grandchildren (Brandon, Laken, Alex, Trevor, Taylor and Chandler), Jeremy DeLong, “who was like a son,” and a special cousin, Johnny “Smokie” Blankenship.","He and Delma share a headstone with their photograph on it."], src:["OBIT","LIC","WEB"]},
-  {id:"delma", name:"Delma Jean (Prichard) Stacy", short:"Delma Prichard", fam:"T", b:"Oct. 6, 1947", bp:"Oceana, Wyoming County, West Virginia", dFlag:"She died at 77, so between Oct. 2024 and Oct. 2025; she was still living in Nov. 2022", dp:"Oceana · age 77", par:["boyd","gracie"], sp:["lonnie"], role:"Rick’s mother", photo:"portrait", notes:["Born in Oceana to Boyd Prichard Sr. and Gracie James Prichard; one of at least five sisters, with brother Mack.","Married Lonnie “Ticky” Stacy at Oceana on December 31, 1966, at 19. (The clerk wrote her father’s name as “Boyd Stacy” on the license, a slip for Boyd Prichard.)","Mother of Angie, Lori and Ricky; widowed in 2012 after 45 years of marriage.","A family post announced that “Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord” on a Saturday."], src:["USER","WEB","LIC","OBIT"]},
+  {id:"lonnie", first:"Ticky", name:"Lonnie Edward “Ticky” Stacy", short:"Lonnie “Ticky” Stacy", fam:"T", b:"July 14, 1946", bFlag:"His obituary and Find a Grave say Hanover, Wyoming County; his 1966 marriage license gives “Iaeger, McDowell County”", bp:"Hanover, Wyoming County, West Virginia", d:"Jan. 10, 2012", dp:"Raleigh General Hospital, Beckley · age 65", bur:"Palm Memorial Gardens, Matheny, Wyoming County", par:["lonnie_sr","hattie"], sp:["delma"], role:"Rick’s father · Navy veteran and coal auger operator", photo:"portrait", notes:["Known to everyone as “Ticky.” Son of Lonnie Stacy (1919–1981) and Hattie Margaret Riffe Stacy (1925–2011), one of seven children raised in Justice.","U.S. Navy veteran and a retired coal auger operator.","Married Delma Jean Prichard on New Year’s Eve, December 31, 1966, at Oceana. He was 20 and living in Justice; she was 19. They were married 45 years.","Died January 10, 2012, at Raleigh General Hospital of injuries from an automobile accident. Funeral at New Life Church in Jesse, with Rev. Jackie Lester officiating; buried with military rites by the Wyoming County Veterans Honor Guard.","His obituary named his six grandchildren (Brandon, Laken, Alex, Trevor, Taylor and Chandler), Jeremy DeLong, “who was like a son,” and a special cousin, Johnny “Smokie” Blankenship.","He and Delma share a headstone with their photograph on it."], src:["OBIT","LIC","WEB"]},
+  {id:"delma", first:"Delma", name:"Delma Jean (Prichard) Stacy", short:"Delma Prichard", fam:"T", b:"Oct. 6, 1947", bp:"Oceana, Wyoming County, West Virginia", dFlag:"She died at 77, so between Oct. 2024 and Oct. 2025; she was still living in Nov. 2022", dp:"Oceana · age 77", par:["boyd","gracie"], sp:["lonnie"], role:"Rick’s mother", photo:"portrait", notes:["Born in Oceana to Boyd Prichard Sr. and Gracie James Prichard; one of at least five sisters, with brother Mack.","Married Lonnie “Ticky” Stacy at Oceana on December 31, 1966, at 19. (The clerk wrote her father’s name as “Boyd Stacy” on the license, a slip for Boyd Prichard.)","Mother of Angie, Lori and Ricky; widowed in 2012 after 45 years of marriage.","A family post announced that “Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord” on a Saturday."], src:["USER","WEB","LIC","OBIT"]},
   {id:"angela", name:"Angela “Angie” (Stacy) Stewart", short:"Angie Stacy Stewart", fam:"T", par:["lonnie","delma"], sp:["kevin_s"], role:"Rick’s sister · Trevor’s aunt · Daniels, W.Va.", notes:["Daughter of Lonnie and Delma Stacy. Married Kevin Stewart; in 2012 they lived in Daniels, Raleigh County. Mother of Taylor Stewart, Trevor’s cousin.","She shared the family’s announcement of her mother Delma’s death."], src:["USER","WEB","OBIT"]},
   {id:"kevin_s", name:"Kevin Stewart", fam:"M", sp:["angela"], role:"Angie’s husband", src:["OBIT"]},
   {id:"taylor_s", name:"Taylor Stewart", first:"Taylor", fam:"T", par:["angela","kevin_s"], role:"Trevor’s first cousin", src:["OBIT"]},
@@ -667,23 +699,23 @@ const PEOPLE = [
   {id:"sterial_s", name:"Sterial Stacy", fam:"T", b:"1939", d:"2016", par:["bill_s"], role:"Lonnie Sr.’s half-brother", src:["USER"]},
   {id:"estil_s", name:"Estil Stacy", fam:"T", b:"1941", d:"2009", par:["bill_s"], role:"Lonnie Sr.’s half-brother", src:["USER"]},
   {id:"carl_s", name:"Carl Stacy", fam:"T", b:"1944", d:"2025", par:["bill_s"], role:"Lonnie Sr.’s half-brother", notes:["An honorary pallbearer at his sister-in-law Hattie’s funeral in 2011."], src:["USER","HOBIT"]},
-  {id:"larry_s", name:"William “Larry” Stacy", fam:"T", b:"1945", d:"2016", par:["lonnie_sr","hattie"], role:"Ticky’s brother · Baisden", notes:["Of Baisden in 2011; companion Jennifer Rollyson."], src:["OBIT","HOBIT"]},
-  {id:"randall_s", name:"Randall Stacy", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s brother · Hanover", notes:["Married to Gladys."], src:["OBIT","HOBIT"]},
-  {id:"sue_s", name:"Sue (Stacy) Egnor", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · Winfield", notes:["Married to Roger Egnor."], src:["OBIT","HOBIT"]},
-  {id:"sharon_s", name:"Sharon (Stacy) Lester", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · North Spring", notes:["Married to the Rev. Jackie Lester, who officiated at both her mother Hattie’s funeral (2011) and her brother Ticky’s (2012)."], src:["OBIT","HOBIT"]},
-  {id:"kathy_s", name:"Kathy (Stacy) Laney", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · Van", notes:["Married to Eric Laney."], src:["OBIT","HOBIT"]},
-  {id:"donna_s", name:"Donna (Stacy) Walker", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · Oceana", notes:["Married to Keith Walker."], src:["OBIT","HOBIT"]},
+  {id:"larry_s", first:"Larry", name:"William “Larry” Stacy", fam:"T", b:"1945", d:"2016", par:["lonnie_sr","hattie"], role:"Ticky’s brother · Baisden", notes:["Of Baisden in 2011; companion Jennifer Rollyson."], src:["OBIT","HOBIT"]},
+  {id:"randall_s", first:"Randall", name:"Randall Stacy", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s brother · Hanover", notes:["Married to Gladys."], src:["OBIT","HOBIT"]},
+  {id:"sue_s", first:"Sue", name:"Sue (Stacy) Egnor", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · Winfield", notes:["Married to Roger Egnor."], src:["OBIT","HOBIT"]},
+  {id:"sharon_s", first:"Sharon", name:"Sharon (Stacy) Lester", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · North Spring", notes:["Married to the Rev. Jackie Lester, who officiated at both her mother Hattie’s funeral (2011) and her brother Ticky’s (2012)."], src:["OBIT","HOBIT"]},
+  {id:"kathy_s", first:"Kathy", name:"Kathy (Stacy) Laney", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · Van", notes:["Married to Eric Laney."], src:["OBIT","HOBIT"]},
+  {id:"donna_s", first:"Donna", name:"Donna (Stacy) Walker", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister · Oceana", notes:["Married to Keith Walker."], src:["OBIT","HOBIT"]},
   {id:"jeff_b", name:"Jeff Barlow", fam:"M", sp:["lori"], role:"Wyoming County magistrate · longtime Oceana lawman", notes:["A longtime lawman in Oceana, later elected magistrate for Wyoming County (Division 3); listed by the West Virginia Judiciary among the county’s magistrates, with a 2022 election year in state records.","Married Lori Stacy; father of Laken and Alex."], src:["USER","WEB"]},
   {id:"laken", name:"Laken (Barlow) Blevins", first:"Laken", fam:"T", par:["jeff_b","lori"], role:"Trevor’s first cousin", src:["USER"]},
   {id:"alex_b", name:"Alex Barlow", first:"Alex", fam:"T", par:["jeff_b","lori"], role:"Trevor’s first cousin", src:["USER"]},
   {id:"boyd", name:"Boyd Prichard Sr.", fam:"T", sp:["gracie"], role:"Delma’s father", notes:["Of Kopperston, Wyoming County, a coal camp built by the Koppers Coal Company in the 1930s–40s. Named as a parent in his son Mack’s obituary."], src:["WEB"]},
   {id:"gracie", name:"Gracie (James) Prichard", short:"Gracie James", fam:"T", sp:["boyd"], role:"Delma’s mother", src:["WEB"]},
-  {id:"mack", name:"Douglas McArthur “Mack” Prichard", fam:"T", b:"Nov. 28, 1942", bp:"Kopperston, West Virginia", d:"Nov. 12, 2022", dp:"family hunting cabin in Virginia · age 79", par:["boyd","gracie"], role:"Delma’s brother", notes:["U.S. Air Force veteran, retired coal miner and UMWA member, of Oceana.","Died unexpectedly at “his happy place,” the family hunting cabin in Virginia.","His obituary names his sisters, including Ruth Lovins of Keyrock, Maggie Blankenship of Oceana, and Delma Stacy of Oceana, and his son Ernest of Eden, North Carolina."], src:["WEB"]},
-  {id:"ruth_l", name:"Ruth (Prichard) Lovins", fam:"T", par:["boyd","gracie"], role:"Delma’s sister · Keyrock, W.Va.", notes:["Widow of Willard Lovins."], src:["WEB"]},
-  {id:"maggie_b", name:"Maggie (Prichard) Blankenship", fam:"T", par:["boyd","gracie"], role:"Delma’s sister · Oceana", notes:["Widow of Connie Blankenship."], src:["WEB"]},
+  {id:"mack", first:"Mack", name:"Douglas McArthur “Mack” Prichard", fam:"T", b:"Nov. 28, 1942", bp:"Kopperston, West Virginia", d:"Nov. 12, 2022", dp:"family hunting cabin in Virginia · age 79", par:["boyd","gracie"], role:"Delma’s brother", notes:["U.S. Air Force veteran, retired coal miner and UMWA member, of Oceana.","Died unexpectedly at “his happy place,” the family hunting cabin in Virginia.","His obituary names his sisters, including Ruth Lovins of Keyrock, Maggie Blankenship of Oceana, and Delma Stacy of Oceana, and his son Ernest of Eden, North Carolina."], src:["WEB"]},
+  {id:"ruth_l", first:"Ruth", name:"Ruth (Prichard) Lovins", fam:"T", par:["boyd","gracie"], role:"Delma’s sister · Keyrock, W.Va.", notes:["Widow of Willard Lovins."], src:["WEB"]},
+  {id:"maggie_b", first:"Maggie", name:"Maggie (Prichard) Blankenship", fam:"T", par:["boyd","gracie"], role:"Delma’s sister · Oceana", notes:["Widow of Connie Blankenship."], src:["WEB"]},
 
   // ---------------- CAMPBELL, HIVELY & DAVIS ----------------
-  {id:"clay", name:"Cledith Vernon “Bub” Campbell Jr.", short:"Pastor Bub Campbell", fam:"K", b:"c. 1953", d:"July 21, 2024", dp:"at home, Huntington, West Virginia · age 71", par:["cledith_sr","barbara"], sp:["ruthie"], role:"Sara’s father · pastor", notes:["Known to family and congregation as “Bub.”","Pastor of Altizer Baptist Church in Huntington for more than 50 years. He he officiated his mother’s funeral in 2021 and where his own funeral was held.","Died at home “surrounded by his loving family.” Survived by Ruthie and their children Christina, Jonathan and Sara Beth."], src:["USER","WEB"]},
+  {id:"clay", first:"Bub", name:"Cledith Vernon “Bub” Campbell Jr.", short:"Pastor Bub Campbell", fam:"K", b:"c. 1953", d:"July 21, 2024", dp:"at home, Huntington, West Virginia · age 71", par:["cledith_sr","barbara"], sp:["ruthie"], role:"Sara’s father · pastor", notes:["Known to family and congregation as “Bub.”","Pastor of Altizer Baptist Church in Huntington for more than 50 years. He he officiated his mother’s funeral in 2021 and where his own funeral was held.","Died at home “surrounded by his loving family.” Survived by Ruthie and their children Christina, Jonathan and Sara Beth."], src:["USER","WEB"]},
   {id:"ruthie", name:"Ruth Ann “Ruthie” (Davis) Campbell", short:"Ruthie Davis", fam:"K", sp:["clay"], role:"Sara’s mother", notes:["Wife of Pastor Bub Campbell. Her Davis parents are not yet in the records."], src:["USER","WEB"]},
   {id:"christina_c", name:"Christina Campbell", fam:"K", par:["clay","ruthie"], role:"Sara’s sister · Huntington", src:["WEB"]},
   {id:"jonathan_c", name:"Jonathan Campbell", fam:"K", par:["clay","ruthie"], role:"Sara’s brother · Huntington", notes:["Married to Valerie."], src:["WEB"]},
@@ -692,10 +724,10 @@ const PEOPLE = [
   {id:"w_hively", name:"William Hively", fam:"K", sp:["h_hively"], role:"Barbara’s father", src:["WEB"]},
   {id:"h_hively", name:"Helen Irene (Turner) Hively", short:"Helen Turner", fam:"K", sp:["w_hively"], role:"Barbara’s mother", src:["WEB"]},
   {id:"jerry_h", name:"Jerry Hively", fam:"K", par:["w_hively","h_hively"], role:"Barbara’s brother", src:["WEB"]},
-  {id:"michael_c", name:"Michael Ray Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s brother", src:["WEB"]},
-  {id:"paul_c", name:"Paul Thomas Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s brother", notes:["Married to Sandra Kay."], src:["WEB"]},
-  {id:"robin_c", name:"Robin Joy Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s sibling", src:["WEB"]},
-  {id:"danny_c", name:"Danny Lee Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s brother", notes:["Married to Margie."], src:["WEB"]},
+  {id:"michael_c", first:"Michael", name:"Michael Ray Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s brother", src:["WEB"]},
+  {id:"paul_c", first:"Paul", name:"Paul Thomas Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s brother", notes:["Married to Sandra Kay."], src:["WEB"]},
+  {id:"robin_c", first:"Robin", name:"Robin Joy Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s sibling", src:["WEB"]},
+  {id:"danny_c", first:"Danny", name:"Danny Lee Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Bub’s brother", notes:["Married to Margie."], src:["WEB"]},
   // ---------------- MARRIED IN (Stallings spouses) ----------------
   {id:"rosabelle", name:"Rosabelle Warren Stallings", fam:"M", sp:["lorenzo"], role:"Wife of Lorenzo", notes:["Sister of Ben Warren and Mary Warren Watson. Visited Waterflow, met Lorenzo, and married him soon after."], src:["MEM"]},
   {id:"edgar_w", name:"Edgar Warren", fam:"M", sp:["mary_loretta"], role:"Husband of Loretta Stallings", notes:["Arrived June 1914 with Loretta and their son Leo."], src:["MEM"]},
@@ -1130,6 +1162,40 @@ const TREE_STACY = [
   {id:"w_hively", x:690, y:85, from:"barbara"},
   {id:"h_hively", x:880, y:105, from:"barbara"}
 ];
+const TREE_STACYRIFFE = [
+  {id:"lonnie_sr", x:390, y:585, kind:"couple", label:"Lonnie Stacy Sr."},
+  {id:"hattie", x:610, y:585, kind:"couple", label:"Hattie Riffe"},
+  {id:"bill_s", x:180, y:420, from:"lonnie_sr", label:"Bill Stacy Sr."},
+  {id:"eva_b", x:385, y:395, from:"lonnie_sr", label:"Eva Blankenship"},
+  {id:"larkin", x:615, y:395, from:"hattie"},
+  {id:"amanda", x:820, y:420, from:"hattie", label:"Amanda “Mandy” Lee"},
+  {id:"stacypar", x:150, y:250, from:"bill_s", unknown:"Bill Stacy’s parents"},
+  {id:"blankpar", x:400, y:220, from:"eva_b", unknown:"Blankenship parents"},
+  {id:"bill_r", x:575, y:215, from:"larkin"},
+  {id:"sarah_bev", x:750, y:255, from:"larkin", label:"Sarah Beverly"},
+  {id:"leepar", x:895, y:320, from:"amanda", unknown:"Lee parents"}
+];
+const TREE_PRICHARD = [
+  {id:"boyd", x:390, y:585, kind:"couple", label:"Boyd Prichard Sr."},
+  {id:"gracie", x:610, y:585, kind:"couple", label:"Gracie James"},
+  {id:"prichpar", x:230, y:400, from:"boyd", unknown:"Prichard parents"},
+  {id:"jamespar", x:770, y:400, from:"gracie", unknown:"James parents"}
+];
+const TREE_FOLZMUDD = [
+  {id:"charles_f", x:390, y:585, kind:"couple", label:"Charles A. Folz"},
+  {id:"stella", x:610, y:585, kind:"couple", label:"Stella Mudd"},
+  {id:"folzpar2", x:230, y:400, from:"charles_f", unknown:"Folz parents"},
+  {id:"muddpar2", x:770, y:400, from:"stella", unknown:"Mudd parents"}
+];
+const TREE_CAMPBELL = [
+  {id:"cledith_sr", x:390, y:585, kind:"couple", label:"Cledith Campbell Sr."},
+  {id:"barbara", x:610, y:585, kind:"couple", label:"Barbara Hively"},
+  {id:"campar", x:230, y:400, from:"cledith_sr", unknown:"Campbell parents"},
+  {id:"w_hively", x:615, y:395, from:"barbara"},
+  {id:"h_hively", x:820, y:420, from:"barbara", label:"Helen Irene Turner"},
+  {id:"hivpar", x:560, y:230, from:"w_hively", unknown:"Hively parents"},
+  {id:"turnpar", x:850, y:260, from:"h_hively", unknown:"Turner parents"}
+];
 const TREES = {
   stacy:{nodes:TREE_STACY, couple:["trevor","sara"], married:"Trevor & Sara", left:["TREVOR’S SIDE · STACY · PRICHARD · FOLZ","var(--teal)"], right:["SARA’S SIDE · CAMPBELL · HIVELY · DAVIS","var(--berry)"], kidsLabel:"Their son",
       more:{text:"↗ Libby & Gene’s Folz tree", label:"Open the Folz tree for Annette’s older ancestors", tree:"folz", x:20, y:740, w:230},
@@ -1139,12 +1205,35 @@ const TREES = {
   folz:{nodes:TREE_FOLZ, couple:["gene","c_libby"], married:"married May 29, 1965", left:["GENE’S SIDE · FOLZ & MUDD","var(--sky)"], right:["LIBBY’S SIDE · ZOGLMAN & STALLINGS","var(--sage)"], kidsLabel:"Their children", more:{text:"↗ Libby’s older ancestors", label:"Switch to the Zoglman & Stallings tree for Libby’s older ancestors", tree:"zs", x:735, y:40, w:250},
       title:"The Folz tree", desc:"Gene Folz and Libby Zoglman form the trunk. Gene’s parents, Charles Folz and Stella Mudd, branch to the left; Libby’s parents and grandparents to the right. Select anyone to open their record.", aria:"Family tree of Gene Folz and Elizabeth Libby Zoglman Folz, with their parents and grandparents"}
 };
+Object.assign(TREES,{
+  stacyriffe:{nodes:TREE_STACYRIFFE, couple:["lonnie_sr","hattie"], married:"married 1946", left:["LONNIE SR.’S SIDE · STACY & BLANKENSHIP","var(--teal)"], right:["HATTIE’S SIDE · RIFFE & LEE","var(--teal)"], kidsLabel:"Their seven children",
+    title:"The Stacy & Riffe family", short:"Stacy & Riffe", desc:"Trevor’s great-grandparents Lonnie Stacy Sr. and Hattie Margaret Riffe, with their parents and grandparents above and their seven children below.", aria:"Family tree of Lonnie Stacy Sr. and Hattie Riffe Stacy",
+    intro:"Lonnie Stacy Sr. was born in 1919 at Blackey, Buchanan County, Virginia, the son of Bill Stacy and Eva Blankenship. Hattie Margaret Riffe was born in 1925 at Ikes Fork, Wyoming County, to Larkin and Amanda Riffe, who farmed at Wild Cat, Hanover. They married in 1946, lived in Justice, and raised seven children. Their son Ticky is Trevor’s grandfather."},
+  prichard:{nodes:TREE_PRICHARD, couple:["boyd","gracie"], married:"Kopperston, Wyoming County", left:["BOYD’S SIDE · PRICHARD","var(--teal)"], right:["GRACIE’S SIDE · JAMES","var(--teal)"], kidsLabel:"Children named so far",
+    title:"The Prichard & James family", short:"Prichard & James", desc:"Trevor’s great-grandparents Boyd Prichard Sr. and Gracie James of the Kopperston coal camp, with the children named so far. Their own parents are not yet in the records.", aria:"Family tree of Boyd Prichard Sr. and Gracie James Prichard",
+    intro:"Boyd Prichard Sr. and Gracie James raised a large family in Kopperston, a Wyoming County coal camp: at least five daughters and a son. Their daughter Delma married Ticky Stacy in 1966 and is Trevor’s grandmother. Their own parents, and the remaining children’s names, are still to be found."},
+  folzmudd:{nodes:TREE_FOLZMUDD, couple:["charles_f","stella"], married:"St. Louis, then Evansville", left:["CHARLES’S SIDE · FOLZ","var(--sky)"], right:["STELLA’S SIDE · MUDD","var(--sky)"], kidsLabel:"Their nine children",
+    title:"The Folz & Mudd family", short:"Folz & Mudd", desc:"Trevor’s great-grandparents Charles A. Folz and Stella Mudd of St. Louis and Evansville, with their nine children. Their own parents are not yet in the records.", aria:"Family tree of Charles A. Folz and Stella Mudd Folz",
+    intro:"Charles A. Folz and Stella M. Mudd started their family in St. Louis, where Gene was born in 1943, and had moved to Evansville by 1951. They raised nine children there. Their son Gene married Libby Zoglman in 1965; Gene and Libby are Trevor’s maternal grandparents."},
+  campbell:{nodes:TREE_CAMPBELL, couple:["cledith_sr","barbara"], married:"Tri-State: W.Va. & Kentucky", left:["CLEDITH SR.’S SIDE · CAMPBELL","var(--berry)"], right:["BARBARA’S SIDE · HIVELY & TURNER","var(--berry)"], kidsLabel:"Their children named so far",
+    title:"The Campbell & Hively family", short:"Campbell & Hively", desc:"Sara’s grandparents Cledith Vernon Campbell Sr. and Barbara Ann Hively, with Barbara’s parents above and their children below.", aria:"Family tree of Cledith Vernon Campbell Sr. and Barbara Ann Hively Campbell",
+    intro:"Barbara Ann Hively was born in Charleston in 1935, a daughter of William and Helen Irene (Turner) Hively. She married Cledith Vernon Campbell Sr. and raised six children; their son Cledith Jr., “Bub,” pastored Altizer Baptist Church in Huntington for more than 50 years and is Sara’s father."}
+});
+TREES.stacy.short="Trevor, Sara & Jeremiah";
+TREES.folz.short="Gene & Libby Folz";
+TREES.zs.short="Zoglman & Stallings";
+TREES.stacy.intro="Trevor Stacy and Sara Beth Campbell are the trunk of this tree, and their son Jeremiah its newest growth. Trevor’s side reaches back through the Stacys, Prichards, Folzes, Zoglmans and Stallingses; Sara’s through the Campbells, Hivelys and Davises.";
+TREES.folz.intro="Gene Thomas Folz of Evansville married Elizabeth A. “Libby” Zoglman of Jasper in 1965. They raised Annette, Alex, Alison and Amy, and were married 61 years. Annette is Trevor’s mother.";
+TREES.zs.title="The Zoglman & Stallings family";
+TREES.zs.intro="Edward “Bud” Zoglman and Theresa Lavina Stallings, Trevor’s great-grandparents, married in 1938. Bud’s Zoglmans came from Bavaria to Fulda, Indiana; Theresa’s Stallingses went from Kentucky to the Kentucky Mesa in New Mexico, where she was born in 1919. Their daughter Libby is Trevor’s grandmother.";
+TREES.zs.desc="Trevor’s great-grandparents Bud Zoglman and Theresa Stallings form the trunk. Bud’s Zoglman ancestors branch to the left, Theresa’s Stallings and Coomes ancestors to the right.";
 let curTree="stacy";
 function setTree(k){
   curTree=k; const T=TREES[k];
   document.querySelectorAll("[data-tree]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tree===k)));
   $("#tree-title").textContent=T.title; $("#tree-desc").textContent=T.desc; $("#tree-svg").setAttribute("aria-label",T.aria);
-  seed=7; drawTree();
+  seed=7; drawTree(); drawFamilyRecord();
+  try{ history.replaceState(null,"","#tree-"+k); }catch(e){}
   const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2;
 }
 document.addEventListener("click",e=>{const b=e.target.closest("[data-tree]"); if(!b) return; if(b.hasAttribute("data-close")) closeDrawer(); setTree(b.dataset.tree); if(b.dataset.scroll!==undefined) document.getElementById("tree").scrollIntoView();});
@@ -1223,18 +1312,18 @@ function drawTree(){
   // children along roots
   const gk = mk("g",{},gNodes);
   const lab = mk("text",{x:500,y:690,"text-anchor":"middle","font-family":"IM Fell English, Georgia, serif","font-size":17,fill:"var(--ink)"},gk); lab.textContent=T.kidsLabel;
-  const step = 130, start = 500 - step*(kids.length-1)/2;
+  const step = Math.min(130, 940/Math.max(1,kids.length)), kw = step-12, start = 500 - step*(kids.length-1)/2;
   kids.forEach((k,i)=>{
     const x=start+i*step, y=735;
-    const g=mk("g",{class:"tnode",tabindex:"0",role:"button","aria-label":k.name, transform:`translate(${x-55} ${y-17})`},gk);
-    mk("rect",{width:110,height:34,rx:17},g);
-    const t=mk("text",{class:"nm",x:55,y:23,"text-anchor":"middle","font-size":15},g); t.textContent=k.first||k.name.replace(" Zoglman","");
+    const g=mk("g",{class:"tnode",tabindex:"0",role:"button","aria-label":k.name, transform:`translate(${x-kw/2} ${y-17})`},gk);
+    mk("rect",{width:kw,height:34,rx:17},g);
+    const t=mk("text",{class:"nm",x:kw/2,y:23,"text-anchor":"middle","font-size":kw<100?14:15},g); t.textContent=k.first||k.name.replace(" Zoglman","");
     g.addEventListener("click",()=>openPerson(k.id));
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openPerson(k.id)}});
   });
   // side labels
   const sl = (x,txt,col)=>{const t=mk("text",{x,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:col},gNodes);t.textContent=txt;};
-  sl(180,T.left[0],T.left[1]);
+  { const t=mk("text",{x:20,y:22,"text-anchor":"start","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:T.left[1]},gNodes); t.textContent=T.left[0]; }
   const t=mk("text",{x:980,y:22,"text-anchor":"end","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:T.right[1]},gNodes); t.textContent=T.right[0];
   if(T.more){
     const M=T.more;
@@ -1243,6 +1332,44 @@ function drawTree(){
     const tt=mk("text",{x:M.w/2,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":12,fill:"var(--gold)"},g); tt.textContent=M.text;
     const go=()=>setTree(M.tree); g.addEventListener("click",go); g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
   }
+}
+
+/* ---------- Family record (per tree) ---------- */
+function drawFamilyRecord(){
+  const T=TREES[curTree], couple=T.couple.filter(id=>P[id]);
+  const chip=id=>`<button class="chip" type="button" data-p="${id}"><span class="sw" style="background:${FAM[P[id].fam].color}"></span>${esc(P[id].name)} <span class="date muted" style="font-size:.78rem">${esc(span(P[id]))}</span></button>`;
+  const uniq=a=>[...new Set(a)].filter(id=>P[id]);
+  const gens=[]; const all=new Set(couple);
+  // ancestors
+  let level=couple, names=["Their parents","Their grandparents","Their great-grandparents"];
+  const up=[];
+  for(let g=0; g<3; g++){ level=uniq(level.flatMap(id=>P[id].par)); if(!level.length) break; up.push([names[g],level]); level.forEach(id=>all.add(id)); }
+  up.reverse().forEach(x=>gens.push(x));
+  gens.push(["The couple",couple]);
+  // descendants
+  let down=couple; const dn=["Children","Grandchildren","Great-grandchildren"];
+  for(let g=0; g<3; g++){ const next=uniq(PEOPLE.filter(c=>c.par.some(x=>down.includes(x))).map(c=>c.id)); if(!next.length) break;
+    next.sort((a,b)=>(yearOf(P[a].b)||9999)-(yearOf(P[b].b)||9999));
+    gens.push([dn[g],next]); next.forEach(id=>all.add(id)); down=next; }
+  // spouses of descendants count as family
+  const spouses=uniq([...all].flatMap(id=>P[id].sp)).filter(id=>!all.has(id));
+  spouses.forEach(id=>all.add(id));
+  const ids=[...all];
+  const recs=RECORDS.filter(r=>r.who.some(w=>all.has(w)));
+  const evs=EVENTS.filter(e=>e.who&&e.who.some(w=>all.has(w))).sort((a,b)=>a.y-b.y);
+  const chs=CHAPTERS.filter(c=>c.who&&c.who.some(w=>all.has(w)));
+  const media=Object.entries(MEDIA).filter(([k,m])=>m.who.some(w=>all.has(w)));
+  let h=`<div class="eyebrow">Family record · ${ids.length} people · ${recs.length} records</div><h3>${esc(T.title)}</h3><p class="fr-intro">${esc(T.intro||"")}</p><div class="fr-gens">`;
+  gens.forEach(([label,list])=>{ h+=`<div class="fr-gen"><h4>${esc(label)}<small>${list.length} ${list.length===1?"person":"people"}</small></h4><div class="chips" style="margin:0">${list.map(chip).join("")}</div></div>`; });
+  if(spouses.length) h+=`<div class="fr-gen"><h4>Married into the family<small>${spouses.length} ${spouses.length===1?"person":"people"}</small></h4><div class="chips" style="margin:0">${spouses.map(chip).join("")}</div></div>`;
+  h+=`</div><div class="fr-cols">`;
+  if(evs.length) h+=`<div><h4>Timeline</h4><ul class="fr-list">${evs.map(e=>`<li><span class="date">${esc(e.label||e.y)}${e.d?" "+esc(e.d):""}</span>${esc(e.t)}</li>`).join("")}</ul></div>`;
+  h+=`<div>`;
+  if(recs.length) h+=`<h4>Newspapers &amp; records</h4><ul class="fr-list">${recs.map(r=>`<li><a href="${esc(r.url)}"${r.url.startsWith("#")?"":` target="_blank" rel="noopener"`}>${esc(r.title)}</a> <span class="muted">· ${esc(r.kind)}${r.date?", "+esc(r.date):""}</span></li>`).join("")}</ul>`;
+  if(media.length) h+=`<h4 style="margin-top:18px">Photos &amp; documents</h4><ul class="fr-list">${media.map(([k,m])=>`<li><a href="#m-${k}">${esc(m.title)}</a></li>`).join("")}</ul>`;
+  if(chs.length) h+=`<h4 style="margin-top:18px">Stories</h4><ul class="fr-list">${chs.map(c=>`<li><a href="#ch-${c.id}">${esc(c.title)}</a> <span class="muted">· ${esc(c.when)}</span></li>`).join("")}</ul>`;
+  h+=`</div></div>`;
+  $("#family-record").innerHTML=h;
 }
 
 /* ---------- Branches ---------- */
@@ -1398,9 +1525,8 @@ function openPerson(id){
   if(p.notes.length) h+=`<div class="rel"><h4>What the papers and records say</h4><ul class="story">${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`;
   const chs=CHAPTERS.filter(c=>c.who&&c.who.includes(id));
   if(chs.length) h+=`<div class="rel"><h4>Appears in these stories</h4><div class="chips">${chs.map(c=>`<a class="chip" href="#ch-${c.id}" data-close style="text-decoration:none">${esc(c.title)}</a>`).join("")}</div></div>`;
-  if(TREE_STACY.some(n=>n.id===id&&!n.unknown) && curTree!=="stacy") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="stacy" data-close data-scroll>View on Trevor, Sara &amp; Jeremiah’s tree</button></p>`;
-  if(TREE_FOLZ.some(n=>n.id===id&&!n.unknown) && curTree!=="folz") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="folz" data-close data-scroll>View on the Folz tree</button></p>`;
-  if(TREE_ZS.some(n=>n.id===id&&!n.unknown) && curTree!=="zs") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="zs" data-close data-scroll>View on the Zoglman &amp; Stallings tree</button></p>`;
+  const onTrees=Object.entries(TREES).filter(([k,T])=>k!==curTree && (T.nodes.some(n=>n.id===id&&!n.unknown) || childrenOf(T.couple[0]).some(c=>c.id===id&&c.par.includes(T.couple[1]))));
+  if(onTrees.length) h+=`<div class="rel"><h4>Also on these trees</h4><div class="chips">${onTrees.map(([k,T])=>`<button class="chip" type="button" data-tree="${k}" data-close data-scroll>${esc(T.short)}</button>`).join("")}</div></div>`;
   const recs=RECORDS.filter(r=>r.who.includes(id));
   if(recs.length) h+=`<div class="rel"><h4>Newspapers &amp; records</h4><ul class="reclinks">${recs.map(r=>`<li><a href="${esc(r.url)}"${r.url.startsWith("#")?" data-close":` target="_blank" rel="noopener"`}>${esc(r.title)}</a><span>${esc(r.pub)}${r.date?" · "+esc(r.date):""}</span></li>`).join("")}</ul></div>`;
   if(p.src.length) h+=`<p class="srcs">Sources: ${p.src.map(s=>esc(SOURCES[s].title)).join(" · ")}</p>`;
@@ -1478,7 +1604,7 @@ $("#shake").addEventListener("click",()=>{ if(!running) setPaused(false); burst(
 
 /* ---------- boot ---------- */
 drawTree(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ seed=7; drawTree(); });
-if(location.hash==="#folz") setTree("folz"); else if(location.hash==="#zoglman") setTree("zs");
+{ const hk=location.hash.replace(/^#tree-/,"").replace(/^#/,""); if(TREES[hk] && hk!=="stacy") setTree(hk); else if(hk==="zoglman") setTree("zs"); else drawFamilyRecord(); }
 { const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2; }
 drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes(); drawRecords(); drawGallery();
 </script>
