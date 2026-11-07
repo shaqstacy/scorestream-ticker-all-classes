@@ -25,6 +25,7 @@
   --rust:#d0663a;        /* oak rust */
   --sage:#8fae74;
   --plum:#b46a6a;
+  --sky:#7fa9cc;          /* Folz line */
   --sky-top:#0d1a22;
   --sky-bot:#2b3a2a;
   --node:#f3ead3;
@@ -40,7 +41,7 @@
     --bg:#e8ebdf; --bg-2:#dfe4d3; --surface:#f6f5ec; --surface-2:#eceee2;
     --ink:#1f271d; --muted:#56604d; --line:#c6cdb7;
     --bark:#6e4f36; --bark-dark:#4f3826;
-    --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a;
+    --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a; --sky:#356690;
     --sky-top:#cfdcd2; --sky-bot:#e8ebdf;
     --node:#fffdf5; --node-ink:#2a2118;
     --shadow:0 10px 26px rgba(60,50,30,.16);
@@ -51,7 +52,7 @@
   --bg:#e8ebdf; --bg-2:#dfe4d3; --surface:#f6f5ec; --surface-2:#eceee2;
   --ink:#1f271d; --muted:#56604d; --line:#c6cdb7;
   --bark:#6e4f36; --bark-dark:#4f3826;
-  --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a;
+  --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a; --sky:#356690;
   --sky-top:#cfdcd2; --sky-bot:#e8ebdf;
   --node:#fffdf5; --node-ink:#2a2118;
   --shadow:0 10px 26px rgba(60,50,30,.16);
@@ -294,7 +295,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
       <div>
         <div class="eyebrow">Family history · Bavaria · Kentucky · New Mexico · Indiana</div>
         <h1>From the <em>Kentucky Mesa</em> back home to the Ohio River</h1>
-        <p class="lede">The Stallings and Zoglman families: English Catholics who reached Maryland, German farmers from Bavaria, and the Kentucky brothers who built a Catholic colony in a dugout near the Navajo Nation. Their lines meet in Theresa Lavina Stallings and Edward “Bud” Zoglman, married in 1938.</p>
+        <p class="lede">The Stallings and Zoglman families: English Catholics who reached Maryland, German farmers from Bavaria, and the Kentucky brothers who built a Catholic colony in a dugout near the Navajo Nation. Their lines meet in Theresa Lavina Stallings and Edward “Bud” Zoglman, married in 1938, and continue through their daughter Libby into the Folz family of St. Louis and Evansville.</p>
         <div class="facts">
           <span><b>1600s</b> Stallings leave England</span>
           <span><b>1909</b> the Dugout on the mesa</span>
@@ -319,15 +320,20 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
       <div class="sec-head">
         <div>
           <div class="eyebrow">The tree</div>
-          <h2>Two roots, one trunk</h2>
-          <p>Bud and Theresa form the trunk. Bud’s Zoglman ancestors branch to the left, Theresa’s Stallings and Coomes ancestors to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.</p>
+          <h2 id="tree-title">Two roots, one trunk</h2>
+          <p id="tree-desc">Bud and Theresa form the trunk. Bud’s Zoglman ancestors branch to the left, Theresa’s Stallings and Coomes ancestors to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.</p>
+        </div>
+        <div class="filters" role="group" aria-label="Choose a tree">
+          <button class="chip" type="button" data-tree="zs" aria-pressed="true">Zoglman &amp; Stallings tree</button>
+          <button class="chip" type="button" data-tree="folz" aria-pressed="false">Folz tree</button>
         </div>
       </div>
-      <div class="tree-shell"><svg id="tree-svg" viewBox="0 0 1000 800" role="group" aria-label="Family tree of Edward Bud Zoglman and Theresa Lavina Stallings, with their ancestors"></svg></div>
+      <div class="tree-shell"><svg id="tree-svg" viewBox="0 0 1000 800" role="group" aria-label="Family tree"></svg></div>
       <div class="legend">
         <span><i style="background:var(--sage)"></i>Zoglman line</span>
         <span><i style="background:var(--rust)"></i>Stallings line</span>
         <span><i style="background:var(--plum)"></i>Coomes line</span>
+        <span><i style="background:var(--sky)"></i>Folz line</span>
         <span><i style="background:var(--gold)"></i>Married in</span>
         <span><i style="border:1.5px dashed var(--muted)"></i>Not yet in the papers</span>
       </div>
@@ -413,7 +419,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
     <div class="wrap">
       <div class="sec-head">
         <div>
-          <div class="eyebrow">Evansville · Jasper · Owensboro · Spencer County · New Mexico</div>
+          <div class="eyebrow">Evansville · Jasper · Owensboro · Spencer County · St. Louis · New Mexico</div>
           <h2>Newspapers &amp; records</h2>
           <p>Obituaries, grave memorials and county histories found online for the main lines of the tree. The details shown are summaries of what each source says. Open the link to read the original, and treat anything marked “lead” as unconfirmed.</p>
         </div>
@@ -489,6 +495,7 @@ const FAM = {
   S:{label:"Stallings", color:"var(--rust)"},
   C:{label:"Coomes", color:"var(--plum)"},
   M:{label:"Married in", color:"var(--gold)"},
+  F:{label:"Folz", color:"var(--sky)"},
   X:{label:"Waterflow community", color:"var(--muted)"}
 };
 const SOURCES = {
@@ -558,12 +565,29 @@ const PEOPLE = [
   {id:"mary_alice", name:"Mary Alice (Stallings) Higdon", fam:"S", b:"Dec. 31, 1931", bp:"Waterflow, New Mexico", d:"Dec. 7, 2018", dp:"Owensboro, Kentucky · age 86", bur:"Resurrection Cemetery, Owensboro", par:["lt","alice"], role:"Youngest of L.T.’s children", notes:["Her obituary confirms her parents as Legora “L.T.” Stallings and Alice Bertha Massey Stallings.","Retired registered nurse: 25 years in coronary care at Owensboro-Daviess County Hospital. Also a potter, seamstress and former beautician.","Married 66 years to Gene Higdon. Member of St. Pius Tenth Catholic Church; volunteered with St. Vincent de Paul."], src:["ST","MEM","WEB"]},
 
   // Bud & Theresa's children (named in the eulogy/memoir; full names & dates to add)
-  {id:"c_joe", name:"Joseph “Joe” Zoglman", fam:"Z", par:["bud","theresa"], role:"Shares her love of family tradition and history", notes:["“I see her intellect and interest in family traditions and history in Joe.”","Once called her bluff at poker."], src:["EUL"]},
-  {id:"c_rosie", name:"Rosemary “Rosie” Stratman", fam:"Z", par:["bud","theresa"], role:"Took Theresa & Bud back to Waterflow, c. 1976", notes:["“I see her gentle, easygoing personality and love for children in Rosie.”"], src:["EUL","MEM"]},
-  {id:"c_susie", name:"Carolyn S. (Zoglman) Schmitt", fam:"Z", par:["bud","theresa"], role:"Probably the “Susie” of the eulogy", notes:["Named as a daughter in Theresa’s 2009 obituary. The eulogy’s five names (Joe, Rosie, Susie, Libby, Ed) match the obituary’s five children if Carolyn S. is “Susie.”","Married William J. “Bill” Schmitt on July 24, 1965, at Holy Family Catholic Church, Jasper (Dubois County Herald, 50th-anniversary notice). Their four sons made the 2014 trip to Waterflow.","“I see her interest in politics and the world, dedication to her Husband, and the love for her Grandchildren in Susie.”"], src:["EUL","WEB"]},
-  {id:"c_libby", name:"Elizabeth “Libby” Folz", fam:"Z", par:["bud","theresa"], role:"Carries on the crafting tradition", notes:["“I see her craftsmanship, musical talent, and creativity in Libby.”"], src:["EUL"]},
-  {id:"c_ed", name:"Edward “Ed” Zoglman", fam:"Z", par:["bud","theresa"], role:"Theresa’s youngest son", notes:["“I see her concern for helping the less fortunate and her sense of humor and mischief in Ed.”","Went on the November 2014 trip to Waterflow. As a boy he thought his grandfather L.T. was 6 ft. 3 in.; he was 5 ft. 9 in."], src:["EUL","MEM"]},
+  {id:"c_joe", first:"Joe", name:"Joseph “Joe” Zoglman", fam:"Z", par:["bud","theresa"], role:"Shares her love of family tradition and history", notes:["“I see her intellect and interest in family traditions and history in Joe.”","Once called her bluff at poker."], src:["EUL"]},
+  {id:"c_rosie", first:"Rosie", name:"Rosemary “Rosie” Stratman", fam:"Z", par:["bud","theresa"], role:"Took Theresa & Bud back to Waterflow, c. 1976", notes:["“I see her gentle, easygoing personality and love for children in Rosie.”"], src:["EUL","MEM"]},
+  {id:"c_susie", first:"Carolyn", name:"Carolyn S. (Zoglman) Schmitt", fam:"Z", par:["bud","theresa"], role:"Probably the “Susie” of the eulogy", notes:["Named as a daughter in Theresa’s 2009 obituary. The eulogy’s five names (Joe, Rosie, Susie, Libby, Ed) match the obituary’s five children if Carolyn S. is “Susie.”","Married William J. “Bill” Schmitt on July 24, 1965, at Holy Family Catholic Church, Jasper (Dubois County Herald, 50th-anniversary notice). Their four sons made the 2014 trip to Waterflow.","“I see her interest in politics and the world, dedication to her Husband, and the love for her Grandchildren in Susie.”"], src:["EUL","WEB"]},
+  {id:"c_libby", name:"Elizabeth A. “Libby” (Zoglman) Folz", short:"Libby Zoglman Folz", first:"Libby", fam:"Z", par:["bud","theresa"], sp:["gene"], role:"Gene Folz’s wife · carries on the crafting tradition", notes:["“I see her craftsmanship, musical talent, and creativity in Libby.”","Married Gene Thomas Folz on May 29, 1965, at Holy Family Catholic Church in Jasper, Indiana. They were married 61 years.","Mother of Annette, Alex, Alison and Amy. The couple lived for a time in Pinckneyville, Illinois, before settling in Evansville."], src:["EUL","WEB"]},
+  {id:"c_ed", first:"Ed", name:"Edward “Ed” Zoglman", fam:"Z", par:["bud","theresa"], role:"Theresa’s youngest son", notes:["“I see her concern for helping the less fortunate and her sense of humor and mischief in Ed.”","Went on the November 2014 trip to Waterflow. As a boy he thought his grandfather L.T. was 6 ft. 3 in.; he was 5 ft. 9 in."], src:["EUL","MEM"]},
 
+
+  // ---------------- FOLZ ----------------
+  {id:"charles_f", name:"Charles A. Folz", fam:"F", b:"c. 1916", bFlag:"Online trees give 1916 or 1917, born in Indiana", d:"not yet confirmed", dFlag:"A MyHeritage record shows a Charles Folz dying in Evansville on Nov. 4, 1991, at 75", dp:"Evansville, Indiana", sp:["stella"], role:"Gene’s father", notes:["Father of nine with Stella Mudd. The family was in St. Louis when Gene was born in 1943 and in Evansville by 1951.","Remembered with Stella as the grandparents “Charles and Stella Folz of Evansville” in their grandson Alex’s obituary."], src:["WEB"]},
+  {id:"stella", name:"Stella M. (Mudd) Folz", short:"Stella Mudd", fam:"F", b:"Feb. 22, 1919", d:"Sept. 20, 2002", bur:"St. Joseph Catholic Cemetery, Evansville, Indiana", sp:["charles_f"], role:"Gene’s mother", notes:["Mother of nine children, including an infant son, James, who died young.","Mudd is an old Maryland Catholic surname that came west into Kentucky, like the Stallings and Coomes. Whether Stella’s branch followed that road is not yet known."], src:["WEB"]},
+  {id:"gene", name:"Gene Thomas Folz", short:"Gene Folz", fam:"F", b:"June 12, 1943", bp:"St. Louis, Missouri", d:"Oct. 31, 2026", dp:"Deaconess Midtown Hospital, Evansville · age 83", bur:"St. Joseph Catholic Cemetery, Evansville", par:["charles_f","stella"], sp:["c_libby"], role:"Libby’s husband", notes:["Graduated from Mater Dei High School in Evansville in 1961.","Earned a bachelor’s degree in business from the University of Evansville in 1970 and an MBA there in 1976.","Began his career at Bucyrus-Erie in Evansville and finished it at Cablofil in Mascoutah, Illinois.","Married Elizabeth A. Zoglman on May 29, 1965, at Holy Family Catholic Church, Jasper. Married 61 years; father of Annette, Alex, Alison and Amy; seven grandchildren and two great-grandchildren.","Funeral Mass at St. Boniface Catholic Church, Evansville, on Nov. 7, 2026. The family asked for memorials to Special Olympics of Evansville or the St. Vincent de Paul Society at St. Boniface."], src:["WEB"]},
+  {id:"michael_f", name:"Michael L. Folz", fam:"F", b:"Jan. 7, 1951", bp:"Evansville, Indiana", d:"Feb. 17, 2024", dp:"Evansville · age 73", par:["charles_f","stella"], role:"Gene’s brother", notes:["Attended Mater Dei High School, F.J. Reitz High School and USI. Worked for Bristol Myers-Squibb."], src:["WEB"]},
+  {id:"james_f", name:"James Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s infant brother", notes:["Died in infancy; named in Gene’s obituary."], src:["WEB"]},
+  {id:"ed_f", name:"Edward P. “Ed” Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Kathy."], src:["WEB"]},
+  {id:"george_f", name:"George Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Julie."], src:["WEB"]},
+  {id:"tony_f", name:"Tony Folz", fam:"F", par:["charles_f","stella"], role:"Gene’s brother · Evansville", notes:["Married to Diane."], src:["WEB"]},
+  {id:"marian_f", name:"Marian J. (Folz) Alvey", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Marion, Kentucky", notes:["Married to Leo Alvey."], src:["WEB"]},
+  {id:"charlotte_f", name:"Charlotte A. (Folz) Sears", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Evansville", notes:["Married to Dave Sears."], src:["WEB"]},
+  {id:"patti_f", name:"Patti (Folz) Haller", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · West Chester, Ohio", notes:["Married to Brad Haller."], src:["WEB"]},
+  {id:"annette", name:"Annette (Folz) Stacy", first:"Annette", fam:"F", par:["gene","c_libby"], role:"Huntington, West Virginia", notes:["Married to Rick Stacy."], src:["WEB"]},
+  {id:"alex", name:"Alex James Folz", first:"Alex", fam:"F", b:"1968", d:"July 8, 2016", dp:"Chicago, Illinois · age 48", par:["gene","c_libby"], role:"Gene and Libby’s only son", notes:["Lived in Dallas. Married Leslie Jo Ramsey on July 25, 2015.","Died suddenly in Chicago while on vacation with his wife, a year after their wedding."], src:["WEB"]},
+  {id:"alison", name:"Alison (Folz) Miller", first:"Alison", fam:"F", par:["gene","c_libby"], role:"Woodstock, Georgia", notes:["Married to Chris Miller."], src:["WEB"]},
+  {id:"amy", name:"Amy (Folz) Morgenstern", first:"Amy", fam:"F", par:["gene","c_libby"], role:"Pinckneyville, Illinois", notes:["Married to Stuart Morgenstern."], src:["WEB"]},
   // ---------------- MARRIED IN (Stallings spouses) ----------------
   {id:"rosabelle", name:"Rosabelle Warren Stallings", fam:"M", sp:["lorenzo"], role:"Wife of Lorenzo", notes:["Sister of Ben Warren and Mary Warren Watson. Visited Waterflow, met Lorenzo, and married him soon after."], src:["MEM"]},
   {id:"edgar_w", name:"Edgar Warren", fam:"M", sp:["mary_loretta"], role:"Husband of Loretta Stallings", notes:["Arrived June 1914 with Loretta and their son Leo."], src:["MEM"]},
@@ -679,6 +703,12 @@ const CHAPTERS = [
   "Around 1976 Aunt Rosie and her family took Theresa and Bud back to New Mexico, to the home of her first fourteen years. Cousin Keith Stratman went too.",
   "Theresa died in July 2009, at 90. On November 1, 2014, to celebrate Bill Schmitt’s 70th birthday, his four sons (Nathan, Todd from Chicago, Luke from Indianapolis, and the memoir’s author) and Theresa’s youngest son Ed flew from Evansville, Chicago and Indianapolis and met in Albuquerque. Keith Stratman drove down from Denver.",
   "On November 5, 2014, they attended Mass in Sacred Heart Church at Waterflow, “probably little different than my Grandma experienced.”"]},
+ {id:"folz", when:"1943–2026", title:"Libby and Gene: the Folz family", who:["gene","c_libby","charles_f","stella","alex","michael_f"], body:[
+  "Gene Thomas Folz was born June 12, 1943, in St. Louis, Missouri, the son of Charles A. Folz and Stella M. Mudd. By 1951 the family had moved to Evansville, Indiana, where Charles and Stella raised nine children: Gene, Michael, Ed, George, Tony, Marian, Charlotte and Patti, plus an infant son, James, who died young.",
+  "Gene graduated from Mater Dei High School in 1961. On May 29, 1965, he married Elizabeth A. “Libby” Zoglman, Bud and Theresa’s daughter, at Holy Family Catholic Church in Jasper. Two months later her sister Carolyn married Bill Schmitt in the same church.",
+  "Gene finished a business degree at the University of Evansville in 1970 and an MBA in 1976 while working. His career ran from Bucyrus-Erie in Evansville to Cablofil in Mascoutah, Illinois, and for a time the family lived in Pinckneyville, Illinois.",
+  "Gene and Libby raised four children: Annette, Alex, Alison and Amy. Alex died suddenly in July 2016, at 48, a year after his wedding. Gene died in Evansville on October 31, 2026, after 61 years of marriage. His funeral Mass was at St. Boniface Church in Evansville."],
+  pull:{q:"On May 29, 1965, Gene married the love of his life, Elizabeth A. Zoglman.", by:"Gene Folz’s obituary, 2026"}},
  {id:"lessons", when:"2009", title:"The lessons she taught", who:["theresa"], lessons:true, body:[
   "Her eulogy closed with the lessons Theresa left her family:"]}
 ];
@@ -743,15 +773,26 @@ const EVENTS = [
  {y:1976, t:"Theresa and Bud return to Waterflow with Rosie’s family.", f:"Z", who:["theresa","bud","c_rosie"]},
  {y:1985, d:"Sept. 28", t:"Bud Zoglman dies.", f:"Z", who:["bud"]},
  {y:2009, d:"July 15", t:"Theresa Lavina Zoglman dies at 90 at Memorial Hospital, Jasper; buried in Fairview Cemetery.", f:"Z", who:["theresa"]},
+ {y:1919, d:"Feb. 22", t:"Stella Mudd born.", f:"F", who:["stella"]},
+ {y:1943, d:"June 12", t:"Gene Thomas Folz born in St. Louis, Missouri, to Charles and Stella Folz.", f:"F", who:["gene","charles_f","stella"]},
+ {y:1951, d:"Jan. 7", t:"Michael Folz born in Evansville; the Folz family has settled there.", f:"F", who:["michael_f"]},
+ {y:1961, t:"Gene graduates from Mater Dei High School, Evansville.", f:"F", who:["gene"]},
+ {y:1965, d:"May 29", t:"Gene Folz marries Libby Zoglman at Holy Family Catholic Church, Jasper.", f:"F", who:["gene","c_libby"]},
+ {y:1970, t:"Gene earns his business degree at the University of Evansville (MBA, 1976).", f:"F", who:["gene"]},
+ {y:2002, d:"Sept. 20", t:"Stella Mudd Folz dies; buried at St. Joseph Catholic Cemetery, Evansville.", f:"F", who:["stella"]},
+ {y:2016, d:"July 8", t:"Alex Folz dies in Chicago at 48.", f:"F", who:["alex"]},
+ {y:2024, d:"Feb. 17", t:"Michael Folz dies in Evansville.", f:"F", who:["michael_f"]},
+ {y:2026, d:"Oct. 31", t:"Gene Folz dies in Evansville at 83, after 61 years of marriage to Libby.", f:"F", who:["gene","c_libby"]},
  {y:2014, d:"Nov. 1–5", t:"Bill Schmitt, his four sons and Ed Zoglman visit Waterflow and attend Mass at Sacred Heart.", f:"W", who:["c_ed"]}
 ];
-const EVFAM = {S:{label:"Stallings",c:"var(--rust)"}, Z:{label:"Zoglman",c:"var(--sage)"}, C:{label:"Coomes",c:"var(--plum)"}, W:{label:"New Mexico & church",c:"var(--gold)"}};
+const EVFAM = {S:{label:"Stallings",c:"var(--rust)"}, Z:{label:"Zoglman",c:"var(--sage)"}, C:{label:"Coomes",c:"var(--plum)"}, F:{label:"Folz",c:"var(--sky)"}, W:{label:"New Mexico & church",c:"var(--gold)"}};
 
 /* --------- Places --------- */
 const PLACES = [
  {id:"md", name:"Maryland", lon:-76.4, lat:38.2, when:"1600s", items:["The Stallings arrive from England; Maryland was a refuge for Catholics.","The Coomes ancestors were also Maryland Catholics before moving to Kentucky."]},
  {id:"bards", name:"Bardstown, Ky.", lon:-85.47, lat:37.81, when:"1700s–1900s", items:["Where the Coomes family settled.","Agnes Zoglman Edelson later lived in Bardstown and Louisville."], dy:-16},
- {id:"ohio", name:"Ohio River home", lon:-87.1, lat:37.77, when:"1800s–today", dy:26, items:["West Louisville, Daviess Co., Ky.: the Stallings farm; William Martin buried at St. Raphael.","Beech Grove, McLean Co., Ky.: Lucy born 1855; William Peter Coomes buried at St. Benedict.","Owensboro: Henry Zoglman buried at Mater Dolorosa.","Maple Mount: the Ursuline Sisters, who bought L.T.’s farm in 1914; Mt. St. Joseph Academy.","Fulda & Gentryville, Ind.: Zoglmann home; St. Boniface Cemetery.","Rockport, Spencer Co., Ind.: the Hoffman farm, 1934; Catherine Zoglman Scherm.","Tell City, Ind.: L.T. and Alice buried at St. Mary’s.","St. Bernard’s Church: Theresa and Bud married, 1938."]},
+ {id:"ohio", name:"Ohio River home", lon:-87.1, lat:37.77, when:"1800s–today", dy:26, items:["West Louisville, Daviess Co., Ky.: the Stallings farm; William Martin buried at St. Raphael.","Beech Grove, McLean Co., Ky.: Lucy born 1855; William Peter Coomes buried at St. Benedict.","Owensboro: Henry Zoglman buried at Mater Dolorosa.","Maple Mount: the Ursuline Sisters, who bought L.T.’s farm in 1914; Mt. St. Joseph Academy.","Fulda & Gentryville, Ind.: Zoglmann home; St. Boniface Cemetery.","Rockport, Spencer Co., Ind.: the Hoffman farm, 1934; Catherine Zoglman Scherm.","Tell City, Ind.: L.T. and Alice buried at St. Mary’s.","St. Bernard’s Church: Theresa and Bud married, 1938.","Evansville, Ind.: the Folz family home from about 1950; Gene and Stella buried at St. Joseph Catholic Cemetery.","Jasper, Ind.: Bud and Theresa’s home; Gene and Libby married at Holy Family, 1965."]},
+ {id:"stl", name:"St. Louis, Mo.", lon:-90.2, lat:38.63, when:"1940s", dy:-16, items:["Gene Folz born here, June 12, 1943, before the family moved to Evansville.","Nearby in Illinois: Gene’s last employer, Cablofil in Mascoutah, and the family’s home in Pinckneyville."]},
  {id:"fs", name:"Fort Smith, Ark.", lon:-94.4, lat:35.39, when:"1906–1907", items:["Joseph and Lorenzo arrive May 1, 1906; meet David Watson.","All three work for the City Street Railway Company.","Nearby Subiaco: L.T. studies for the priesthood, 1907–1909."]},
  {id:"pueblo", name:"Pueblo, Colo.", lon:-104.6, lat:38.25, when:"c. 1907–1908", items:["The three friends live and work here about a year."]},
  {id:"moriarty", name:"Moriarty, N.M.", lon:-106.05, lat:34.99, when:"c. 1908–1909", items:["Lorenzo arrives first, in Torrance County southeast of Albuquerque; Joseph and Watson join him."]},
@@ -760,6 +801,8 @@ const PLACES = [
 ];
 
 const NOTES = [
+ {h:"Charles A. Folz’s dates", s:"Open", p:"No obituary or grave record for Gene’s father turned up. Online trees put his birth about 1916–17 in Indiana, and a MyHeritage record shows a Charles Folz dying in Evansville on Nov. 4, 1991, at 75.", v:"Check Stella’s Find a Grave page and the Courier & Press for November 1991."},
+ {h:"The Folz and Mudd families before 1943", s:"Open", p:"Gene was born in St. Louis, but his father was apparently Indiana-born. The parents of Charles Folz and of Stella Mudd are not yet known, nor when the family moved from St. Louis to Evansville.", v:"The 1950 census would show the household and its ages."},
  {h:"Theresa’s children, from her obituary", s:"Resolved", p:"The 2009 obituary names daughters Carolyn Schmitt, Elizabeth Folz and Rosemary Stratman and sons Edward and Joseph. The eulogy’s “Libby” is Elizabeth, “Rosie” is Rosemary, and “Susie” is most likely Carolyn S. Schmitt.", v:"Updated on the tree. Carolyn = Susie is still an inference."},
  {h:"Joseph Zoglmann’s parents and Catherine’s first marriage", s:"New", p:"A Spencer County history biography names Joseph’s parents, Leonard and Theresa (Spatt) Zoglmann of Bavaria, and gives his bride’s name in 1854 as Kathrina (Lauber) Diebenbach, which points to an earlier marriage for her.", v:"Added a new generation to the tree. Look for a Diebenbach marriage before 1854."},
  {h:"More Zoglmann children", s:"New", p:"The county history counts ten children of Joseph and Kathrina, eight sons and two daughters. The family page lists only three. Martin (b. 1874) and Mary are now added.", v:"Five or more sons still unnamed."},
@@ -781,6 +824,12 @@ const NOTES = [
 /* --------- Newspapers & online records (found by web search, Nov. 2026) ---------
    status: "found" = the record matches names and dates in the family papers; "lead" = likely, needs confirming */
 const RECORDS = [
+ {title:"Gene Thomas Folz obituary", pub:"Pierre Funeral Home (via Legacy.com)", date:"Nov. 2026", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.legacy.com/us/obituaries/name/gene-folz-obituary?id=62892448", who:["gene","c_libby","charles_f","stella","annette","alex","alison","amy","ed_f","george_f","tony_f","marian_f","charlotte_f","patti_f","michael_f","james_f"], sum:"Born June 12, 1943, in St. Louis to Charles A. and Stella M. (Mudd) Folz; died Oct. 31, 2026, in Evansville at 83. Married Elizabeth A. Zoglman May 29, 1965, at Holy Family, Jasper. Names his children, brothers and sisters. Mass at St. Boniface; burial at St. Joseph Catholic Cemetery."},
+ {title:"Alex Folz obituary", pub:"Evansville Courier & Press (via Legacy.com)", date:"July 11, 2016", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.legacy.com/us/obituaries/courierpress/name/alex-folz-obituary?id=17614343", who:["alex","gene","c_libby","annette","alison","amy","charles_f","stella"], sum:"Alex James Folz, 48, of Dallas, died July 8, 2016, in Chicago. Son of Gene and Libby Folz of Pinckneyville, Ill.; brother of Annette, Alison and Amy; grandson of Charles and Stella Folz of Evansville."},
+ {title:"Alex J. Folz obituary", pub:"Pierre Funeral Home, Evansville", date:"2016", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.pierrefuneralhome.com/obituaries/alex-folz/", who:["alex"], sum:"The funeral home’s copy of Alex’s obituary."},
+ {title:"Michael L. Folz obituary", pub:"Pierre Funeral Home, Evansville", date:"Feb. 2024", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.pierrefuneralhome.com/obituaries/Michael-Folz/", who:["michael_f","charles_f","stella"], sum:"Born Jan. 7, 1951, in Evansville to Charles A. and Stella M. (Mudd) Folz; died Feb. 17, 2024. Worked for Bristol Myers-Squibb."},
+ {title:"Stella M. Mudd Folz (1919–2002)", pub:"Find a Grave · memorial 115762487", region:"Evansville", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/115762487/stella-m-folz", who:["stella"], sum:"Born Feb. 22, 1919; died Sept. 20, 2002. Buried at St. Joseph Catholic Cemetery, Evansville. Check this page for a link to Charles’s memorial."},
+ {title:"Charles Folz family records", pub:"MyHeritage", region:"Online trees", kind:"Online tree", status:"lead", url:"https://www.myheritage.com/names/charles_folz", who:["charles_f"], sum:"Lists a Charles A. Folz born about 1916–17 in Indiana, with children Gene, Marian, Charlotte and Edward, and a Charles Folz who died in Evansville on Nov. 4, 1991, at 75. The death record is not clearly tied to him."},
  {title:"Theresa Zoglman obituary", pub:"Evansville Courier & Press (via Legacy.com)", date:"July 17, 2009", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.legacy.com/us/obituaries/courierpress/name/theresa-zoglman-obituary?id=49303498", who:["theresa","bud","c_susie","c_libby","c_rosie","c_ed","c_joe","mary_alice"], sum:"Names her survivors: daughters Carolyn Schmitt, Elizabeth Folz and Rosemary Stratman; sons Edward and Joseph; sister Mary Alice Higdon; 18 grandchildren and 35 great-grandchildren. Mass at St. Joseph Catholic Church; burial in Fairview Cemetery."},
  {title:"Theresa Zoglman obituary", pub:"Becher & Kluesner Funeral Home, Jasper", date:"July 2009", region:"Jasper", kind:"Obituary", status:"found", url:"https://www.becherkluesner.com/obituaries/Theresa-Zoglman/", who:["theresa","lt","alice"], sum:"Theresa, 90, of Jasper, died July 15, 2009, at Jasper Memorial Hospital. Born March 5, 1919, at Waterflow, N.M., to L.T. and Alice (Massey) Stallings. Visitation at the Downtown Chapel."},
  {title:"Theresa L. Zoglman (1919–2009)", pub:"AncientFaces", region:"Jasper", kind:"Record index", status:"found", url:"https://www.ancientfaces.com/person/theresa-l-zoglman-birth-1919-death-2009/37908827", who:["theresa"], sum:"Index entry for Theresa L. Zoglman of Jasper, Indiana, born March 5, 1919."},
@@ -812,6 +861,8 @@ const ARCHIVES = [
  {title:"St. Bernard Cemetery, Rockport", pub:"Find a Grave", region:"Spencer Co.", url:"https://www.findagrave.com/cemetery/86661/saint-bernard-cemetery", sum:"Damien Stallings is buried here. St. Bernard’s Church is where Theresa and Bud married in 1938."},
  {title:"Zoglmann obituaries in the Messenger-Inquirer", pub:"Ancestry", region:"Owensboro", url:"https://www.ancestry.com/obituaries/kentucky/owensboro/messenger-inquirer_7158/Z-1/zoglmann-1", sum:"Subscription index of Zoglmann family obituaries in the Owensboro paper."},
  {title:"Spencer County obits, bios and wills", pub:"Spencer County, Indiana genealogy", region:"Spencer Co.", url:"https://spencercoin.weebly.com/obits-bios-and-wills4.html", sum:"Transcribed obituaries and biographies from Spencer County, home of Fulda, Gentryville and Rockport."},
+ {title:"St. Joseph Catholic Cemetery, Evansville", pub:"Find a Grave", region:"Evansville", url:"https://www.findagrave.com/cemetery/86698/saint-joseph-catholic-cemetery", sum:"Stella Folz is buried here, and Gene will be. Search for Charles A. Folz to confirm his dates."},
+ {title:"Evansville Courier & Press archive (1870–today)", pub:"Newspapers.com", region:"Evansville", url:"https://courierpress.newspapers.com/", sum:"Subscription archive of the Evansville paper. The best place for Charles Folz’s obituary (possibly Nov. 1991) and Stella’s (Sept. 2002)."},
  {title:"Chronicling America", pub:"Library of Congress", region:"New Mexico", url:"https://chroniclingamerica.loc.gov/", sum:"Free historic newspapers. Try New Mexico and Colorado papers from October 1917 for Joseph Stallings’s automobile accident."}
 ];
 let recRegion="all";
@@ -838,7 +889,7 @@ const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(
 let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
 
 /* ---------- Tree ---------- */
-const TREE = [
+const TREE_ZS = [
   {id:"bud", x:390, y:585, kind:"couple", label:"Bud Zoglman"},
   {id:"theresa", x:610, y:585, kind:"couple", label:"Theresa Stallings"},
   {id:"henry", x:180, y:420, from:"bud"},
@@ -856,7 +907,37 @@ const TREE = [
   {id:"wp_coomes", x:645, y:70, from:"lucy"},
   {id:"ej_peyton", x:860, y:115, from:"lucy", label:"Elizabeth J. Peyton"}
 ];
+const TREE_FOLZ = [
+  {id:"gene", x:390, y:585, kind:"couple", label:"Gene Folz"},
+  {id:"c_libby", x:610, y:585, kind:"couple", label:"Libby Zoglman"},
+  {id:"charles_f", x:180, y:420, from:"gene"},
+  {id:"stella", x:385, y:395, from:"gene"},
+  {id:"bud", x:615, y:395, from:"c_libby", label:"Bud Zoglman"},
+  {id:"theresa", x:820, y:420, from:"c_libby", label:"Theresa Stallings"},
+  {id:"folzpar", x:150, y:250, from:"charles_f", unknown:"Folz grandparents"},
+  {id:"muddpar", x:390, y:220, from:"stella", unknown:"Mudd parents"},
+  {id:"henry", x:560, y:195, from:"bud"},
+  {id:"lizzie", x:665, y:270, from:"bud"},
+  {id:"lt", x:855, y:265, from:"theresa"},
+  {id:"alice", x:875, y:145, from:"theresa"}
+];
+const TREES = {
+  zs:{nodes:TREE_ZS, couple:["bud","theresa"], married:"married April 19, 1938", left:["BUD’S SIDE · ZOGLMAN","var(--sage)"], right:["THERESA’S SIDE · STALLINGS & COOMES","var(--rust)"], kidsLabel:"Their children named in the papers",
+      title:"Two roots, one trunk", desc:"Bud and Theresa form the trunk. Bud’s Zoglman ancestors branch to the left, Theresa’s Stallings and Coomes ancestors to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.", aria:"Family tree of Edward Bud Zoglman and Theresa Lavina Stallings, with their ancestors"},
+  folz:{nodes:TREE_FOLZ, couple:["gene","c_libby"], married:"married May 29, 1965", left:["GENE’S SIDE · FOLZ & MUDD","var(--sky)"], right:["LIBBY’S SIDE · ZOGLMAN & STALLINGS","var(--sage)"], kidsLabel:"Their children", more:"Switch to the Zoglman & Stallings tree for Libby’s older ancestors",
+      title:"The Folz tree", desc:"Gene Folz and Libby Zoglman form the trunk. Gene’s parents, Charles Folz and Stella Mudd, branch to the left; Libby’s parents and grandparents to the right. Select anyone to open their record.", aria:"Family tree of Gene Folz and Elizabeth Libby Zoglman Folz, with their parents and grandparents"}
+};
+let curTree="zs";
+function setTree(k){
+  curTree=k; const T=TREES[k];
+  document.querySelectorAll("[data-tree]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tree===k)));
+  $("#tree-title").textContent=T.title; $("#tree-desc").textContent=T.desc; $("#tree-svg").setAttribute("aria-label",T.aria);
+  seed=7; drawTree();
+  const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2;
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tree]"); if(!b) return; if(b.hasAttribute("data-close")) closeDrawer(); setTree(b.dataset.tree); if(b.dataset.scroll!==undefined) document.getElementById("tree").scrollIntoView();});
 function drawTree(){
+  const T = TREES[curTree], TREE = T.nodes;
   const svg = $("#tree-svg"); svg.innerHTML="";
   const pos = Object.fromEntries(TREE.map(n=>[n.id,n]));
   const gLeaves = mk("g",{},svg), gBranch = mk("g",{},svg), gNodes = mk("g",{},svg);
@@ -867,7 +948,7 @@ function drawTree(){
     mk("path",{d:`M500 770 Q ${500+s*dx*0.5} 780 ${500+s*dx} ${800}`, stroke:bark, "stroke-width":w/4, fill:"none","stroke-linecap":"round"},gBranch);
   });
   // children "sprouts" along the ground
-  const kids = childrenOf("bud").filter(c=>c.par.includes("theresa"));
+  const kids = childrenOf(T.couple[0]).filter(c=>c.par.includes(T.couple[1]));
   // branches
   TREE.forEach(n=>{
     if(!n.from) return;
@@ -926,23 +1007,29 @@ function drawTree(){
     }
   });
   // marriage label
-  const ml = mk("text",{x:500,y:640,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":13, fill:"var(--ink)"},gNodes); ml.textContent="married April 19, 1938";
+  const ml = mk("text",{x:500,y:640,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":13, fill:"var(--ink)"},gNodes); ml.textContent=T.married;
   // children along roots
   const gk = mk("g",{},gNodes);
-  const lab = mk("text",{x:500,y:690,"text-anchor":"middle","font-family":"IM Fell English, Georgia, serif","font-size":17,fill:"var(--ink)"},gk); lab.textContent="Their children named in the papers";
+  const lab = mk("text",{x:500,y:690,"text-anchor":"middle","font-family":"IM Fell English, Georgia, serif","font-size":17,fill:"var(--ink)"},gk); lab.textContent=T.kidsLabel;
   const step = 130, start = 500 - step*(kids.length-1)/2;
   kids.forEach((k,i)=>{
     const x=start+i*step, y=735;
     const g=mk("g",{class:"tnode",tabindex:"0",role:"button","aria-label":k.name, transform:`translate(${x-55} ${y-17})`},gk);
     mk("rect",{width:110,height:34,rx:17},g);
-    const t=mk("text",{class:"nm",x:55,y:23,"text-anchor":"middle","font-size":15},g); t.textContent=k.name.replace(" Zoglman","");
+    const t=mk("text",{class:"nm",x:55,y:23,"text-anchor":"middle","font-size":15},g); t.textContent=k.first||k.name.replace(" Zoglman","");
     g.addEventListener("click",()=>openPerson(k.id));
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openPerson(k.id)}});
   });
   // side labels
   const sl = (x,txt,col)=>{const t=mk("text",{x,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:col},gNodes);t.textContent=txt;};
-  sl(180,"BUD’S SIDE · ZOGLMAN","var(--sage)");
-  const t=mk("text",{x:980,y:22,"text-anchor":"end","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:"var(--rust)"},gNodes); t.textContent="THERESA’S SIDE · STALLINGS & COOMES";
+  sl(180,T.left[0],T.left[1]);
+  const t=mk("text",{x:980,y:22,"text-anchor":"end","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:T.right[1]},gNodes); t.textContent=T.right[0];
+  if(T.more){
+    const g=mk("g",{class:"tnode",tabindex:"0",role:"button","aria-label":T.more,transform:"translate(735 40)"},gNodes);
+    const r=mk("rect",{width:250,height:34,rx:17},g); r.style.fill="transparent"; r.style.stroke="var(--gold)"; r.style.strokeDasharray="4 4";
+    const tt=mk("text",{x:125,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":12,fill:"var(--gold)"},g); tt.textContent="↗ Libby’s older ancestors";
+    const go=()=>setTree("zs"); g.addEventListener("click",go); g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
+  }
 }
 
 /* ---------- Branches ---------- */
@@ -955,9 +1042,11 @@ function drawBranches(){
     "henry":"Eight children, 1897–1917.",
     "wm_martin":"Twelve children. William died in 1897, leaving eleven living.",
     "lt":"Eleven children, all but one born in Waterflow, New Mexico.",
-    "bud":"Named in the eulogy and memoir. Full names and dates still to be added."
+    "bud":"The five children named in Theresa’s 2009 obituary.",
+    "charles_f":"Nine children. Birth order is not yet known, apart from Gene (1943, St. Louis) and Michael (1951, Evansville).",
+    "gene":"Four children, named in Gene’s 2026 obituary."
   };
-  const order = ["joseph_z","henry","bud","wp_coomes","wm_martin","lt","lorenzo","robert_j","edgar_w"];
+  const order = ["joseph_z","henry","bud","charles_f","gene","wp_coomes","wm_martin","lt","lorenzo","robert_j","edgar_w"];
   groups.sort((a,b)=>{const ia=order.indexOf(a[0]),ib=order.indexOf(b[0]);return (ia<0?99:ia)-(ib<0?99:ib)});
   $("#branches").innerHTML = groups.map(par=>{
     const names = par.map(id=>P[id]).map(p=>p.short||p.name);
@@ -1080,6 +1169,8 @@ function openPerson(id){
   if(p.notes.length) h+=`<div class="rel"><h4>What the papers and records say</h4><ul class="story">${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`;
   const chs=CHAPTERS.filter(c=>c.who&&c.who.includes(id));
   if(chs.length) h+=`<div class="rel"><h4>Appears in these stories</h4><div class="chips">${chs.map(c=>`<a class="chip" href="#ch-${c.id}" data-close style="text-decoration:none">${esc(c.title)}</a>`).join("")}</div></div>`;
+  if(TREE_FOLZ.some(n=>n.id===id&&!n.unknown) && curTree!=="folz") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="folz" data-close data-scroll>View on the Folz tree</button></p>`;
+  if(TREE_ZS.some(n=>n.id===id&&!n.unknown) && curTree!=="zs") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="zs" data-close data-scroll>View on the Zoglman &amp; Stallings tree</button></p>`;
   const recs=RECORDS.filter(r=>r.who.includes(id));
   if(recs.length) h+=`<div class="rel"><h4>Newspapers &amp; records</h4><ul class="reclinks">${recs.map(r=>`<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.pub)}${r.date?" · "+esc(r.date):""}</span></li>`).join("")}</ul></div>`;
   if(p.src.length) h+=`<p class="srcs">Sources: ${p.src.map(s=>esc(SOURCES[s].title)).join(" · ")}</p>`;
@@ -1157,6 +1248,7 @@ $("#shake").addEventListener("click",()=>{ if(!running) setPaused(false); burst(
 
 /* ---------- boot ---------- */
 drawTree(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ seed=7; drawTree(); });
+if(location.hash==="#folz") setTree("folz");
 { const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2; }
 drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes(); drawRecords();
 </script>
