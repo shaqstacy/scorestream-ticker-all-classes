@@ -26,6 +26,8 @@
   --sage:#8fae74;
   --plum:#b46a6a;
   --sky:#7fa9cc;          /* Folz line */
+  --teal:#62b8a4;         /* Stacy line */
+  --berry:#c97ea6;        /* Campbell line */
   --sky-top:#0d1a22;
   --sky-bot:#2b3a2a;
   --node:#f3ead3;
@@ -41,7 +43,7 @@
     --bg:#e8ebdf; --bg-2:#dfe4d3; --surface:#f6f5ec; --surface-2:#eceee2;
     --ink:#1f271d; --muted:#56604d; --line:#c6cdb7;
     --bark:#6e4f36; --bark-dark:#4f3826;
-    --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a; --sky:#356690;
+    --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a; --sky:#356690; --teal:#2b7565; --berry:#8f3f6b;
     --sky-top:#cfdcd2; --sky-bot:#e8ebdf;
     --node:#fffdf5; --node-ink:#2a2118;
     --shadow:0 10px 26px rgba(60,50,30,.16);
@@ -52,7 +54,7 @@
   --bg:#e8ebdf; --bg-2:#dfe4d3; --surface:#f6f5ec; --surface-2:#eceee2;
   --ink:#1f271d; --muted:#56604d; --line:#c6cdb7;
   --bark:#6e4f36; --bark-dark:#4f3826;
-  --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a; --sky:#356690;
+  --gold:#a8730f; --rust:#b04a22; --sage:#4f7340; --plum:#94484a; --sky:#356690; --teal:#2b7565; --berry:#8f3f6b;
   --sky-top:#cfdcd2; --sky-bot:#e8ebdf;
   --node:#fffdf5; --node-ink:#2a2118;
   --shadow:0 10px 26px rgba(60,50,30,.16);
@@ -295,7 +297,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
       <div>
         <div class="eyebrow">Family history · Bavaria · Kentucky · New Mexico · Indiana</div>
         <h1>From the <em>Kentucky Mesa</em> back home to the Ohio River</h1>
-        <p class="lede">The Stallings and Zoglman families: English Catholics who reached Maryland, German farmers from Bavaria, and the Kentucky brothers who built a Catholic colony in a dugout near the Navajo Nation. Their lines meet in Theresa Lavina Stallings and Edward “Bud” Zoglman, married in 1938, and continue through their daughter Libby into the Folz family of St. Louis and Evansville.</p>
+        <p class="lede"><b style="color:var(--ink)">The family of Trevor, Sara and Jeremiah Stacy.</b> Their roots run back through the Stacys and Prichards of Wyoming County, West Virginia, the Campbells of the Tri-State, the Folz family of Evansville, and the Stallings and Zoglman families: English Catholics who reached Maryland, German farmers from Bavaria, and the Kentucky brothers who built a Catholic colony in a dugout near the Navajo Nation. Their lines meet in Theresa Lavina Stallings and Edward “Bud” Zoglman, married in 1938, and continue through their daughter Libby into the Folz family of St. Louis and Evansville.</p>
         <div class="facts">
           <span><b>1600s</b> Stallings leave England</span>
           <span><b>1909</b> the Dugout on the mesa</span>
@@ -320,12 +322,13 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
       <div class="sec-head">
         <div>
           <div class="eyebrow">The tree</div>
-          <h2 id="tree-title">Two roots, one trunk</h2>
-          <p id="tree-desc">Bud and Theresa form the trunk. Bud’s Zoglman ancestors branch to the left, Theresa’s Stallings and Coomes ancestors to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.</p>
+          <h2 id="tree-title">Trevor, Sara &amp; Jeremiah</h2>
+          <p id="tree-desc">Trevor and Sara form the trunk, with Jeremiah at its root. Trevor’s Stacy, Prichard and Folz families branch to the left; Sara’s Campbell, Hively and Davis families to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.</p>
         </div>
         <div class="filters" role="group" aria-label="Choose a tree">
-          <button class="chip" type="button" data-tree="zs" aria-pressed="true">Zoglman &amp; Stallings tree</button>
+          <button class="chip" type="button" data-tree="stacy" aria-pressed="true">Trevor, Sara &amp; Jeremiah</button>
           <button class="chip" type="button" data-tree="folz" aria-pressed="false">Folz tree</button>
+          <button class="chip" type="button" data-tree="zs" aria-pressed="false">Zoglman &amp; Stallings tree</button>
         </div>
       </div>
       <div class="tree-shell"><svg id="tree-svg" viewBox="0 0 1000 800" role="group" aria-label="Family tree"></svg></div>
@@ -333,6 +336,8 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <span><i style="background:var(--sage)"></i>Zoglman line</span>
         <span><i style="background:var(--rust)"></i>Stallings line</span>
         <span><i style="background:var(--plum)"></i>Coomes line</span>
+        <span><i style="background:var(--teal)"></i>Stacy &amp; Prichard line</span>
+        <span><i style="background:var(--berry)"></i>Campbell &amp; Hively line</span>
         <span><i style="background:var(--sky)"></i>Folz line</span>
         <span><i style="background:var(--gold)"></i>Married in</span>
         <span><i style="border:1.5px dashed var(--muted)"></i>Not yet in the papers</span>
@@ -419,7 +424,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
     <div class="wrap">
       <div class="sec-head">
         <div>
-          <div class="eyebrow">Evansville · Jasper · Owensboro · Spencer County · St. Louis · New Mexico</div>
+          <div class="eyebrow">Huntington · Oceana · Evansville · Jasper · Owensboro · Spencer County · New Mexico</div>
           <h2>Newspapers &amp; records</h2>
           <p>Obituaries, grave memorials and county histories found online for the main lines of the tree. The details shown are summaries of what each source says. Open the link to read the original, and treat anything marked “lead” as unconfirmed.</p>
         </div>
@@ -496,12 +501,15 @@ const FAM = {
   C:{label:"Coomes", color:"var(--plum)"},
   M:{label:"Married in", color:"var(--gold)"},
   F:{label:"Folz", color:"var(--sky)"},
+  T:{label:"Stacy & Prichard", color:"var(--teal)"},
+  K:{label:"Campbell & Hively", color:"var(--berry)"},
   X:{label:"Waterflow community", color:"var(--muted)"}
 };
 const SOURCES = {
   ZT:{title:"Zoglman Family Tree", kind:"Typed list · 1 page", desc:"Joseph Zoglmann and Catherine Lauber, Henry Zoglman and Lizzie Haller, Henry’s two siblings and eight children, with dates and burial places.", r:"-1.2deg"},
   ST:{title:"Stallings Family Tree", kind:"Typed list · 1 page", desc:"William Martin Stallings and Lucy Ann Coomes, William Peter Coomes and Elizabeth Jane Peyton, L.T. Stallings and Alice Massey, and L.T.’s eleven children.", r:"1deg"},
   MEM:{title:"Stallings Family History", kind:"Memoir · 7 pages · written after the Nov. 2014 trip", desc:"By a grandson of Theresa, son of Bill Schmitt. Traces the Stallings from England to Kentucky to the Kentucky Mesa, drawing on the book “Candles of the Lord” and the “History of Sacred Heart Parish of Farmington.”", r:"-0.6deg"},
+  USER:{title:"From Trevor Stacy", kind:"Family knowledge · Nov. 2026", desc:"Names and relationships Trevor supplied: his siblings Brandon and Chandler, his father Richard Edward Stacy of Oceana, grandparents Lonnie Edward Stacy and Delma Jean Prichard, and Sara’s parents.", r:"1.1deg"},
   WEB:{title:"Newspapers & online records", kind:"Obituaries, grave memorials, county histories", desc:"Found by web search in November 2026. Each is listed with its link in the Newspapers & Records section.", r:"-0.8deg"},
   EUL:{title:"Theresa Lavina — eulogy", kind:"Funeral remarks · 3 pages · July 2009", desc:"Delivered on behalf of the Zoglman family. Her childhood in Waterflow, the move home, her marriage to Bud, her cooking, candles, cards, and the lessons she taught.", r:"1.4deg"}
 };
@@ -584,10 +592,41 @@ const PEOPLE = [
   {id:"marian_f", name:"Marian J. (Folz) Alvey", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Marion, Kentucky", notes:["Married to Leo Alvey."], src:["WEB"]},
   {id:"charlotte_f", name:"Charlotte A. (Folz) Sears", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · Evansville", notes:["Married to Dave Sears."], src:["WEB"]},
   {id:"patti_f", name:"Patti (Folz) Haller", fam:"F", par:["charles_f","stella"], role:"Gene’s sister · West Chester, Ohio", notes:["Married to Brad Haller."], src:["WEB"]},
-  {id:"annette", name:"Annette (Folz) Stacy", first:"Annette", fam:"F", par:["gene","c_libby"], role:"Huntington, West Virginia", notes:["Married to Rick Stacy."], src:["WEB"]},
+  {id:"annette", name:"Annette (Folz) Stacy", short:"Annette Folz", aka:"“Annie”", first:"Annette", fam:"F", par:["gene","c_libby"], sp:["rick"], role:"Trevor’s mother · Huntington, West Virginia", notes:["Gene and Libby Folz’s eldest daughter (listed first among their children). Married Rick Stacy; mother of Trevor, Brandon and Chandler.","Through her, Trevor descends from the Folz, Zoglman and Stallings families."], src:["WEB"]},
   {id:"alex", name:"Alex James Folz", first:"Alex", fam:"F", b:"1968", d:"July 8, 2016", dp:"Chicago, Illinois · age 48", par:["gene","c_libby"], role:"Gene and Libby’s only son", notes:["Lived in Dallas. Married Leslie Jo Ramsey on July 25, 2015.","Died suddenly in Chicago while on vacation with his wife, a year after their wedding."], src:["WEB"]},
   {id:"alison", name:"Alison (Folz) Miller", first:"Alison", fam:"F", par:["gene","c_libby"], role:"Woodstock, Georgia", notes:["Married to Chris Miller."], src:["WEB"]},
   {id:"amy", name:"Amy (Folz) Morgenstern", first:"Amy", fam:"F", par:["gene","c_libby"], role:"Pinckneyville, Illinois", notes:["Married to Stuart Morgenstern."], src:["WEB"]},
+
+  // ---------------- STACY & PRICHARD ----------------
+  {id:"trevor", name:"Trevor Stacy", fam:"T", b:"Sept. 24, 1996", bp:"Huntington, West Virginia", par:["rick","annette"], sp:["sara"], role:"Sara’s husband · Jeremiah’s father", notes:["Son of Rick and Annette (“Annie”) Stacy.","Played offensive line at Spring Valley High School in Huntington, then college football at the University of North Carolina at Charlotte.","Came home to coach as an assistant for the Spring Valley Timberwolves.","Through his mother he is a great-grandson of Theresa Stallings Zoglman, born in Waterflow, New Mexico, in 1919."], src:["WEB"]},
+  {id:"sara", name:"Sara Beth (Campbell) Stacy", short:"Sara Campbell", fam:"K", par:["clay","ruthie"], sp:["trevor"], role:"Trevor’s wife · Jeremiah’s mother", notes:["Daughter of Pastor Clay Campbell and Ruthie Davis Campbell of Huntington.","Granddaughter of Barbara Ann Hively Campbell, born in Charleston in 1935."], src:["WEB"]},
+  {id:"jeremiah", name:"Jeremiah Stacy", first:"Jeremiah", fam:"T", par:["trevor","sara"], role:"Trevor and Sara’s son", notes:["Named in his great-grandfather Gene Folz’s 2026 obituary as one of Gene’s two great-grandchildren.","Through his father he descends from the Stacys, Prichards, Folzes, Zoglmans and Stallingses; through his mother from the Campbells, Hivelys and Davises."], src:["WEB"]},
+  {id:"brandon", name:"Brandon Stacy", fam:"T", par:["rick","annette"], role:"Trevor’s brother", src:["USER"]},
+  {id:"chandler", name:"Chandler Stacy", fam:"T", par:["rick","annette"], role:"Trevor’s brother", src:["USER"]},
+  {id:"rick", name:"Richard Edward “Rick” Stacy", short:"Rick Stacy", fam:"T", bp:"Oceana, West Virginia", par:["lonnie","delma"], sp:["annette"], role:"Trevor’s father", notes:["Grew up in Oceana, Wyoming County, in the southern West Virginia coalfields.","Married Annette Folz; they made their home in Huntington, where they raised Trevor, Brandon and Chandler."], src:["USER","WEB"]},
+  {id:"lonnie", name:"Lonnie Edward Stacy", short:"Lonnie Stacy", fam:"T", dp:"Oceana, West Virginia", sp:["delma"], role:"Rick’s father", notes:["Of Oceana, Wyoming County. He had died by November 2022, when his brother-in-law Mack Prichard’s obituary listed “Delma Stacy (and the late Lonnie) of Oceana.”"], src:["USER","WEB"]},
+  {id:"delma", name:"Delma Jean (Prichard) Stacy", short:"Delma Prichard", fam:"T", bp:"Wyoming County, West Virginia", dp:"Oceana · age 77", par:["boyd","gracie"], sp:["lonnie"], role:"Rick’s mother", notes:["Daughter of Boyd Prichard Sr. and Gracie James Prichard; one of at least five sisters, with brother Mack.","A family post announced that “Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord” on a Saturday. Her formal obituary and dates have not been found yet."], src:["USER","WEB"]},
+  {id:"angela", name:"Angela (Stacy) Stewart", fam:"T", par:["lonnie","delma"], role:"Probably Rick’s sister", notes:["She shared the announcement of Delma Jean Prichard Stacy’s death. Her name, Angela Stacy Stewart, suggests she is Lonnie and Delma’s daughter; please confirm."], src:["WEB"]},
+  {id:"boyd", name:"Boyd Prichard Sr.", fam:"T", sp:["gracie"], role:"Delma’s father", notes:["Of Kopperston, Wyoming County, a coal camp built by the Koppers Coal Company in the 1930s–40s. Named as a parent in his son Mack’s obituary."], src:["WEB"]},
+  {id:"gracie", name:"Gracie (James) Prichard", short:"Gracie James", fam:"T", sp:["boyd"], role:"Delma’s mother", src:["WEB"]},
+  {id:"mack", name:"Douglas McArthur “Mack” Prichard", fam:"T", b:"Nov. 28, 1942", bp:"Kopperston, West Virginia", d:"Nov. 12, 2022", dp:"family hunting cabin in Virginia · age 79", par:["boyd","gracie"], role:"Delma’s brother", notes:["U.S. Air Force veteran, retired coal miner and UMWA member, of Oceana.","Died unexpectedly at “his happy place,” the family hunting cabin in Virginia.","His obituary names his sisters, including Ruth Lovins of Keyrock, Maggie Blankenship of Oceana, and Delma Stacy of Oceana, and his son Ernest of Eden, North Carolina."], src:["WEB"]},
+  {id:"ruth_l", name:"Ruth (Prichard) Lovins", fam:"T", par:["boyd","gracie"], role:"Delma’s sister · Keyrock, W.Va.", notes:["Widow of Willard Lovins."], src:["WEB"]},
+  {id:"maggie_b", name:"Maggie (Prichard) Blankenship", fam:"T", par:["boyd","gracie"], role:"Delma’s sister · Oceana", notes:["Widow of Connie Blankenship."], src:["WEB"]},
+
+  // ---------------- CAMPBELL, HIVELY & DAVIS ----------------
+  {id:"clay", name:"Cledith Vernon “Clay” Campbell Jr.", short:"Pastor Clay Campbell", fam:"K", b:"c. 1953", d:"July 21, 2024", dp:"at home, Huntington, West Virginia · age 71", par:["cledith_sr","barbara"], sp:["ruthie"], role:"Sara’s father · pastor", notes:["Records give his legal first name as Cledith; the family knew him as Clay.","Pastor at Altizer Baptist Church in Huntington, where he officiated his mother’s funeral in 2021 and where his own funeral was held.","Died at home “surrounded by his loving family.” Survived by Ruthie and their children Christina, Jonathan and Sara Beth."], src:["USER","WEB"]},
+  {id:"ruthie", name:"Ruth Ann “Ruthie” (Davis) Campbell", short:"Ruthie Davis", fam:"K", sp:["clay"], role:"Sara’s mother", notes:["Wife of Pastor Clay Campbell. Her Davis parents are not yet in the records."], src:["USER","WEB"]},
+  {id:"christina_c", name:"Christina Campbell", fam:"K", par:["clay","ruthie"], role:"Sara’s sister · Huntington", src:["WEB"]},
+  {id:"jonathan_c", name:"Jonathan Campbell", fam:"K", par:["clay","ruthie"], role:"Sara’s brother · Huntington", notes:["Married to Valerie."], src:["WEB"]},
+  {id:"cledith_sr", name:"Cledith Vernon Campbell Sr.", short:"Cledith Campbell Sr.", fam:"K", sp:["barbara"], role:"Clay’s father", notes:["Died before his wife Barbara (2021). A Reger Funeral Home listing under the misspelling “Cledtih Vernon Campbell” may be his."], src:["WEB"]},
+  {id:"barbara", name:"Barbara Ann (Hively) Campbell", short:"Barbara Hively", fam:"K", b:"Mar. 10, 1935", bp:"Charleston, West Virginia", d:"Mar. 12, 2021", dp:"King’s Daughters Medical Center, Ashland, Kentucky · age 86", bur:"Rose Hill Burial Park, Ashland, Kentucky", par:["w_hively","h_hively"], sp:["cledith_sr"], role:"Clay’s mother", notes:["Of Catlettsburg, Kentucky. Daughter of William and Helen Irene (Turner) Hively; she outlived five sisters and one brother.","Mother of six: Cledith Jr. (Clay), Michael Ray, Paul Thomas, Robin Joy and Danny Lee among them. Grandmother of 11 and great-grandmother of 15.","Her funeral at Altizer Baptist Church was led by her son, Pastor Clay Campbell."], src:["WEB"]},
+  {id:"w_hively", name:"William Hively", fam:"K", sp:["h_hively"], role:"Barbara’s father", src:["WEB"]},
+  {id:"h_hively", name:"Helen Irene (Turner) Hively", short:"Helen Turner", fam:"K", sp:["w_hively"], role:"Barbara’s mother", src:["WEB"]},
+  {id:"jerry_h", name:"Jerry Hively", fam:"K", par:["w_hively","h_hively"], role:"Barbara’s brother", src:["WEB"]},
+  {id:"michael_c", name:"Michael Ray Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Clay’s brother", src:["WEB"]},
+  {id:"paul_c", name:"Paul Thomas Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Clay’s brother", notes:["Married to Sandra Kay."], src:["WEB"]},
+  {id:"robin_c", name:"Robin Joy Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Clay’s sibling", src:["WEB"]},
+  {id:"danny_c", name:"Danny Lee Campbell", fam:"K", par:["cledith_sr","barbara"], role:"Clay’s brother", notes:["Married to Margie."], src:["WEB"]},
   // ---------------- MARRIED IN (Stallings spouses) ----------------
   {id:"rosabelle", name:"Rosabelle Warren Stallings", fam:"M", sp:["lorenzo"], role:"Wife of Lorenzo", notes:["Sister of Ben Warren and Mary Warren Watson. Visited Waterflow, met Lorenzo, and married him soon after."], src:["MEM"]},
   {id:"edgar_w", name:"Edgar Warren", fam:"M", sp:["mary_loretta"], role:"Husband of Loretta Stallings", notes:["Arrived June 1914 with Loretta and their son Leo."], src:["MEM"]},
@@ -621,6 +660,19 @@ const siblingsOf = p => p.par.length ? PEOPLE.filter(c=>c.id!==p.id && c.par.som
 
 /* --------- Story chapters --------- */
 const CHAPTERS = [
+ {id:"today", when:"Today", title:"Trevor, Sara and Jeremiah", who:["trevor","sara","jeremiah","rick","annette","clay","ruthie"], body:[
+  "Every branch on this site leads here. Trevor Stacy, son of Rick and Annette (Folz) Stacy, grew up in Huntington with his brothers Brandon and Chandler. He played offensive line at Spring Valley High School and in college at Charlotte, then came home to coach the Timberwolves.",
+  "Sara Beth Campbell grew up in Huntington too, the daughter of Pastor Clay Campbell of Altizer Baptist Church and his wife, Ruthie Davis Campbell, with her sister Christina and brother Jonathan. Her father died at home in July 2024.",
+  "Trevor and Sara’s son, Jeremiah, carries all of it forward: coal-country Stacys and Prichards from Wyoming County, Campbells and Hivelys from Charleston and the Tri-State, Folzes from Evansville, Zoglmans from Bavaria by way of Fulda, and Stallingses who walked from Kentucky to the Kentucky Mesa."]},
+ {id:"oceana", when:"1940s–today", title:"The Stacys and Prichards of Wyoming County", who:["rick","lonnie","delma","boyd","gracie","mack","angela"], body:[
+  "Trevor’s father, Richard Edward Stacy, comes from Oceana, a small town on the Clear Fork in Wyoming County, deep in the southern West Virginia coalfields. His parents were Lonnie Edward Stacy and Delma Jean Prichard.",
+  "Delma’s family came from Kopperston, a coal camp a few miles up the road. Her parents, Boyd Prichard Sr. and Gracie James Prichard, raised a large family there: Delma, her brother Douglas McArthur “Mack” Prichard, and at least five sisters, including Ruth Lovins and Maggie Blankenship.",
+  "Mack, born in Kopperston in 1942, served in the U.S. Air Force, came home to mine coal, and belonged to the United Mine Workers. He died in November 2022 at the family hunting cabin in Virginia, “his happy place.” His obituary named his sister as “Delma Stacy (and the late Lonnie) of Oceana.” Delma later died at 77."],
+  pull:{q:"Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord.", by:"Family announcement"}},
+ {id:"campbell", when:"1935–2024", title:"The Campbells: a pastor’s family", who:["clay","ruthie","barbara","cledith_sr","w_hively","h_hively","sara"], body:[
+  "Sara’s grandmother, Barbara Ann Hively, was born in Charleston on March 10, 1935, to William and Helen Irene (Turner) Hively, one of at least eight children. She married Cledith Vernon Campbell Sr. and raised six children; she later lived in Catlettsburg, Kentucky, just across the Big Sandy from West Virginia.",
+  "Her son Cledith Vernon Campbell Jr., known as Clay, became pastor of Altizer Baptist Church in Huntington. In March 2021 he led his own mother’s funeral there, and she was buried at Rose Hill Burial Park in Ashland.",
+  "Pastor Campbell died at home in Huntington on July 21, 2024, at 71, surrounded by his family: his wife Ruthie, and their children Christina, Jonathan and Sara Beth. His funeral was held in the church he served."]},
  {id:"england", when:"1600s–1800s", title:"Out of England, into Maryland", who:["wm_martin","wp_coomes"], body:[
   "The Stallings story begins in England in the 1600s. Like many Catholic families, the Stallings left England for the colony of Maryland, a refuge for Catholics leaving the country. The memoir says they sought refuge “after the takeover of the Protestants.”",
   "Over the next two centuries the family moved west. By the late 1800s they were settled in West Louisville, Kentucky, in Daviess County near Owensboro.",
@@ -782,16 +834,24 @@ const EVENTS = [
  {y:2002, d:"Sept. 20", t:"Stella Mudd Folz dies; buried at St. Joseph Catholic Cemetery, Evansville.", f:"F", who:["stella"]},
  {y:2016, d:"July 8", t:"Alex Folz dies in Chicago at 48.", f:"F", who:["alex"]},
  {y:2024, d:"Feb. 17", t:"Michael Folz dies in Evansville.", f:"F", who:["michael_f"]},
+ {y:1935, d:"Mar. 10", t:"Barbara Ann Hively born in Charleston, West Virginia.", f:"K", who:["barbara"]},
+ {y:1942, d:"Nov. 28", t:"Douglas “Mack” Prichard born in Kopperston, Wyoming County.", f:"T", who:["mack","boyd","gracie"]},
+ {y:1996, d:"Sept. 24", t:"Trevor Stacy born to Rick and Annette Stacy.", f:"T", who:["trevor","rick","annette"]},
+ {y:2021, d:"Mar. 12", t:"Barbara Ann Hively Campbell dies; her son Pastor Clay Campbell leads her funeral.", f:"K", who:["barbara","clay"]},
+ {y:2022, d:"Nov. 12", t:"Mack Prichard dies at the family hunting cabin in Virginia.", f:"T", who:["mack","delma"]},
+ {y:2024, d:"July 21", t:"Pastor Clay Campbell dies at home in Huntington at 71.", f:"K", who:["clay","ruthie","sara"]},
  {y:2026, d:"Oct. 31", t:"Gene Folz dies in Evansville at 83, after 61 years of marriage to Libby.", f:"F", who:["gene","c_libby"]},
  {y:2014, d:"Nov. 1–5", t:"Bill Schmitt, his four sons and Ed Zoglman visit Waterflow and attend Mass at Sacred Heart.", f:"W", who:["c_ed"]}
 ];
-const EVFAM = {S:{label:"Stallings",c:"var(--rust)"}, Z:{label:"Zoglman",c:"var(--sage)"}, C:{label:"Coomes",c:"var(--plum)"}, F:{label:"Folz",c:"var(--sky)"}, W:{label:"New Mexico & church",c:"var(--gold)"}};
+const EVFAM = {T:{label:"Stacy & Prichard",c:"var(--teal)"}, K:{label:"Campbell & Hively",c:"var(--berry)"}, S:{label:"Stallings",c:"var(--rust)"}, Z:{label:"Zoglman",c:"var(--sage)"}, C:{label:"Coomes",c:"var(--plum)"}, F:{label:"Folz",c:"var(--sky)"}, W:{label:"New Mexico & church",c:"var(--gold)"}};
 
 /* --------- Places --------- */
 const PLACES = [
  {id:"md", name:"Maryland", lon:-76.4, lat:38.2, when:"1600s", items:["The Stallings arrive from England; Maryland was a refuge for Catholics.","The Coomes ancestors were also Maryland Catholics before moving to Kentucky."]},
  {id:"bards", name:"Bardstown, Ky.", lon:-85.47, lat:37.81, when:"1700s–1900s", items:["Where the Coomes family settled.","Agnes Zoglman Edelson later lived in Bardstown and Louisville."], dy:-16},
  {id:"ohio", name:"Ohio River home", lon:-87.1, lat:37.77, when:"1800s–today", dy:26, items:["West Louisville, Daviess Co., Ky.: the Stallings farm; William Martin buried at St. Raphael.","Beech Grove, McLean Co., Ky.: Lucy born 1855; William Peter Coomes buried at St. Benedict.","Owensboro: Henry Zoglman buried at Mater Dolorosa.","Maple Mount: the Ursuline Sisters, who bought L.T.’s farm in 1914; Mt. St. Joseph Academy.","Fulda & Gentryville, Ind.: Zoglmann home; St. Boniface Cemetery.","Rockport, Spencer Co., Ind.: the Hoffman farm, 1934; Catherine Zoglman Scherm.","Tell City, Ind.: L.T. and Alice buried at St. Mary’s.","St. Bernard’s Church: Theresa and Bud married, 1938.","Evansville, Ind.: the Folz family home from about 1950; Gene and Stella buried at St. Joseph Catholic Cemetery.","Jasper, Ind.: Bud and Theresa’s home; Gene and Libby married at Holy Family, 1965."]},
+ {id:"oceana", name:"Oceana, W.Va.", lon:-81.63, lat:37.69, when:"1940s–today", dy:26, items:["Home of Lonnie and Delma Stacy and the Prichard family; Rick Stacy grew up here.","Kopperston, the coal camp where Mack Prichard was born in 1942, is a few miles away. Keyrock is home to Delma’s sister Ruth Lovins."]},
+ {id:"huntington", name:"Huntington, W.Va.", lon:-82.45, lat:38.42, when:"today", dy:-16, items:["Home of Trevor, Sara and Jeremiah, and of Rick and Annette Stacy.","Altizer Baptist Church, where Pastor Clay Campbell served; Spring Valley High School, where Trevor played and coached.","Across the river: Catlettsburg and Ashland, Kentucky, home of Barbara Campbell, buried at Rose Hill Burial Park.","Charleston, an hour east, where Barbara Hively was born in 1935."]},
  {id:"stl", name:"St. Louis, Mo.", lon:-90.2, lat:38.63, when:"1940s", dy:-16, items:["Gene Folz born here, June 12, 1943, before the family moved to Evansville.","Nearby in Illinois: Gene’s last employer, Cablofil in Mascoutah, and the family’s home in Pinckneyville."]},
  {id:"fs", name:"Fort Smith, Ark.", lon:-94.4, lat:35.39, when:"1906–1907", items:["Joseph and Lorenzo arrive May 1, 1906; meet David Watson.","All three work for the City Street Railway Company.","Nearby Subiaco: L.T. studies for the priesthood, 1907–1909."]},
  {id:"pueblo", name:"Pueblo, Colo.", lon:-104.6, lat:38.25, when:"c. 1907–1908", items:["The three friends live and work here about a year."]},
@@ -801,6 +861,10 @@ const PLACES = [
 ];
 
 const NOTES = [
+ {h:"“Clay” or “Cledith”", s:"Resolved", p:"The family calls Sara’s father Clay Vernon Campbell Jr. His obituary and his mother’s give his legal name as Cledith Vernon Campbell Jr., and his father as Cledith Vernon Campbell Sr.", v:"Shown as Cledith Vernon “Clay” Campbell Jr."},
+ {h:"Lonnie and Delma Stacy’s dates", s:"Open", p:"No obituary has turned up for either. Mack Prichard’s November 2022 obituary lists Delma as living and Lonnie as deceased. A family post gives Delma’s age at death as 77.", v:"Check Stafford Family Funeral Home and Evans-Calfee listings."},
+ {h:"Rick Stacy’s brothers and sisters", s:"Open", p:"Only Angela Stacy Stewart has turned up, and she is placed as Rick’s sister because of her name and her post about Delma. Trevor’s other aunts and uncles on the Stacy side are not yet in the records.", v:"Add the names you know and I’ll place them."},
+ {h:"Ruthie Davis Campbell’s parents", s:"Open", p:"The Davis branch has no names yet.", v:"A family member’s memory or a Davis obituary naming “Ruthie (Clay) Campbell” would open this branch."},
  {h:"Charles A. Folz’s dates", s:"Open", p:"No obituary or grave record for Gene’s father turned up. Online trees put his birth about 1916–17 in Indiana, and a MyHeritage record shows a Charles Folz dying in Evansville on Nov. 4, 1991, at 75.", v:"Check Stella’s Find a Grave page and the Courier & Press for November 1991."},
  {h:"The Folz and Mudd families before 1943", s:"Open", p:"Gene was born in St. Louis, but his father was apparently Indiana-born. The parents of Charles Folz and of Stella Mudd are not yet known, nor when the family moved from St. Louis to Evansville.", v:"The 1950 census would show the household and its ages."},
  {h:"Theresa’s children, from her obituary", s:"Resolved", p:"The 2009 obituary names daughters Carolyn Schmitt, Elizabeth Folz and Rosemary Stratman and sons Edward and Joseph. The eulogy’s “Libby” is Elizabeth, “Rosie” is Rosemary, and “Susie” is most likely Carolyn S. Schmitt.", v:"Updated on the tree. Carolyn = Susie is still an inference."},
@@ -824,6 +888,15 @@ const NOTES = [
 /* --------- Newspapers & online records (found by web search, Nov. 2026) ---------
    status: "found" = the record matches names and dates in the family papers; "lead" = likely, needs confirming */
 const RECORDS = [
+ {title:"Cledith V. Campbell, Jr. obituary", pub:"Beard Mortuary, Huntington", date:"July 2024", region:"Huntington", kind:"Obituary", status:"found", url:"https://www.beardmortuary.com/obituaries/cledith-campbell-jr", who:["clay","ruthie","sara","christina_c","jonathan_c","trevor"], sum:"Pastor Cledith V. Campbell Jr., 71, of Huntington, died at home July 21, 2024, surrounded by his family. Survived by his wife Ruth Ann Davis Campbell and children Christina, Jonathan (Valerie) and Sara Beth Stacy (Trevor). Funeral at Altizer Baptist Church."},
+ {title:"Barbara Ann Campbell obituary", pub:"Reger Funeral Home, Ceredo-Kenova", date:"Mar. 2021", region:"Huntington", kind:"Obituary", status:"found", url:"https://www.regerfuneralhome.com/obituaries/Barbara-Ann-Campbell?obId=20288793", who:["barbara","cledith_sr","clay","ruthie","w_hively","h_hively","michael_c","paul_c","robin_c","danny_c","jerry_h"], sum:"Born March 10, 1935, in Charleston to William and Helen Irene Turner Hively; of Catlettsburg, Ky.; died March 12, 2021. Widow of Cledith Vernon Campbell Sr. Names her six children, 11 grandchildren and 15 great-grandchildren. Pastor Cledith V. Campbell Jr. officiated; burial at Rose Hill Burial Park, Ashland."},
+ {title:"Barbara Ann Campbell obituary (copy)", pub:"Tribute Archive", date:"2021", region:"Huntington", kind:"Obituary", status:"found", url:"https://www.tributearchive.com/obituaries/20288793/Barbara-Ann-Campbell/", who:["barbara"], sum:"A second copy of Barbara’s obituary."},
+ {title:"Barbara Ann Hively Campbell (1935–2021)", pub:"Find a Grave · memorial 224439387", region:"Huntington", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/224439387/barbara-ann-campbell", who:["barbara"], sum:"Grave memorial at Rose Hill Burial Park, Ashland, Kentucky. May link to her husband and parents."},
+ {title:"Cledtih [Cledith] Vernon Campbell", pub:"Reger Funeral Home", region:"Huntington", kind:"Obituary", status:"lead", url:"https://www.regerfuneralhome.com/obituaries/Cledtih-Vernon-Campbell?obId=8421162", who:["cledith_sr"], sum:"A funeral-home listing under a misspelled first name, probably Sara’s grandfather, Cledith Vernon Campbell Sr. Open it to confirm his dates."},
+ {title:"Douglas “Mack” Prichard obituary", pub:"The Register-Herald (Stafford Family Funeral Home, Oceana)", date:"Nov. 2022", region:"Oceana", kind:"Obituary", status:"found", url:"https://obituaries.register-herald.com/obituary/douglas-prichard-1086661377", who:["mack","boyd","gracie","delma","lonnie","ruth_l","maggie_b"], sum:"Born Nov. 28, 1942, in Kopperston to Boyd Prichard Sr. and Gracie James Prichard; Air Force veteran and retired coal miner; died Nov. 12, 2022. Lists his sisters, including “Delma Stacy (and the late Lonnie) of Oceana.”"},
+ {title:"Delma Jean Prichard Stacy, 77, of Oceana", pub:"Facebook post (Angela Stacy Stewart)", region:"Oceana", kind:"Death notice", status:"lead", url:"https://www.facebook.com/angela.stewart.75248/posts/delma-jean-prichard-stacy-77-of-oceana-wv-went-home-to-be-with-the-lord-on-satur/3783702571898067/", who:["delma","angela"], sum:"A family announcement of Delma’s death at 77. Her formal obituary, likely from Stafford Family Funeral Home or Evans-Calfee, hasn’t been found."},
+ {title:"Trevor Stacy · Football", pub:"Charlotte 49ers Athletics", region:"Huntington", kind:"Article", status:"found", url:"https://charlotte49ers.com/sports/football/roster/trevor-stacy/5469", who:["trevor","rick","annette"], sum:"College roster bio: offensive lineman from Spring Valley High School in Huntington, born Sept. 24, 1996, son of Rick and Annie Stacy."},
+ {title:"Bound for Harvard, Bartrum enjoying final opportunity to represent Spring Valley", pub:"WV MetroNews", date:"June 9, 2022", region:"Huntington", kind:"Article", status:"found", url:"https://wvmetronews.com/2022/06/09/bound-for-harvard-bartrum-enjoying-final-opportunity-to-represent-spring-valley/", who:["trevor"], sum:"Mentions Trevor Stacy as a Spring Valley Timberwolves assistant coach."},
  {title:"Gene Thomas Folz obituary", pub:"Pierre Funeral Home (via Legacy.com)", date:"Nov. 2026", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.legacy.com/us/obituaries/name/gene-folz-obituary?id=62892448", who:["gene","c_libby","charles_f","stella","annette","alex","alison","amy","ed_f","george_f","tony_f","marian_f","charlotte_f","patti_f","michael_f","james_f"], sum:"Born June 12, 1943, in St. Louis to Charles A. and Stella M. (Mudd) Folz; died Oct. 31, 2026, in Evansville at 83. Married Elizabeth A. Zoglman May 29, 1965, at Holy Family, Jasper. Names his children, brothers and sisters. Mass at St. Boniface; burial at St. Joseph Catholic Cemetery."},
  {title:"Alex Folz obituary", pub:"Evansville Courier & Press (via Legacy.com)", date:"July 11, 2016", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.legacy.com/us/obituaries/courierpress/name/alex-folz-obituary?id=17614343", who:["alex","gene","c_libby","annette","alison","amy","charles_f","stella"], sum:"Alex James Folz, 48, of Dallas, died July 8, 2016, in Chicago. Son of Gene and Libby Folz of Pinckneyville, Ill.; brother of Annette, Alison and Amy; grandson of Charles and Stella Folz of Evansville."},
  {title:"Alex J. Folz obituary", pub:"Pierre Funeral Home, Evansville", date:"2016", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.pierrefuneralhome.com/obituaries/alex-folz/", who:["alex"], sum:"The funeral home’s copy of Alex’s obituary."},
@@ -863,6 +936,9 @@ const ARCHIVES = [
  {title:"Spencer County obits, bios and wills", pub:"Spencer County, Indiana genealogy", region:"Spencer Co.", url:"https://spencercoin.weebly.com/obits-bios-and-wills4.html", sum:"Transcribed obituaries and biographies from Spencer County, home of Fulda, Gentryville and Rockport."},
  {title:"St. Joseph Catholic Cemetery, Evansville", pub:"Find a Grave", region:"Evansville", url:"https://www.findagrave.com/cemetery/86698/saint-joseph-catholic-cemetery", sum:"Stella Folz is buried here, and Gene will be. Search for Charles A. Folz to confirm his dates."},
  {title:"Evansville Courier & Press archive (1870–today)", pub:"Newspapers.com", region:"Evansville", url:"https://courierpress.newspapers.com/", sum:"Subscription archive of the Evansville paper. The best place for Charles Folz’s obituary (possibly Nov. 1991) and Stella’s (Sept. 2002)."},
+ {title:"Stafford Family Funeral Home obituaries, Oceana", pub:"The Register-Herald", region:"Oceana", url:"https://obituaries.register-herald.com/funeral-home/wv/oceana/stafford-family-funeral-home-inc-73001", sum:"The Oceana funeral home that handled Mack Prichard. Search here for Delma and Lonnie Stacy and for Boyd and Gracie Prichard."},
+ {title:"Evans-Calfee Funeral Services obituaries", pub:"Evans-Calfee, Pineville & Oceana", region:"Oceana", url:"https://www.evans-calfee.com/listings", sum:"The other Wyoming County funeral home. Another place to look for Lonnie and Delma Stacy."},
+ {title:"Beard Mortuary obituaries", pub:"Beard Mortuary, Huntington", region:"Huntington", url:"https://www.beardmortuary.com/", sum:"Handled Pastor Clay Campbell’s service; may also hold Davis family obituaries for Ruthie’s parents."},
  {title:"Chronicling America", pub:"Library of Congress", region:"New Mexico", url:"https://chroniclingamerica.loc.gov/", sum:"Free historic newspapers. Try New Mexico and Colorado papers from October 1917 for Joseph Stallings’s automobile accident."}
 ];
 let recRegion="all";
@@ -921,13 +997,35 @@ const TREE_FOLZ = [
   {id:"lt", x:855, y:265, from:"theresa"},
   {id:"alice", x:875, y:145, from:"theresa"}
 ];
+const TREE_STACY = [
+  {id:"trevor", x:390, y:585, kind:"couple", label:"Trevor Stacy"},
+  {id:"sara", x:610, y:585, kind:"couple", label:"Sara Campbell"},
+  {id:"rick", x:180, y:420, from:"trevor"},
+  {id:"annette", x:385, y:395, from:"trevor"},
+  {id:"clay", x:615, y:395, from:"sara", label:"Clay Campbell"},
+  {id:"ruthie", x:820, y:420, from:"sara"},
+  {id:"lonnie", x:90, y:262, from:"rick"},
+  {id:"delma", x:245, y:205, from:"rick"},
+  {id:"boyd", x:125, y:100, from:"delma"},
+  {id:"gracie", x:290, y:60, from:"delma"},
+  {id:"gene", x:430, y:262, from:"annette"},
+  {id:"c_libby", x:445, y:135, from:"annette", label:"Libby Zoglman"},
+  {id:"cledith_sr", x:605, y:240, from:"clay"},
+  {id:"barbara", x:770, y:205, from:"clay"},
+  {id:"davispar", x:900, y:295, from:"ruthie", unknown:"Davis parents"},
+  {id:"w_hively", x:690, y:85, from:"barbara"},
+  {id:"h_hively", x:880, y:105, from:"barbara"}
+];
 const TREES = {
+  stacy:{nodes:TREE_STACY, couple:["trevor","sara"], married:"Trevor & Sara", left:["TREVOR’S SIDE · STACY · PRICHARD · FOLZ","var(--teal)"], right:["SARA’S SIDE · CAMPBELL · HIVELY · DAVIS","var(--berry)"], kidsLabel:"Their son",
+      more:{text:"↗ Libby & Gene’s Folz tree", label:"Open the Folz tree for Annette’s older ancestors", tree:"folz", x:20, y:740, w:230},
+      title:"Trevor, Sara & Jeremiah", desc:"Trevor and Sara form the trunk, with Jeremiah at its root. Trevor’s Stacy, Prichard and Folz families branch to the left; Sara’s Campbell, Hively and Davis families to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.", aria:"Family tree of Trevor and Sara Stacy and their son Jeremiah, with their ancestors"},
   zs:{nodes:TREE_ZS, couple:["bud","theresa"], married:"married April 19, 1938", left:["BUD’S SIDE · ZOGLMAN","var(--sage)"], right:["THERESA’S SIDE · STALLINGS & COOMES","var(--rust)"], kidsLabel:"Their children named in the papers",
       title:"Two roots, one trunk", desc:"Bud and Theresa form the trunk. Bud’s Zoglman ancestors branch to the left, Theresa’s Stallings and Coomes ancestors to the right. Select anyone to open their record, with parents, siblings, children and the stories told about them.", aria:"Family tree of Edward Bud Zoglman and Theresa Lavina Stallings, with their ancestors"},
-  folz:{nodes:TREE_FOLZ, couple:["gene","c_libby"], married:"married May 29, 1965", left:["GENE’S SIDE · FOLZ & MUDD","var(--sky)"], right:["LIBBY’S SIDE · ZOGLMAN & STALLINGS","var(--sage)"], kidsLabel:"Their children", more:"Switch to the Zoglman & Stallings tree for Libby’s older ancestors",
+  folz:{nodes:TREE_FOLZ, couple:["gene","c_libby"], married:"married May 29, 1965", left:["GENE’S SIDE · FOLZ & MUDD","var(--sky)"], right:["LIBBY’S SIDE · ZOGLMAN & STALLINGS","var(--sage)"], kidsLabel:"Their children", more:{text:"↗ Libby’s older ancestors", label:"Switch to the Zoglman & Stallings tree for Libby’s older ancestors", tree:"zs", x:735, y:40, w:250},
       title:"The Folz tree", desc:"Gene Folz and Libby Zoglman form the trunk. Gene’s parents, Charles Folz and Stella Mudd, branch to the left; Libby’s parents and grandparents to the right. Select anyone to open their record.", aria:"Family tree of Gene Folz and Elizabeth Libby Zoglman Folz, with their parents and grandparents"}
 };
-let curTree="zs";
+let curTree="stacy";
 function setTree(k){
   curTree=k; const T=TREES[k];
   document.querySelectorAll("[data-tree]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.tree===k)));
@@ -1025,10 +1123,11 @@ function drawTree(){
   sl(180,T.left[0],T.left[1]);
   const t=mk("text",{x:980,y:22,"text-anchor":"end","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:T.right[1]},gNodes); t.textContent=T.right[0];
   if(T.more){
-    const g=mk("g",{class:"tnode",tabindex:"0",role:"button","aria-label":T.more,transform:"translate(735 40)"},gNodes);
-    const r=mk("rect",{width:250,height:34,rx:17},g); r.style.fill="transparent"; r.style.stroke="var(--gold)"; r.style.strokeDasharray="4 4";
-    const tt=mk("text",{x:125,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":12,fill:"var(--gold)"},g); tt.textContent="↗ Libby’s older ancestors";
-    const go=()=>setTree("zs"); g.addEventListener("click",go); g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
+    const M=T.more;
+    const g=mk("g",{class:"tnode",tabindex:"0",role:"button","aria-label":M.label,transform:`translate(${M.x} ${M.y})`},gNodes);
+    const r=mk("rect",{width:M.w,height:34,rx:17},g); r.style.fill="transparent"; r.style.stroke="var(--gold)"; r.style.strokeDasharray="4 4";
+    const tt=mk("text",{x:M.w/2,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":12,fill:"var(--gold)"},g); tt.textContent=M.text;
+    const go=()=>setTree(M.tree); g.addEventListener("click",go); g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}});
   }
 }
 
@@ -1044,9 +1143,16 @@ function drawBranches(){
     "lt":"Eleven children, all but one born in Waterflow, New Mexico.",
     "bud":"The five children named in Theresa’s 2009 obituary.",
     "charles_f":"Nine children. Birth order is not yet known, apart from Gene (1943, St. Louis) and Michael (1951, Evansville).",
-    "gene":"Four children, named in Gene’s 2026 obituary."
+    "gene":"Four children, named in Gene’s 2026 obituary.",
+    "trevor":"The center of this tree.",
+    "rick":"Trevor and his brothers.",
+    "lonnie":"Rick’s siblings are still being gathered. Angela is inferred from her name.",
+    "boyd":"Delma, her brother Mack and at least four sisters; three are named so far.",
+    "clay":"Named in Pastor Clay Campbell’s 2024 obituary.",
+    "cledith_sr":"Six children, named in Barbara Ann Campbell’s 2021 obituary.",
+    "w_hively":"Barbara had five sisters and two brothers; only Jerry is named so far."
   };
-  const order = ["joseph_z","henry","bud","charles_f","gene","wp_coomes","wm_martin","lt","lorenzo","robert_j","edgar_w"];
+  const order = ["trevor","rick","clay","lonnie","boyd","cledith_sr","w_hively","joseph_z","henry","bud","charles_f","gene","wp_coomes","wm_martin","lt","lorenzo","robert_j","edgar_w"];
   groups.sort((a,b)=>{const ia=order.indexOf(a[0]),ib=order.indexOf(b[0]);return (ia<0?99:ia)-(ib<0?99:ib)});
   $("#branches").innerHTML = groups.map(par=>{
     const names = par.map(id=>P[id]).map(p=>p.short||p.name);
@@ -1169,6 +1275,7 @@ function openPerson(id){
   if(p.notes.length) h+=`<div class="rel"><h4>What the papers and records say</h4><ul class="story">${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`;
   const chs=CHAPTERS.filter(c=>c.who&&c.who.includes(id));
   if(chs.length) h+=`<div class="rel"><h4>Appears in these stories</h4><div class="chips">${chs.map(c=>`<a class="chip" href="#ch-${c.id}" data-close style="text-decoration:none">${esc(c.title)}</a>`).join("")}</div></div>`;
+  if(TREE_STACY.some(n=>n.id===id&&!n.unknown) && curTree!=="stacy") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="stacy" data-close data-scroll>View on Trevor, Sara &amp; Jeremiah’s tree</button></p>`;
   if(TREE_FOLZ.some(n=>n.id===id&&!n.unknown) && curTree!=="folz") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="folz" data-close data-scroll>View on the Folz tree</button></p>`;
   if(TREE_ZS.some(n=>n.id===id&&!n.unknown) && curTree!=="zs") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="zs" data-close data-scroll>View on the Zoglman &amp; Stallings tree</button></p>`;
   const recs=RECORDS.filter(r=>r.who.includes(id));
@@ -1248,7 +1355,7 @@ $("#shake").addEventListener("click",()=>{ if(!running) setPaused(false); burst(
 
 /* ---------- boot ---------- */
 drawTree(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ seed=7; drawTree(); });
-if(location.hash==="#folz") setTree("folz");
+if(location.hash==="#folz") setTree("folz"); else if(location.hash==="#zoglman") setTree("zs");
 { const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2; }
 drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes(); drawRecords();
 </script>
