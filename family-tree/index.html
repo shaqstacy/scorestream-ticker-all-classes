@@ -250,6 +250,18 @@ section{padding-block:64px}
 .reclinks{list-style:none;padding:0;margin:6px 0;display:grid;gap:8px}
 .reclinks a{color:var(--gold)}
 .reclinks span{display:block;font-size:.82rem;color:var(--muted)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;align-items:start}
+.photo{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;min-width:0}
+.photo .zoom{all:unset;cursor:zoom-in;display:block}
+.photo img{display:block;width:100%;height:auto;max-height:420px;object-fit:contain;background:var(--bg-2);border-radius:3px}
+.photo.big{grid-column:1/-1}
+.photo.big .zoom{cursor:zoom-out}
+.photo.big img{max-height:none}
+.photo figcaption{display:grid;gap:6px;margin-top:10px;font-size:.92rem}
+.photo figcaption span{color:var(--muted)}
+.drawer .dphoto{margin:14px 0;max-width:100%}
+.drawer .dphoto img{width:100%;max-width:260px;height:auto;border-radius:4px;display:block}
+.drawer .dphoto figcaption{font-size:.8rem;color:var(--muted);margin-top:4px}
 footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);font-size:.9rem}
 
 /* ---------- drawer ---------- */
@@ -282,7 +294,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
       Stallings &amp; Zoglman
     </a>
     <nav class="sections" aria-label="Sections">
-      <a href="#tree">Tree</a><a href="#stories">Stories</a><a href="#timeline">Timeline</a><a href="#journey">Journey</a><a href="#people">People</a><a href="#records">Newspapers</a><a href="#notes">Research notes</a><a href="#sources">Sources</a>
+      <a href="#tree">Tree</a><a href="#stories">Stories</a><a href="#timeline">Timeline</a><a href="#journey">Journey</a><a href="#people">People</a><a href="#gallery">Photos</a><a href="#records">Newspapers</a><a href="#notes">Research notes</a><a href="#sources">Sources</a>
     </nav>
     <div class="tools">
       <button class="iconbtn" id="shake" type="button">Shake the tree</button>
@@ -419,6 +431,20 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
     </div>
   </section>
 
+  <!-- ================= GALLERY ================= -->
+  <section id="gallery">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Photos &amp; documents</div>
+          <h2>From the family’s keeping</h2>
+          <p>Photographs and original documents. Select an image to enlarge it.</p>
+        </div>
+      </div>
+      <div class="gallery" id="gallery-list"></div>
+    </div>
+  </section>
+
   <!-- ================= RECORDS ================= -->
   <section id="records">
     <div class="wrap">
@@ -510,6 +536,8 @@ const SOURCES = {
   ST:{title:"Stallings Family Tree", kind:"Typed list · 1 page", desc:"William Martin Stallings and Lucy Ann Coomes, William Peter Coomes and Elizabeth Jane Peyton, L.T. Stallings and Alice Massey, and L.T.’s eleven children.", r:"1deg"},
   MEM:{title:"Stallings Family History", kind:"Memoir · 7 pages · written after the Nov. 2014 trip", desc:"By a grandson of Theresa, son of Bill Schmitt. Traces the Stallings from England to Kentucky to the Kentucky Mesa, drawing on the book “Candles of the Lord” and the “History of Sacred Heart Parish of Farmington.”", r:"-0.6deg"},
   USER:{title:"From Trevor Stacy", kind:"Family knowledge · Nov. 2026", desc:"Names and relationships Trevor supplied: his siblings Brandon and Chandler, his father Richard Edward Stacy of Oceana, grandparents Lonnie Edward Stacy and Delma Jean Prichard, and Sara’s parents.", r:"1.1deg"},
+  OBIT:{title:"Lonnie “Ticky” Stacy obituary", kind:"Obituary · January 2012", desc:"Shared by Trevor. Lonnie’s parents, eight siblings, wife, children and their spouses, and all six grandchildren, with his service and burial.", r:"-1deg"},
+  LIC:{title:"Stacy–Prichard marriage license", kind:"Wyoming County court record · Dec. 31, 1966", desc:"Shared by Trevor. Application, license and minister’s return for Lonnie Edward Stacy and Delma Jean Prichard, with both birth dates, birthplaces and parents.", r:"0.7deg"},
   WEB:{title:"Newspapers & online records", kind:"Obituaries, grave memorials, county histories", desc:"Found by web search in November 2026. Each is listed with its link in the Newspapers & Records section.", r:"-0.8deg"},
   EUL:{title:"Theresa Lavina — eulogy", kind:"Funeral remarks · 3 pages · July 2009", desc:"Delivered on behalf of the Zoglman family. Her childhood in Waterflow, the move home, her marriage to Bud, her cooking, candles, cards, and the lessons she taught.", r:"1.4deg"}
 };
@@ -603,11 +631,22 @@ const PEOPLE = [
   {id:"jeremiah", name:"Jeremiah Stacy", first:"Jeremiah", fam:"T", par:["trevor","sara"], role:"Trevor and Sara’s son", notes:["Named in his great-grandfather Gene Folz’s 2026 obituary as one of Gene’s two great-grandchildren.","Through his father he descends from the Stacys, Prichards, Folzes, Zoglmans and Stallingses; through his mother from the Campbells, Hivelys and Davises."], src:["WEB"]},
   {id:"brandon", name:"Brandon Stacy", fam:"T", par:["rick","annette"], role:"Trevor’s brother", src:["USER"]},
   {id:"chandler", name:"Chandler Stacy", fam:"T", par:["rick","annette"], role:"Trevor’s brother", src:["USER"]},
-  {id:"rick", name:"Richard Edward “Rick” Stacy", short:"Rick Stacy", fam:"T", bp:"Oceana, West Virginia", par:["lonnie","delma"], sp:["annette"], role:"Trevor’s father", notes:["Grew up in Oceana, Wyoming County, in the southern West Virginia coalfields.","Married Annette Folz; they made their home in Huntington, where they raised Trevor, Brandon and Chandler."], src:["USER","WEB"]},
-  {id:"lonnie", name:"Lonnie Edward Stacy", short:"Lonnie Stacy", fam:"T", dp:"Oceana, West Virginia", sp:["delma"], role:"Rick’s father", notes:["Of Oceana, Wyoming County. He had died by November 2022, when his brother-in-law Mack Prichard’s obituary listed “Delma Stacy (and the late Lonnie) of Oceana.”"], src:["USER","WEB"]},
-  {id:"delma", name:"Delma Jean (Prichard) Stacy", short:"Delma Prichard", fam:"T", bp:"Wyoming County, West Virginia", dp:"Oceana · age 77", par:["boyd","gracie"], sp:["lonnie"], role:"Rick’s mother", notes:["Daughter of Boyd Prichard Sr. and Gracie James Prichard; one of at least five sisters, with brother Mack.","A family post announced that “Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord” on a Saturday. Her formal obituary and dates have not been found yet."], src:["USER","WEB"]},
-  {id:"angela", name:"Angela (Stacy) Stewart", fam:"T", par:["lonnie","delma"], role:"Rick’s sister · Trevor’s aunt", notes:["Daughter of Lonnie and Delma Stacy; married name Stewart.","She shared the family’s announcement of her mother Delma’s death."], src:["USER","WEB"]},
-  {id:"lori", name:"Lori (Stacy) Barlow Pruitt", short:"Lori Stacy Pruitt", aka:"also known as Lori Pruitt Stacy; Lori Barlow Pruitt on Facebook", fam:"T", b:"July 3 (year not given)", bp:"Oceana, West Virginia", par:["lonnie","delma"], sp:["jeff_b"], role:"Rick’s sister · Trevor’s aunt · Oceana", notes:["Daughter of Lonnie and Delma Stacy. Born and still living in Oceana.","Married Jeff Barlow, longtime lawman and Wyoming County magistrate; they had Laken and Alex, Trevor’s first cousins. Now married with the surname Pruitt.","Her Facebook cover photo is a family portrait of Lonnie and Delma Stacy with their grandchildren."], src:["USER"]},
+  {id:"rick", name:"Richard Edward “Rick” Stacy", short:"Rick Stacy", aka:"“Ricky” to his parents’ generation", fam:"T", bp:"Oceana, West Virginia", par:["lonnie","delma"], sp:["annette"], role:"Trevor’s father", notes:["Only son of Lonnie “Ticky” Stacy and Delma Jean Prichard; grew up in Oceana, Wyoming County, in the southern West Virginia coalfields, with his sisters Angie and Lori.","Married Annette “Annie” Folz. In 2012 they were living in Lavalette, Wayne County, where they raised Trevor, Brandon and Chandler; they later made their home in Huntington."], src:["USER","WEB","OBIT"]},
+  {id:"lonnie", name:"Lonnie Edward “Ticky” Stacy", short:"Lonnie “Ticky” Stacy", fam:"T", b:"July 14, 1946", bFlag:"His obituary and Find a Grave say Hanover, Wyoming County; his 1966 marriage license gives “Iaeger, McDowell County”", bp:"Hanover, Wyoming County, West Virginia", d:"Jan. 10, 2012", dp:"Raleigh General Hospital, Beckley · age 65", bur:"Palm Memorial Gardens, Matheny, Wyoming County", par:["lonnie_sr","hattie"], sp:["delma"], role:"Rick’s father · Navy veteran and coal auger operator", photo:"portrait", notes:["Known to everyone as “Ticky.” Son of Lonnie Stacy (1919–1981) and Hattie Margaret Riffe Stacy (1925–2011), one of eight children.","U.S. Navy veteran and a retired coal auger operator.","Married Delma Jean Prichard on New Year’s Eve, December 31, 1966, at Oceana. He was 20 and living in Justice; she was 19. They were married 45 years.","Died January 10, 2012, at Raleigh General Hospital of injuries from an automobile accident. Funeral at New Life Church in Jesse, with Rev. Jackie Lester officiating; buried with military rites by the Wyoming County Veterans Honor Guard.","His obituary named his six grandchildren (Brandon, Laken, Alex, Trevor, Taylor and Chandler), Jeremy DeLong, “who was like a son,” and a special cousin, Johnny “Smokie” Blankenship.","He and Delma share a headstone with their photograph on it."], src:["OBIT","LIC","WEB"]},
+  {id:"delma", name:"Delma Jean (Prichard) Stacy", short:"Delma Prichard", fam:"T", b:"Oct. 6, 1947", bp:"Oceana, Wyoming County, West Virginia", dFlag:"She died at 77, so between Oct. 2024 and Oct. 2025; she was still living in Nov. 2022", dp:"Oceana · age 77", par:["boyd","gracie"], sp:["lonnie"], role:"Rick’s mother", photo:"portrait", notes:["Born in Oceana to Boyd Prichard Sr. and Gracie James Prichard; one of at least five sisters, with brother Mack.","Married Lonnie “Ticky” Stacy at Oceana on December 31, 1966, at 19. (The clerk wrote her father’s name as “Boyd Stacy” on the license, a slip for Boyd Prichard.)","Mother of Angie, Lori and Ricky; widowed in 2012 after 45 years of marriage.","A family post announced that “Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord” on a Saturday."], src:["USER","WEB","LIC","OBIT"]},
+  {id:"angela", name:"Angela “Angie” (Stacy) Stewart", short:"Angie Stacy Stewart", fam:"T", par:["lonnie","delma"], sp:["kevin_s"], role:"Rick’s sister · Trevor’s aunt · Daniels, W.Va.", notes:["Daughter of Lonnie and Delma Stacy. Married Kevin Stewart; in 2012 they lived in Daniels, Raleigh County. Mother of Taylor Stewart, Trevor’s cousin.","She shared the family’s announcement of her mother Delma’s death."], src:["USER","WEB","OBIT"]},
+  {id:"kevin_s", name:"Kevin Stewart", fam:"M", sp:["angela"], role:"Angie’s husband", src:["OBIT"]},
+  {id:"taylor_s", name:"Taylor Stewart", first:"Taylor", fam:"T", par:["angela","kevin_s"], role:"Trevor’s first cousin", src:["OBIT"]},
+  {id:"lori", name:"Lori (Stacy) Barlow Pruitt", short:"Lori Stacy Pruitt", aka:"also known as Lori Pruitt Stacy; Lori Barlow Pruitt on Facebook", fam:"T", b:"July 3 (year not given)", bp:"Oceana, West Virginia", par:["lonnie","delma"], sp:["jeff_b","eddie_p"], role:"Rick’s sister · Trevor’s aunt · Oceana", notes:["Daughter of Lonnie and Delma Stacy. Born and still living in Oceana.","Married Jeff Barlow, longtime lawman and Wyoming County magistrate; they had Laken and Alex, Trevor’s first cousins.","In 2012 her father’s obituary listed her as Lori Stacy-Barlow with her companion Eddie Pruitt; she now goes by Lori Pruitt.","Her Facebook cover photo is a family portrait of Lonnie and Delma Stacy with their grandchildren."], src:["USER","OBIT"]},
+  {id:"eddie_p", name:"Eddie Pruitt", fam:"M", sp:["lori"], role:"Lori’s husband", notes:["Named as Lori’s companion in her father’s 2012 obituary."], src:["OBIT"]},
+  {id:"lonnie_sr", name:"Lonnie Stacy", short:"Lonnie Stacy Sr.", fam:"T", b:"1919", d:"1981", sp:["hattie"], role:"Ticky’s father · Trevor’s great-grandfather", notes:["Father of eight, including Lonnie Edward “Ticky” Stacy. Named on Ticky’s 1966 marriage license and in his obituary."], src:["OBIT","LIC"]},
+  {id:"hattie", name:"Hattie Margaret (Riffe) Stacy", short:"Hattie Riffe", fam:"T", b:"1925", d:"2011", sp:["lonnie_sr"], role:"Ticky’s mother · Trevor’s great-grandmother", notes:["Born a Riffe, an old Wyoming County family name. The minister who married Ticky and Delma in 1966 was a J. L. Riffe of Oceana, quite possibly a relative.","Died in 2011, a year before her son Ticky."], src:["OBIT","LIC"]},
+  {id:"larry_s", name:"William “Larry” Stacy", fam:"T", b:"1945", d:"2016", par:["lonnie_sr","hattie"], role:"Ticky’s brother", src:["OBIT"]},
+  {id:"randall_s", name:"Randall Stacy", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s brother", src:["OBIT"]},
+  {id:"sue_s", name:"Sue (Stacy) Egnor", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister", src:["OBIT"]},
+  {id:"sharon_s", name:"Sharon (Stacy) Lester", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister", src:["OBIT"]},
+  {id:"kathy_s", name:"Kathy (Stacy) Laney", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister", src:["OBIT"]},
+  {id:"donna_s", name:"Donna (Stacy) Walker", fam:"T", par:["lonnie_sr","hattie"], role:"Ticky’s sister", src:["OBIT"]},
   {id:"jeff_b", name:"Jeff Barlow", fam:"M", sp:["lori"], role:"Wyoming County magistrate · longtime Oceana lawman", notes:["A longtime lawman in Oceana, later elected magistrate for Wyoming County (Division 3); listed by the West Virginia Judiciary among the county’s magistrates, with a 2022 election year in state records.","Married Lori Stacy; father of Laken and Alex."], src:["USER","WEB"]},
   {id:"laken", name:"Laken (Barlow) Blevins", first:"Laken", fam:"T", par:["jeff_b","lori"], role:"Trevor’s first cousin", src:["USER"]},
   {id:"alex_b", name:"Alex Barlow", first:"Alex", fam:"T", par:["jeff_b","lori"], role:"Trevor’s first cousin", src:["USER"]},
@@ -668,11 +707,13 @@ const CHAPTERS = [
   "Every branch on this site leads here. Trevor Stacy, son of Rick and Annette (Folz) Stacy, grew up in Huntington with his brothers Brandon and Chandler. He played offensive line at Spring Valley High School and in college at Charlotte, then came home to coach the Timberwolves.",
   "Sara Beth Campbell grew up in Huntington too, the daughter of Pastor Clay Campbell of Altizer Baptist Church and his wife, Ruthie Davis Campbell, with her sister Christina and brother Jonathan. Her father died at home in July 2024.",
   "Trevor and Sara’s son, Jeremiah, carries all of it forward: coal-country Stacys and Prichards from Wyoming County, Campbells and Hivelys from Charleston and the Tri-State, Folzes from Evansville, Zoglmans from Bavaria by way of Fulda, and Stallingses who walked from Kentucky to the Kentucky Mesa."]},
- {id:"oceana", when:"1940s–today", title:"The Stacys and Prichards of Wyoming County", who:["rick","angela","lori","jeff_b","lonnie","delma","boyd","gracie","mack"], body:[
-  "Trevor’s father, Richard Edward Stacy, comes from Oceana, a small town on the Clear Fork in Wyoming County, deep in the southern West Virginia coalfields. His parents were Lonnie Edward Stacy and Delma Jean Prichard, and he grew up with his sisters Angela, now Angela Stacy Stewart, and Lori. Lori stayed in Oceana and married Jeff Barlow, a longtime lawman who became a Wyoming County magistrate; their children Laken and Alex are Trevor’s first cousins. A favorite family portrait shows Lonnie and Delma surrounded by their grandchildren.",
-  "Delma’s family came from Kopperston, a coal camp a few miles up the road. Her parents, Boyd Prichard Sr. and Gracie James Prichard, raised a large family there: Delma, her brother Douglas McArthur “Mack” Prichard, and at least five sisters, including Ruth Lovins and Maggie Blankenship.",
-  "Mack, born in Kopperston in 1942, served in the U.S. Air Force, came home to mine coal, and belonged to the United Mine Workers. He died in November 2022 at the family hunting cabin in Virginia, “his happy place.” His obituary named his sister as “Delma Stacy (and the late Lonnie) of Oceana.” Delma later died at 77."],
-  pull:{q:"Delma Jean Prichard Stacy, 77, of Oceana, WV went home to be with the Lord.", by:"Family announcement"}},
+ {id:"oceana", when:"1919–today", title:"The Stacys and Prichards of Wyoming County", who:["lonnie","delma","lonnie_sr","hattie","rick","angela","lori","jeff_b","boyd","gracie","mack"], photo:"portrait", body:[
+  "Trevor’s great-grandparents Lonnie Stacy (1919–1981) and Hattie Margaret Riffe (1925–2011) raised eight children in the Wyoming County coalfields: Larry, Lonnie Edward, Randall, Sue, Sharon, Kathy and Donna among them. Their son Lonnie Edward, born July 14, 1946, went by “Ticky.”",
+  "On New Year’s Eve 1966, Ticky, 20, of Justice, and Delma Jean Prichard, 19, of Oceana, took out a marriage license at the Wyoming County courthouse and were married the same day at Oceana by the Rev. J. L. Riffe. Delma was the daughter of Boyd Prichard Sr. and Gracie James of the Kopperston coal camp.",
+  "Ticky served in the U.S. Navy and spent his working life in the mines as a coal auger operator. He and Delma raised Angie, Lori and Ricky, Trevor’s father, in Oceana. Angie married Kevin Stewart and settled in Daniels; Lori married Jeff Barlow, a longtime lawman who became a Wyoming County magistrate; Ricky married Annette “Annie” Folz and moved north to Lavalette and Huntington.",
+  "Ticky died on January 10, 2012, at 65, from injuries in an automobile accident, after 45 years of marriage. The Wyoming County Veterans Honor Guard gave him military rites at Palm Memorial Gardens in Matheny. His obituary named all six grandchildren: Brandon, Laken, Alex, Trevor, Taylor and Chandler.",
+  "Delma’s brother Douglas “Mack” Prichard, born in Kopperston in 1942, was an Air Force veteran, coal miner and UMWA member; he died in 2022 at the family hunting cabin, “his happy place.” Delma herself died at 77. She and Ticky share a headstone that carries their photograph."],
+  pull:{q:"Survivors include his loving wife of 45 years, Delma Jean Prichard-Stacy.", by:"Lonnie “Ticky” Stacy’s obituary, 2012"}},
  {id:"campbell", when:"1935–2024", title:"The Campbells: a pastor’s family", who:["clay","ruthie","barbara","cledith_sr","w_hively","h_hively","sara"], body:[
   "Sara’s grandmother, Barbara Ann Hively, was born in Charleston on March 10, 1935, to William and Helen Irene (Turner) Hively, one of at least eight children. She married Cledith Vernon Campbell Sr. and raised six children; she later lived in Catlettsburg, Kentucky, just across the Big Sandy from West Virginia.",
   "Her son Cledith Vernon Campbell Jr., known as Clay, became pastor of Altizer Baptist Church in Huntington. In March 2021 he led his own mother’s funeral there, and she was buried at Rose Hill Burial Park in Ashland.",
@@ -839,6 +880,15 @@ const EVENTS = [
  {y:2016, d:"July 8", t:"Alex Folz dies in Chicago at 48.", f:"F", who:["alex"]},
  {y:2024, d:"Feb. 17", t:"Michael Folz dies in Evansville.", f:"F", who:["michael_f"]},
  {y:1935, d:"Mar. 10", t:"Barbara Ann Hively born in Charleston, West Virginia.", f:"K", who:["barbara"]},
+ {y:1919, t:"Lonnie Stacy Sr., Trevor’s great-grandfather, born.", f:"T", who:["lonnie_sr"]},
+ {y:1925, t:"Hattie Margaret Riffe born.", f:"T", who:["hattie"]},
+ {y:1946, d:"July 14", t:"Lonnie Edward “Ticky” Stacy born at Hanover, Wyoming County.", f:"T", who:["lonnie"]},
+ {y:1947, d:"Oct. 6", t:"Delma Jean Prichard born in Oceana.", f:"T", who:["delma"]},
+ {y:1966, d:"Dec. 31", t:"Ticky Stacy and Delma Prichard marry at Oceana on New Year’s Eve.", f:"T", who:["lonnie","delma"]},
+ {y:1981, t:"Lonnie Stacy Sr. dies.", f:"T", who:["lonnie_sr"]},
+ {y:2011, t:"Hattie Riffe Stacy dies.", f:"T", who:["hattie"]},
+ {y:2012, d:"Jan. 10", t:"Ticky Stacy dies at 65 after an automobile accident; buried with military rites at Palm Memorial Gardens, Matheny.", f:"T", who:["lonnie","delma"]},
+ {y:2016, t:"William “Larry” Stacy, Ticky’s brother, dies.", f:"T", who:["larry_s"]},
  {y:1942, d:"Nov. 28", t:"Douglas “Mack” Prichard born in Kopperston, Wyoming County.", f:"T", who:["mack","boyd","gracie"]},
  {y:1996, d:"Sept. 24", t:"Trevor Stacy born to Rick and Annette Stacy.", f:"T", who:["trevor","rick","annette"]},
  {y:2021, d:"Mar. 12", t:"Barbara Ann Hively Campbell dies; her son Pastor Clay Campbell leads her funeral.", f:"K", who:["barbara","clay"]},
@@ -866,7 +916,9 @@ const PLACES = [
 
 const NOTES = [
  {h:"“Clay” or “Cledith”", s:"Resolved", p:"The family calls Sara’s father Clay Vernon Campbell Jr. His obituary and his mother’s give his legal name as Cledith Vernon Campbell Jr., and his father as Cledith Vernon Campbell Sr.", v:"Shown as Cledith Vernon “Clay” Campbell Jr."},
- {h:"Lonnie and Delma Stacy’s dates", s:"Open", p:"No obituary has turned up for either. Mack Prichard’s November 2022 obituary lists Delma as living and Lonnie as deceased. A family post gives Delma’s age at death as 77.", v:"Check Stafford Family Funeral Home and Evans-Calfee listings."},
+ {h:"Lonnie and Delma Stacy’s dates", s:"Resolved", p:"Trevor shared Lonnie’s obituary, Find a Grave memorial and their 1966 marriage license. Lonnie: July 14, 1946 – Jan. 10, 2012. Delma: born Oct. 6, 1947; died at 77, between Oct. 2024 and Oct. 2025.", v:"Delma’s exact death date and burial still to add."},
+ {h:"Where was Ticky born?", s:"Conflict", p:"His obituary and Find a Grave say Hanover, Wyoming County. The 1966 marriage license says “Iaeger, McD. Co.” (McDowell County, next door).", v:"Shown as Hanover; a delayed birth certificate would settle it."},
+ {h:"A clerk’s slip on the license", s:"Note", p:"The marriage license gives the bride’s father as “Boyd Stacy.” Every other record has Boyd Prichard; the clerk wrote the groom’s surname by mistake.", v:"Read as Boyd Prichard."},
  {h:"Rick Stacy’s brothers and sisters", s:"Resolved", p:"Trevor confirmed his aunts Angela (Stacy) Stewart and Lori (Stacy) Pruitt as Rick’s sisters, daughters of Lonnie and Delma.", v:"Birth order and any other siblings still to add."},
  {h:"Ruthie Davis Campbell’s parents", s:"Open", p:"The Davis branch has no names yet.", v:"A family member’s memory or a Davis obituary naming “Ruthie (Clay) Campbell” would open this branch."},
  {h:"Charles A. Folz’s dates", s:"Open", p:"No obituary or grave record for Gene’s father turned up. Online trees put his birth about 1916–17 in Indiana, and a MyHeritage record shows a Charles Folz dying in Evansville on Nov. 4, 1991, at 75.", v:"Check Stella’s Find a Grave page and the Courier & Press for November 1991."},
@@ -891,8 +943,19 @@ const NOTES = [
 
 /* --------- Newspapers & online records (found by web search, Nov. 2026) ---------
    status: "found" = the record matches names and dates in the family papers; "lead" = likely, needs confirming */
+const MEDIA = {
+  portrait:{src:"media/lonnie-delma-headstone-portrait.jpg", title:"Ticky and Delma Stacy", caption:"The photograph on Lonnie and Delma Stacy’s headstone at Palm Memorial Gardens, Matheny. Photo added to Find a Grave by B. Walls.", who:["lonnie","delma"], w:439, h:584},
+  license:{src:"media/stacy-prichard-marriage-license-1966.jpg", title:"Marriage license, December 31, 1966", caption:"Wyoming County marriage license of Lonnie Edward Stacy, 20, and Delma Jean Prichard, 19. Married the same day at Oceana by J. L. Riffe, minister; returned and filed January 4, 1967.", who:["lonnie","delma","lonnie_sr","hattie","boyd","gracie"], w:1000, h:1803}
+};
+function drawGallery(){
+  $("#gallery-list").innerHTML=Object.entries(MEDIA).map(([k,m])=>`<figure class="photo" id="m-${k}"><button type="button" class="zoom" data-zoom="${k}" aria-label="Enlarge ${esc(m.title)}"><img src="${m.src}" alt="${esc(m.title)}" width="${m.w}" height="${m.h}"></button>
+    <figcaption><b>${esc(m.title)}</b><span>${esc(m.caption)}</span><span class="chips">${m.who.filter(id=>P[id]).map(id=>`<button class="chip" type="button" data-p="${id}"><span class="sw" style="background:${FAM[P[id].fam].color}"></span>${esc(P[id].short||P[id].name)}</button>`).join("")}</span></figcaption></figure>`).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-zoom]"); if(!b) return; b.closest(".photo").classList.toggle("big");});
 const RECORDS = [
- {title:"Lonnie Edward Stacy", pub:"Find a Grave · memorial 83371208", region:"Oceana", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/83371208/lonnie_edward_stacy", who:["lonnie","delma","rick","angela","lori"], sum:"Lonnie’s grave memorial, shared by Trevor. Its dates and cemetery haven’t been added to the tree yet."},
+ {title:"Lonnie “Ticky” Stacy obituary", pub:"Obituary text (shared by Trevor)", date:"Jan. 2012", region:"Oceana", kind:"Obituary", status:"found", url:"https://www.findagrave.com/memorial/83371208/lonnie_edward_stacy", who:["lonnie","delma","lonnie_sr","hattie","angela","kevin_s","lori","eddie_p","rick","annette","larry_s","randall_s","sue_s","sharon_s","kathy_s","donna_s","brandon","laken","alex_b","trevor","taylor_s","chandler"], sum:"Navy veteran and retired coal auger operator, 65, of Oceana; died Jan. 10, 2012, at Raleigh General Hospital after an automobile accident. Son of Lonnie Stacy (1919–1981) and Hattie Margaret Riffe-Stacy (1925–2011). Names his wife of 45 years, three children, eight siblings and six grandchildren."},
+ {title:"Marriage license: Lonnie Edward Stacy & Delma Jean Prichard", pub:"Wyoming County Court Clerk (shared by Trevor)", date:"Dec. 31, 1966", region:"Oceana", kind:"Court record", status:"found", url:"#m-license", who:["lonnie","delma","lonnie_sr","hattie","boyd","gracie"], sum:"Gives his birth as July 14, 1946, Iaeger, McDowell Co., and hers as Oct. 6, 1947, Oceana; his parents Lonnie Stacy and Hattie Riffe, hers Boyd [Prichard] and Gracie James. Married at Oceana by J. L. Riffe, minister. See the scan in the Photos & documents section."},
+ {title:"Lonnie Edward “Ticky” Stacy", pub:"Find a Grave · memorial 83371208", region:"Oceana", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/83371208/lonnie_edward_stacy", who:["lonnie","delma","rick","angela","lori","lonnie_sr","hattie"], sum:"Born July 14, 1946, Hanover, Wyoming County; died Jan. 10, 2012, Raleigh County, at 65. Buried at Palm Memorial Gardens, Matheny. The headstone carries a photo of Lonnie and Delma (photo added by B. Walls). The memorial includes his obituary."},
  {title:"Lori Barlow Pruitt", pub:"Facebook profile (shared by Trevor)", region:"Oceana", kind:"Family profile", status:"found", url:"https://www.facebook.com/share/1GTKjqXHAh/", who:["lori","lonnie","delma","laken","alex_b"], sum:"Trevor’s aunt Lori, of Oceana. Her cover photo shows Lonnie and Delma Stacy surrounded by their grandchildren."},
  {title:"Magistrate Jeff Barlow", pub:"West Virginia Judiciary · Wyoming County Magistrate Court", region:"Oceana", kind:"Public record", status:"found", url:"https://www.courtswv.gov/node/32813", who:["jeff_b"], sum:"Lists Jeff Barlow among Wyoming County’s magistrates."},
  {title:"Jeffrey Barlow, elected official", pub:"West Virginia Secretary of State", region:"Oceana", kind:"Public record", status:"found", url:"https://apps.sos.wv.gov/elections/Officials/Home/Details/b893e7ee-78cb-40ea-86c0-f5653828d55d", who:["jeff_b"], sum:"State elected-officials record: Magistrate Court Judge, Wyoming County."},
@@ -954,7 +1017,7 @@ function drawRecords(){
   const regions=["all",...new Set(RECORDS.map(r=>r.region))];
   $("#rec-filters").innerHTML=regions.map(r=>`<button class="chip" type="button" data-rr="${esc(r)}" aria-pressed="${recRegion===r}">${r==="all"?"All places":esc(r)}</button>`).join("");
   const card=(r,isArch)=>`<article class="rec"><div class="meta"><span class="kind">${esc(isArch?"Archive":r.kind)}</span><span>${esc(r.region)}</span>${r.date?`<span>${esc(r.date)}</span>`:""}${r.status==="lead"?`<span class="lead">lead</span>`:""}</div>
-    <h3><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></h3><p class="muted" style="font-size:.85rem">${esc(r.pub)}</p><p>${esc(r.sum)}</p>
+    <h3><a href="${esc(r.url)}"${r.url.startsWith("#")?"":` target="_blank" rel="noopener"`}>${esc(r.title)}</a></h3><p class="muted" style="font-size:.85rem">${esc(r.pub)}</p><p>${esc(r.sum)}</p>
     ${r.who?`<div class="chips">${r.who.filter(id=>P[id]).map(id=>`<button class="chip" type="button" data-p="${id}"><span class="sw" style="background:${FAM[P[id].fam].color}"></span>${esc(P[id].short||P[id].name)}</button>`).join("")}</div>`:""}</article>`;
   $("#rec-list").innerHTML=RECORDS.filter(r=>recRegion==="all"||r.region===recRegion).map(r=>card(r,false)).join("");
   $("#arch-list").innerHTML=ARCHIVES.map(r=>card(r,true)).join("");
@@ -1012,12 +1075,14 @@ const TREE_STACY = [
   {id:"annette", x:385, y:395, from:"trevor"},
   {id:"clay", x:615, y:395, from:"sara", label:"Clay Campbell"},
   {id:"ruthie", x:820, y:420, from:"sara"},
-  {id:"lonnie", x:90, y:262, from:"rick"},
+  {id:"lonnie", x:128, y:262, from:"rick", label:"Lonnie “Ticky” Stacy"},
   {id:"delma", x:245, y:205, from:"rick"},
-  {id:"boyd", x:125, y:100, from:"delma"},
-  {id:"gracie", x:290, y:60, from:"delma"},
+  {id:"boyd", x:265, y:132, from:"delma"},
+  {id:"lonnie_sr", x:85, y:150, from:"lonnie", label:"Lonnie Stacy Sr."},
+  {id:"hattie", x:105, y:60, from:"lonnie", label:"Hattie Riffe"},
+  {id:"gracie", x:300, y:60, from:"delma"},
   {id:"gene", x:430, y:262, from:"annette"},
-  {id:"c_libby", x:445, y:135, from:"annette", label:"Libby Zoglman"},
+  {id:"c_libby", x:475, y:140, from:"annette", label:"Libby Zoglman"},
   {id:"cledith_sr", x:605, y:240, from:"clay"},
   {id:"barbara", x:770, y:205, from:"clay"},
   {id:"davispar", x:900, y:295, from:"ruthie", unknown:"Davis parents"},
@@ -1154,14 +1219,16 @@ function drawBranches(){
     "gene":"Four children, named in Gene’s 2026 obituary.",
     "trevor":"The center of this tree.",
     "rick":"Trevor and his brothers.",
-    "lonnie":"Rick and his sisters Angela and Lori, all raised in Oceana. Birth order not yet known.",
+    "lonnie":"Angie, Lori and Ricky, all raised in Oceana.",
+    "lonnie_sr":"Eight children, named in Ticky’s 2012 obituary.",
+    "angela":"Trevor’s first cousin on the Stacy side.",
     "jeff_b":"Trevor’s first cousins on the Stacy side.",
     "boyd":"Delma, her brother Mack and at least four sisters; three are named so far.",
     "clay":"Named in Pastor Clay Campbell’s 2024 obituary.",
     "cledith_sr":"Six children, named in Barbara Ann Campbell’s 2021 obituary.",
     "w_hively":"Barbara had five sisters and two brothers; only Jerry is named so far."
   };
-  const order = ["trevor","rick","clay","lonnie","jeff_b","boyd","cledith_sr","w_hively","joseph_z","henry","bud","charles_f","gene","wp_coomes","wm_martin","lt","lorenzo","robert_j","edgar_w"];
+  const order = ["trevor","rick","clay","lonnie","jeff_b","angela","lonnie_sr","boyd","cledith_sr","w_hively","joseph_z","henry","bud","charles_f","gene","wp_coomes","wm_martin","lt","lorenzo","robert_j","edgar_w"];
   groups.sort((a,b)=>{const ia=order.indexOf(a[0]),ib=order.indexOf(b[0]);return (ia<0?99:ia)-(ib<0?99:ib)});
   $("#branches").innerHTML = groups.map(par=>{
     const names = par.map(id=>P[id]).map(p=>p.short||p.name);
@@ -1281,6 +1348,9 @@ function openPerson(id){
   if(kids.length) h+=`<h4>Children</h4>${chipList(kids.map(k=>k.id))}`;
   if(sibs.length) h+=`<h4>Siblings</h4>${chipList(sibs.map(s=>s.id))}`;
   h+=`</div>`;
+  if(p.photo&&MEDIA[p.photo]) h+=`<figure class="dphoto"><img src="${MEDIA[p.photo].src}" alt="${esc(MEDIA[p.photo].title)}"><figcaption>${esc(MEDIA[p.photo].caption)}</figcaption></figure>`;
+  const docs=Object.entries(MEDIA).filter(([k,m])=>k!==p.photo&&m.who.includes(id));
+  if(docs.length) h+=`<div class="rel"><h4>Photos &amp; documents</h4><div class="chips">${docs.map(([k,m])=>`<a class="chip" href="#m-${k}" data-close style="text-decoration:none">${esc(m.title)}</a>`).join("")}</div></div>`;
   if(p.notes.length) h+=`<div class="rel"><h4>What the papers and records say</h4><ul class="story">${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`;
   const chs=CHAPTERS.filter(c=>c.who&&c.who.includes(id));
   if(chs.length) h+=`<div class="rel"><h4>Appears in these stories</h4><div class="chips">${chs.map(c=>`<a class="chip" href="#ch-${c.id}" data-close style="text-decoration:none">${esc(c.title)}</a>`).join("")}</div></div>`;
@@ -1288,7 +1358,7 @@ function openPerson(id){
   if(TREE_FOLZ.some(n=>n.id===id&&!n.unknown) && curTree!=="folz") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="folz" data-close data-scroll>View on the Folz tree</button></p>`;
   if(TREE_ZS.some(n=>n.id===id&&!n.unknown) && curTree!=="zs") h+=`<p style="margin-top:16px"><button class="chip" type="button" data-tree="zs" data-close data-scroll>View on the Zoglman &amp; Stallings tree</button></p>`;
   const recs=RECORDS.filter(r=>r.who.includes(id));
-  if(recs.length) h+=`<div class="rel"><h4>Newspapers &amp; records</h4><ul class="reclinks">${recs.map(r=>`<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.pub)}${r.date?" · "+esc(r.date):""}</span></li>`).join("")}</ul></div>`;
+  if(recs.length) h+=`<div class="rel"><h4>Newspapers &amp; records</h4><ul class="reclinks">${recs.map(r=>`<li><a href="${esc(r.url)}"${r.url.startsWith("#")?" data-close":` target="_blank" rel="noopener"`}>${esc(r.title)}</a><span>${esc(r.pub)}${r.date?" · "+esc(r.date):""}</span></li>`).join("")}</ul></div>`;
   if(p.src.length) h+=`<p class="srcs">Sources: ${p.src.map(s=>esc(SOURCES[s].title)).join(" · ")}</p>`;
   $("#d-body").innerHTML=h;
   $("#drawer").scrollTop=0;
@@ -1366,7 +1436,7 @@ $("#shake").addEventListener("click",()=>{ if(!running) setPaused(false); burst(
 drawTree(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ seed=7; drawTree(); });
 if(location.hash==="#folz") setTree("folz"); else if(location.hash==="#zoglman") setTree("zs");
 { const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2; }
-drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes(); drawRecords();
+drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes(); drawRecords(); drawGallery();
 </script>
 </body>
 </html>
