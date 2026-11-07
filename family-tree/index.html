@@ -234,6 +234,19 @@ section{padding-block:64px}
 .keepers ul{columns:2 280px;padding-left:20px}
 .keepers li{break-inside:avoid;margin-bottom:6px}
 
+.records{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;align-items:start}
+.rec{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 18px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.rec .meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-family:var(--type);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.rec .kind{color:var(--gold)}
+.rec .lead{color:var(--rust);border:1px solid var(--rust);border-radius:3px;padding:0 5px}
+.rec h3{font-family:var(--body);font-weight:700;font-size:1.05rem;line-height:1.3}
+.rec h3 a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--gold)}
+.rec h3 a:hover{color:var(--gold)}
+.rec p{margin:0;font-size:.95rem}
+.rec .url{font-family:var(--type);font-size:.75rem;color:var(--muted);overflow-wrap:anywhere}
+.reclinks{list-style:none;padding:0;margin:6px 0;display:grid;gap:8px}
+.reclinks a{color:var(--gold)}
+.reclinks span{display:block;font-size:.82rem;color:var(--muted)}
 footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);font-size:.9rem}
 
 /* ---------- drawer ---------- */
@@ -266,7 +279,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
       Stallings &amp; Zoglman
     </a>
     <nav class="sections" aria-label="Sections">
-      <a href="#tree">Tree</a><a href="#stories">Stories</a><a href="#timeline">Timeline</a><a href="#journey">Journey</a><a href="#people">People</a><a href="#notes">Research notes</a><a href="#sources">Sources</a>
+      <a href="#tree">Tree</a><a href="#stories">Stories</a><a href="#timeline">Timeline</a><a href="#journey">Journey</a><a href="#people">People</a><a href="#records">Newspapers</a><a href="#notes">Research notes</a><a href="#sources">Sources</a>
     </nav>
     <div class="tools">
       <button class="iconbtn" id="shake" type="button">Shake the tree</button>
@@ -395,6 +408,24 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
     </div>
   </section>
 
+  <!-- ================= RECORDS ================= -->
+  <section id="records">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="eyebrow">Evansville · Jasper · Owensboro · Spencer County · New Mexico</div>
+          <h2>Newspapers &amp; records</h2>
+          <p>Obituaries, grave memorials and county histories found online for the main lines of the tree. The details shown are summaries of what each source says. Open the link to read the original, and treat anything marked “lead” as unconfirmed.</p>
+        </div>
+        <div class="filters" id="rec-filters" role="group" aria-label="Filter records by region"></div>
+      </div>
+      <div class="records" id="rec-list"></div>
+      <h3 style="font-size:1.6rem;margin-top:44px">Where to search next</h3>
+      <p class="muted prose" style="margin:6px 0 16px">Archives that hold the older newspapers. Most 1890s–1980s obituaries are on paid sites or in library microfilm, so these are the best places to dig further.</p>
+      <div class="records" id="arch-list"></div>
+    </div>
+  </section>
+
   <!-- ================= NOTES ================= -->
   <section id="notes" style="background:var(--bg-2)">
     <div class="wrap">
@@ -416,7 +447,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <div>
           <div class="eyebrow">The papers</div>
           <h2>Sources</h2>
-          <p>Everything on this site comes from these family documents. More are coming: a short family memoir and scanned originals.</p>
+          <p>The family documents below, plus the newspapers and online records listed in the section above. More are coming: a short family memoir and scanned originals.</p>
         </div>
       </div>
       <div class="sources" id="src-list"></div>
@@ -437,7 +468,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
 </main>
 
 <footer>
-  <div class="wrap">Compiled from family papers: the Zoglman and Stallings family tree pages, “Stallings Family History,” and Theresa’s eulogy (2009). Built to grow as more records are added.</div>
+  <div class="wrap">Compiled from family papers (the Zoglman and Stallings family tree pages, “Stallings Family History,” and Theresa’s eulogy) and from obituaries and records found online. Built to grow as more records are added.</div>
 </footer>
 
 <div class="scrim" id="scrim"></div>
@@ -464,45 +495,51 @@ const SOURCES = {
   ZT:{title:"Zoglman Family Tree", kind:"Typed list · 1 page", desc:"Joseph Zoglmann and Catherine Lauber, Henry Zoglman and Lizzie Haller, Henry’s two siblings and eight children, with dates and burial places.", r:"-1.2deg"},
   ST:{title:"Stallings Family Tree", kind:"Typed list · 1 page", desc:"William Martin Stallings and Lucy Ann Coomes, William Peter Coomes and Elizabeth Jane Peyton, L.T. Stallings and Alice Massey, and L.T.’s eleven children.", r:"1deg"},
   MEM:{title:"Stallings Family History", kind:"Memoir · 7 pages · written after the Nov. 2014 trip", desc:"By a grandson of Theresa, son of Bill Schmitt. Traces the Stallings from England to Kentucky to the Kentucky Mesa, drawing on the book “Candles of the Lord” and the “History of Sacred Heart Parish of Farmington.”", r:"-0.6deg"},
+  WEB:{title:"Newspapers & online records", kind:"Obituaries, grave memorials, county histories", desc:"Found by web search in November 2026. Each is listed with its link in the Newspapers & Records section.", r:"-0.8deg"},
   EUL:{title:"Theresa Lavina — eulogy", kind:"Funeral remarks · 3 pages · July 2009", desc:"Delivered on behalf of the Zoglman family. Her childhood in Waterflow, the move home, her marriage to Bud, her cooking, candles, cards, and the lessons she taught.", r:"1.4deg"}
 };
 
 const PEOPLE = [
   // ---------------- ZOGLMAN ----------------
-  {id:"joseph_z", name:"Joseph Zoglmann", fam:"Z", b:"Dec. 17, 1833", bp:"Germany", d:"Aug. 27, 1894", dp:"Gentryville, Indiana", bur:"St. Boniface, Fulda, Indiana", sp:["catherine_l"], role:"Emigrant patriarch of the Zoglman line", notes:["Born in Germany; died in Gentryville, Indiana.","Buried at St. Boniface in Fulda, Indiana, beside his wife Catherine."], src:["ZT"]},
-  {id:"catherine_l", name:"Catherine Lauber Zoglmann", fam:"Z", b:"Mar. 30, 1834", bp:"Bavaria", d:"Mar. 2, 1914", dp:"Fulda, Indiana", bur:"St. Boniface, Fulda, Indiana", sp:["joseph_z"], role:"Born in Bavaria; matriarch of the Zoglman line", notes:["Born in Bavaria, she outlived her husband by twenty years and died in Fulda."], src:["ZT"]},
-  {id:"johann_adam", name:"Johann Adam Zoglmann", fam:"Z", b:"Aug. 14, 1855", bp:"Fulda", d:"Nov. 19, 1904", par:["joseph_z","catherine_l"], sp:["elizabeth_s"], role:"Henry’s brother · father of 11", notes:["Married Elizabeth Sergesketter; they had 11 children."], src:["ZT"]},
+  {id:"leonard_z", name:"Leonard Zoglmann", fam:"Z", d:"1883", dp:"Bavaria", sp:["theresa_spatt"], role:"Joseph’s father · Bavarian blacksmith", notes:["Named in the county-history biography of his son Joseph. A blacksmith who taught Joseph the trade.","He never emigrated; he and his wife lived out their lives in Bavaria. He died in 1883."], src:["WEB"]},
+  {id:"theresa_spatt", name:"Theresa Spatt Zoglmann", fam:"Z", d:"1884", dp:"Bavaria", sp:["leonard_z"], role:"Joseph’s mother", notes:["Named in the county-history biography of her son Joseph, eldest of her four children. She died in Bavaria in 1884."], src:["WEB"]},
+  {id:"joseph_z", name:"Joseph Zoglmann", fam:"Z", b:"Dec. 17, 1833", bp:"Bavaria, Germany", d:"Aug. 27, 1894", dp:"Gentryville, Indiana", bur:"St. Boniface, Fulda, Indiana", par:["leonard_z","theresa_spatt"], sp:["catherine_l"], role:"Blacksmith of Fulda · emigrant patriarch", notes:["Eldest of four children of Leonard and Theresa (Spatt) Zoglmann. Learned blacksmithing from his father and worked at it in Bavaria until 1852.","Came to Fulda, Spencer County, Indiana, in 1852 and opened the blacksmith shop he worked for the rest of his career.","Married Kathrina (Lauber) Diebenbach in 1854. The county history counts ten children, eight sons and two daughters, raised Catholic.","Died in Gentryville, Indiana; buried at St. Boniface in Fulda beside Catherine."], src:["ZT","WEB"]},
+  {id:"catherine_l", name:"Catherine Lauber Zoglmann", fam:"Z", b:"Mar. 30, 1834", bp:"Bavaria", d:"Mar. 2, 1914", dp:"Fulda, Indiana", bur:"St. Boniface, Fulda, Indiana", sp:["joseph_z"], aka:"“Kathrina (Lauber) Diebenbach” at her 1854 marriage; “Caterina Lauba” in one birth index", role:"Born in Bavaria; matriarch of the Zoglman line", notes:["Born in Bavaria. The county history gives her name at marriage as Kathrina (Lauber) Diebenbach, which suggests she was a young widow of a Diebenbach when she married Joseph in 1854.","Mother of ten. She outlived Joseph by twenty years and died in Fulda."], src:["ZT","WEB"]},
+  {id:"johann_adam", name:"Johann Adam Zoglmann", fam:"Z", b:"Aug. 14, 1855", bp:"Fulda", d:"Nov. 19, 1904", par:["joseph_z","catherine_l"], sp:["elizabeth_s"], role:"Henry’s brother · father of 11", notes:["Born in Fulda, Harrison Township, Spencer County.","Married Elizabeth Sergesketter; they had 11 children, among them Clara Christina (born Aug. 28, 1895, in Fulda)."], src:["ZT","WEB"]},
   {id:"elizabeth_s", name:"Elizabeth Sergesketter Zoglmann", fam:"M", sp:["johann_adam"], role:"Wife of Johann Adam Zoglmann", notes:["Mother of 11 Zoglmann children (not yet named in the papers)."], src:["ZT"]},
-  {id:"johanna", name:"Johanna Zoglemann Rupprecht", fam:"Z", b:"Aug. 30, 1859", bp:"Fulda", d:"Mar. 8, 1905", par:["joseph_z","catherine_l"], role:"Henry’s sister", notes:["Married name Rupprecht."], src:["ZT"]},
+  {id:"johanna", name:"Johanna Zoglemann Rupprecht", fam:"Z", b:"Aug. 30, 1859", bp:"Fulda", d:"Mar. 8, 1905", bur:"St. Boniface, Fulda, Indiana", par:["joseph_z","catherine_l"], role:"Henry’s sister", notes:["Married name Rupprecht. Her Find a Grave memorial spells the maiden name “Zogelman.”"], src:["ZT","WEB"]},
+  {id:"martin_z", name:"Martin Zoglmann", fam:"Z", b:"Nov. 11, 1874", bp:"Fulda, Spencer County, Indiana", par:["joseph_z","catherine_l"], role:"Henry’s younger brother", notes:["Found in a genealogy birth index naming his parents as Joseph Zoglmann and “Caterina Lauba.” Not on the family tree page."], src:["WEB"]},
+  {id:"mary_z", name:"Mary Zoglmann", fam:"Z", par:["joseph_z","catherine_l"], role:"Henry’s sister", notes:["Named among Joseph and Kathrina’s children in the county history. Not on the family tree page; dates unknown."], src:["WEB"]},
   {id:"henry", name:"Henry Zoglman", fam:"Z", b:"July 4, 1866", d:"Aug. 21, 1926", bur:"Mater Dolorosa, Owensboro, Kentucky", par:["joseph_z","catherine_l"], sp:["lizzie"], role:"Bud’s father", notes:["Born on the Fourth of July, 1866.","Father of eight children with Lizzie Haller.","Buried at Mater Dolorosa in Owensboro."], src:["ZT"]},
   {id:"lizzie", name:"Anna Elizabeth “Lizzie” Haller Zoglmann", short:"Lizzie Haller", fam:"M", b:"May 18, 1872", d:"May 15, 1942", sp:["henry"], role:"Bud’s mother", notes:["Married Henry Zoglman; mother of eight. Her Haller parents are not yet in the papers."], src:["ZT"]},
-  {id:"henry_j", name:"Henry Joseph Zoglmann", fam:"Z", b:"Sept. 15, 1897", d:"Mar. 30, 1977", par:["henry","lizzie"], role:"Eldest child of Henry & Lizzie", src:["ZT"]},
-  {id:"robert_j", name:"Robert John Zoglmann", fam:"Z", b:"Dec. 15, 1898", d:"Oct. 7, 1975", par:["henry","lizzie"], role:"Father of Brother John Lyle", src:["ZT"]},
+  {id:"henry_j", name:"Henry Joseph Zoglmann", fam:"Z", b:"Sept. 15, 1897", d:"Mar. 30, 1977", par:["henry","lizzie"], role:"Eldest child of Henry & Lizzie", notes:["Married Margaret Rebecca Tong about 1928 in Owensboro. Their son William J. “Bill” Zoglmann (1931–2020) was born in Daviess County."], src:["ZT","WEB"]},
+  {id:"robert_j", name:"Robert John Zoglmann", fam:"Z", b:"Dec. 15, 1898", d:"Oct. 7, 1975", par:["henry","lizzie"], role:"Father of Brother John Lyle", bur:"Mater Dolorosa Cemetery, Owensboro, Kentucky", src:["ZT","WEB"]},
   {id:"john_lyle", name:"Brother John Lyle Zoglman", fam:"Z", b:"1938", d:"1995", par:["robert_j"], role:"Son of Robert John · a religious Brother", notes:["Listed on the Zoglman page as “Son Brother John Lyle 1938 to 1995.”"], src:["ZT"]},
   {id:"clara", name:"Clara Catherine Zoglmann", fam:"Z", b:"Dec. 14, 1900", d:"Jan. 7, 1976", par:["henry","lizzie"], src:["ZT"]},
   {id:"frank", name:"Frank Anton Zoglmann", fam:"Z", b:"Nov. 14, 1902", d:"Nov. 15, 1972", dp:"Tennessee", bur:"Resurrection", par:["henry","lizzie"], notes:["Died in Tennessee, buried at Resurrection."], src:["ZT"]},
   {id:"leo_dick", name:"Leo Joseph “Dick” Zoglmann", fam:"Z", b:"Apr. 1, 1904", d:"Aug. 26, 1966", par:["henry","lizzie"], role:"Farmer at Rome", notes:["Noted as a farmer at Rome (likely Rome, Indiana)."], src:["ZT"]},
   {id:"catherine_m", name:"Catherine Mary (Zoglman) Scherm", fam:"Z", b:"Jan. 16, 1910", d:"Oct. 1, 1984", dp:"Rockport", par:["henry","lizzie"], role:"Of Rockport · mother of 6", src:["ZT"]},
-  {id:"bud", name:"Edward Joseph “Bud” Zoglman Sr.", short:"Edward “Bud” Zoglman", fam:"Z", b:"Dec. 23, 1913", d:"Sept. 28, 1985", par:["henry","lizzie"], sp:["theresa"], role:"Theresa’s husband", notes:["Married Theresa Stallings on April 19, 1938, at St. Bernard’s Church, in a double wedding with her oldest sister.","“She loved my Grandfather and treated him like a king. He was known to be picky, but I am not sure if he was picky or spoiled by my Grandma’s cooking.” (eulogy)","He and Theresa went back to Waterflow, New Mexico, with daughter Rosie’s family around 1976."], src:["ZT","EUL","MEM"]},
+  {id:"bud", name:"Edward Joseph “Bud” Zoglman Sr.", short:"Edward “Bud” Zoglman", fam:"Z", b:"Dec. 23, 1913", d:"Sept. 28, 1985", par:["henry","lizzie"], sp:["theresa"], role:"Theresa’s husband", notes:["Married Theresa Stallings on April 19, 1938, at St. Bernard’s Church, in a double wedding with her oldest sister.","“She loved my Grandfather and treated him like a king. He was known to be picky, but I am not sure if he was picky or spoiled by my Grandma’s cooking.” (eulogy)","He and Theresa went back to Waterflow, New Mexico, with daughter Rosie’s family around 1976.","The couple made their home in Jasper, Indiana. Theresa was buried at Fairview Cemetery in Jasper; his own grave record has not been found online yet."], src:["ZT","EUL","MEM"]},
   {id:"agnes_e", name:"Agnes Elizabeth (Zoglman) Edelson", fam:"Z", b:"Jan. 29, 1917", d:"Nov. 13, 2000", par:["henry","lizzie"], role:"Bardstown and Louisville", src:["ZT"]},
 
   // ---------------- COOMES ----------------
-  {id:"wp_coomes", name:"William Peter Coomes", fam:"C", b:"1811", bp:"Kentucky", d:"Nov. 22, 1894", bur:"St. Benedict, Beech Grove, Kentucky", sp:["ej_peyton"], role:"Lucy’s father · father of 15", notes:["Lucy was one of his 15 children.","The Coomes family came from Ireland and settled in Bardstown, Kentucky; his ancestors were Maryland Catholics who moved to Kentucky."], src:["ST","MEM"]},
+  {id:"wp_coomes", name:"William Peter Coomes", fam:"C", b:"c. 1811", bp:"Nelson County, Kentucky (per WikiTree)", d:"Nov. 22, 1894", bur:"St. Benedict Catholic Cemetery, Beech Grove, McLean County, Kentucky", sp:["ej_peyton"], role:"Lucy’s father · father of 15", notes:["Lucy was one of his 15 children.","Married Elizabeth Jane Peyton in Daviess County in 1843. The 1860 McLean County census shows William, 50, with Elizabeth J. and nine children at home.","A Coomes family history calls him one of the first settlers of what became Beech Grove. His obituary ran in an Owensboro newspaper.","His own parents are disputed: online trees name William J. Coomes and Rachel Wood, but his Find a Grave memorial marks the parentage unknown and warns of a second man with the same name.","The Coomes family came from Ireland and settled in Bardstown, Kentucky; his ancestors were Maryland Catholics who moved to Kentucky."], src:["ST","MEM","WEB"]},
   {id:"ej_peyton", name:"Elizabeth Jane Peyton Coomes", fam:"C", b:"1823", bp:"Owensboro, Kentucky", d:"1893", sp:["wp_coomes"], role:"Lucy’s mother", src:["ST"]},
 
   // ---------------- STALLINGS ----------------
   {id:"wm_martin", name:"William Martin Stallings", fam:"S", b:"Feb. 18, 1848", d:"Nov. 30, 1897", dFlag:"The tree page gives 3/30/1897", bur:"St. Raphael Cemetery, West Louisville, Daviess County, Kentucky", sp:["lucy"], role:"Patriarch · farmer in West Louisville, Ky.", notes:["Married Lucy Ann Coomes on February 22, 1873. They had twelve children.","Died at 48 when his youngest, Lottie, was only three months old. The family stayed on his farm, and the children helped run it."], src:["ST","MEM"]},
-  {id:"lucy", name:"Lucy Ann Coomes Stallings", fam:"C", b:"Oct. 28, 1855", bp:"Beech Grove, McLean County, Kentucky", d:"July 10, 1936", dFlag:"The tree page gives July 1934", dp:"Waterflow, New Mexico", bur:"Sacred Heart Cemetery, Waterflow", par:["wp_coomes","ej_peyton"], sp:["wm_martin"], role:"Grandmother of Waterflow", notes:["Widowed at 42 with eleven living children. Her goal was to raise “Good Citizens and Good Catholics.”","Came to New Mexico in January 1915 with Damien, Lottie and Emmanuel.","Before the school was built, students were taught in her home. She lived with or near L.T. at the trading post, later with her youngest son Walter.","Very close to her granddaughter Theresa. When the family left New Mexico she told her, “This will be the last time I see you on earth, the next time we meet will be in Heaven.”"], src:["ST","MEM","EUL"]},
+  {id:"lucy", name:"Lucy Ann Coomes Stallings", aka:"called “Annie”", fam:"C", b:"Oct. 28, 1855", bp:"Beech Grove, McLean County, Kentucky", d:"July 10, 1936", dFlag:"The tree page gives July 1934", dp:"Waterflow, New Mexico", bur:"Sacred Heart Cemetery, Waterflow", par:["wp_coomes","ej_peyton"], sp:["wm_martin"], role:"Grandmother of Waterflow", notes:["Widowed at 42 with eleven living children. Her goal was to raise “Good Citizens and Good Catholics.”","Came to New Mexico in January 1915 with Damien, Lottie and Emmanuel.","Before the school was built, students were taught in her home. She lived with or near L.T. at the trading post, later with her youngest son Walter.","Very close to her granddaughter Theresa. When the family left New Mexico she told her, “This will be the last time I see you on earth, the next time we meet will be in Heaven.”"], src:["ST","MEM","EUL"]},
   {id:"mary_lorena", name:"Mary Lorena Stallings", fam:"S", b:"Dec. 22, 1873", d:"Aug. 22, 1954", par:["wm_martin","lucy"], role:"Eldest of the twelve", src:["MEM"]},
   {id:"leo_g", name:"Leo Gustave Stallings", fam:"S", b:"Nov. 1, 1875", d:"Feb. 10, 1876", par:["wm_martin","lucy"], role:"Died in infancy", src:["MEM"]},
   {id:"joseph_a", name:"Joseph Alphonsus Stallings", short:"Joseph Stallings", fam:"S", b:"Dec. 15, 1876", d:"Oct. 9, 1917", dp:"Colorado (automobile accident)", par:["wm_martin","lucy"], role:"Founder of the Kentucky Mesa colony", notes:["Left Kentucky with Lorenzo; reached Fort Smith, Arkansas, May 1, 1906, where they met David Watson.","Worked for the City Street Railway Company, then Pueblo, Colorado, then Moriarty, New Mexico.","Settled the Kentucky Mesa in late fall 1909, living in the Dugout. Asked Fr. Fintan to celebrate the first Mass there on February 22, 1912.","A good friend of railroad man P.B. McAtee.","Killed October 9, 1917, in an automobile accident in Colorado while bringing the automobile to Waterflow, months after the new church was finished.","“I have a gut feeling Joseph may have been [the leader].” (memoir)"], src:["MEM"]},
-  {id:"paul", name:"Paul De Lacy Stallings", fam:"S", b:"Apr. 13, 1879", d:"Oct. 14, 1947", par:["wm_martin","lucy"], src:["MEM"]},
+  {id:"paul", name:"Paul De Lacy Stallings", fam:"S", b:"Apr. 13, 1879", d:"Oct. 14, 1947", par:["wm_martin","lucy"], sp:["maude"], src:["MEM","WEB"]},
+  {id:"maude", name:"Maude Ann “Maudie” Gibson Stallings-Hamblin", fam:"M", b:"1894", d:"1987", sp:["paul"], role:"Wife of Paul D. Stallings", notes:["Her Find a Grave memorial names Paul’s parents as William Martin Stallings and Lucy Ann “Annie” Coomes Stallings.","A marker stands for her in Sacred Heart Cemetery, Waterflow, but it may be a cenotaph; she may be buried at Greenlawn Cemetery, Farmington, with her second husband."], src:["WEB"]},
   {id:"lorenzo", name:"Laurence Lorenzo Stallings", short:"Lorenzo “Uncle Dock”", aka:"“L.L.” or “Uncle Dock”", fam:"S", b:"May 9, 1881", d:"Dec. 10, 1954", par:["wm_martin","lucy"], sp:["rosabelle"], role:"Rancher · co-founder of the Kentucky Mesa", notes:["Went west with Joseph in 1906. Moved to New Mexico first, to Moriarty in Torrance County.","Lived in the Dugout and Bachelor’s Hall.","Became a ranch owner. Married Rosabelle, sister of Ben Warren. Four children: Irene, Lucy, Warren and Frances."], src:["MEM"]},
   {id:"mary_loretta", name:"Mary Loretta Stallings Warren", short:"Mary Loretta", fam:"S", b:"Sept. 4, 1883", d:"Aug. 6, 1969", par:["wm_martin","lucy"], sp:["edgar_w"], role:"Among the first settlers to join the bachelors", notes:["The memoir names “Loretta Stallings Warren,” the brothers’ sister, arriving in June 1914 with husband Edgar and son Leo. This is most likely Mary Loretta."], src:["MEM"]},
-  {id:"lt", name:"Legora Troosten “L.T.” Stallings", short:"L.T. Stallings", aka:"“L.T.”", fam:"S", b:"Feb. 11, 1886", bFlag:"The tree page gives 11-2-1886", bp:"West Louisville, Kentucky", d:"May 26, 1959", bur:"St. Mary’s, Tell City, Indiana", par:["wm_martin","lucy"], sp:["alice"], role:"Theresa’s father · Waterflow trader", notes:["His father died when he was 11; he helped his mother keep the farm.","At 21 (1907) entered the monastery at Subiaco, Arkansas, to study for the priesthood. After two years he left and joined Joseph and Lorenzo in Fort Smith.","Married Alice Massey on January 11, 1911, and bought a farm next to his mother’s, beside Mt. St. Joseph Academy.","In 1914 sold the farm to the Ursuline Sisters at Maple Mount, reportedly on the promise that they would send teachers to the settlement once there was a school, and moved west with his mother and five younger siblings.","Developed rheumatic fever; the altitude hurt his health. Sold his farm and stock and bought a Navajo trading post on the Kentucky Mesa, ran the store and post office for 19 years. The settlement’s name became Waterflow when he applied for the post office.","Ordered a young Easterner who shot a Navajo man to turn himself in to the San Juan County Sheriff, and was threatened by the dead man’s kin.","Health failing, he moved the family back to Kentucky (1932–33) and in 1934 bought the Hoffman farm near Rockport, Indiana.","A Third Order Franciscan, buried in his robe of St. Francis. “A good natured man who loved his faith, family, and his farm.”"], src:["ST","MEM","EUL"]},
+  {id:"lt", name:"Legora Troosten “L.T.” Stallings", short:"L.T. Stallings", aka:"“L.T.”", fam:"S", b:"Feb. 11, 1886", bFlag:"The tree page gives 11-2-1886; FamilySearch gives 1887", bp:"West Louisville, Kentucky", d:"May 26, 1959", bur:"St. Mary’s, Tell City, Indiana", par:["wm_martin","lucy"], sp:["alice"], role:"Theresa’s father · Waterflow trader", notes:["His father died when he was 11; he helped his mother keep the farm.","At 21 (1907) entered the monastery at Subiaco, Arkansas, to study for the priesthood. After two years he left and joined Joseph and Lorenzo in Fort Smith.","Married Alice Massey on January 11, 1911, and bought a farm next to his mother’s, beside Mt. St. Joseph Academy.","In 1914 sold the farm to the Ursuline Sisters at Maple Mount, reportedly on the promise that they would send teachers to the settlement once there was a school, and moved west with his mother and five younger siblings.","Developed rheumatic fever; the altitude hurt his health. Sold his farm and stock and bought a Navajo trading post on the Kentucky Mesa, ran the store and post office for 19 years. The settlement’s name became Waterflow when he applied for the post office.","Ordered a young Easterner who shot a Navajo man to turn himself in to the San Juan County Sheriff, and was threatened by the dead man’s kin.","Health failing, he moved the family back to Kentucky (1932–33) and in 1934 bought the Hoffman farm near Rockport, Indiana.","A Third Order Franciscan, buried in his robe of St. Francis. “A good natured man who loved his faith, family, and his farm.”"], src:["ST","MEM","EUL"]},
   {id:"corilla", name:"Corilla Jane Stallings", fam:"S", b:"May 8, 1888", d:"Jan. 27, 1951", par:["wm_martin","lucy"], src:["MEM"]},
   {id:"emanuel", name:"Emanuel Borgia Stallings", fam:"S", b:"Oct. 31, 1890", d:"Oct. 24, 1953", par:["wm_martin","lucy"], sp:["arlie"], notes:["Came to New Mexico in January 1915, age 24.","He and Arlie Belle Aders were the first couple married in the new brick church."], src:["MEM"]},
-  {id:"damien", name:"Felix Damien Stallings", short:"Damien Stallings", fam:"S", b:"Jan. 12, 1893", d:"Feb. 7, 1969", par:["wm_martin","lucy"], sp:["bertha_w"], notes:["Lived in Bachelor’s Hall at 21 (1914).","He and Bertha Wethington were the first couple married in the framed church."], src:["MEM"]},
+  {id:"damien", name:"Felix Damien Stallings", short:"Damien Stallings", fam:"S", b:"Jan. 12, 1893", bFlag:"Find a Grave gives Jan. 17, 1893", d:"Feb. 7, 1969", bur:"St. Bernard Cemetery, Rockport, Indiana", par:["wm_martin","lucy"], sp:["bertha_w"], notes:["Lived in Bachelor’s Hall at 21 (1914).","He and Bertha Wethington were the first couple married in the framed church.","Later came back east; he is buried at St. Bernard Cemetery in Rockport, near L.T.’s Hoffman farm."], src:["MEM","WEB"]},
   {id:"walter", name:"Walter Guy Stallings", fam:"S", b:"May 11, 1895", d:"May 9, 1951", par:["wm_martin","lucy"], role:"Ran the Waterflow trading post & post office", notes:["Lucy’s youngest son. Took over the trading post and post office after L.T.; Lucy lived with him in her last years."], src:["MEM"]},
   {id:"lottie", name:"Lottie Burdel Stallings Wethington", short:"Lottie Stallings", fam:"S", b:"Aug. 27, 1897", par:["wm_martin","lucy"], sp:["fred_w"], role:"Youngest of the twelve", notes:["Three months old when her father died.","Came west with her mother in January 1915, age 18, and later married Fred Wethington."], src:["MEM"]},
   {id:"alice", name:"Alice Bertha Massey Stallings", short:"Alice Massey", fam:"M", b:"1889", d:"Oct. 5, 1974", bur:"St. Mary’s, Tell City, Indiana", sp:["lt"], role:"Theresa’s mother", notes:["Met L.T. before he left for the West; married January 11, 1911.","Returned to New Mexico with L.T. in 1936 when his mother died.","“I can remember my Great Grandma Alice Stallings. I did not know her very well…” (memoir)"], src:["ST","MEM"]},
@@ -512,20 +549,20 @@ const PEOPLE = [
   {id:"michael", name:"Michael Esta “Mike” Stallings", fam:"S", b:"Dec. 12, 1913", d:"Mar. 7, 1967", par:["lt","alice"], notes:["Theresa told of brothers Fintan and Mike working as cowboys on the ranches."], src:["ST","MEM","EUL"]},
   {id:"fintan", name:"Fintan Joseph Stallings", fam:"S", aka:"spelled “Finton” on the tree page", b:"July 12, 1915", d:"Dec. 3, 1992", par:["lt","alice"], notes:["Worked as a cowboy on New Mexico ranches as a boy.","Born in 1915, while Fr. Fintan Zumbahler was the settlers’ priest."], src:["ST","MEM"]},
   {id:"madeline", name:"Mary Madeline (Stallings) Lasher", fam:"S", b:"Apr. 1, 1917", d:"Mar. 8, 1996", par:["lt","alice"], src:["ST","MEM"]},
-  {id:"theresa", name:"Theresa Lavina Stallings Zoglman", short:"Theresa Lavina Stallings", aka:"also written “Levina”", fam:"S", b:"Mar. 5, 1919", bp:"Waterflow, New Mexico", d:"July 15, 2009", dp:"age 90", par:["lt","alice"], sp:["bud"], role:"Born in the Wild West · Grandma Zoglman", notes:["Born seven years after New Mexico became a state, probably baptized by Fr. Albert Daeger.","Attended Sacred Heart Academy, learned several instruments, and considered becoming a nun.","Thrown off horses, saw steers run through town, and saw a Navajo man die on her family’s living-room rug.","Left New Mexico with her family in the early 1930s. Studied at Mt. St. Joseph Academy and played on its champion basketball team.","Married Ed “Bud” Zoglman April 19, 1938.","Cook, baker, candle-maker, crafter, card shark, historian. Volunteered at the Providence Home.","Returned to Waterflow in 1976."], src:["ST","MEM","EUL"]},
+  {id:"theresa", name:"Theresa Lavina Stallings Zoglman", short:"Theresa Lavina Stallings", aka:"also written “Levina”", fam:"S", b:"Mar. 5, 1919", bp:"Waterflow, New Mexico", d:"July 15, 2009", dp:"Memorial Hospital, Jasper, Indiana · age 90", bur:"Fairview Cemetery, Jasper, Indiana", par:["lt","alice"], sp:["bud"], role:"Born in the Wild West · Grandma Zoglman", notes:["Born seven years after New Mexico became a state, probably baptized by Fr. Albert Daeger.","Attended Sacred Heart Academy, learned several instruments, and considered becoming a nun.","Thrown off horses, saw steers run through town, and saw a Navajo man die on her family’s living-room rug.","Left New Mexico with her family in the early 1930s. Studied at Mt. St. Joseph Academy and played on its champion basketball team.","Married Ed “Bud” Zoglman April 19, 1938.","Cook, baker, candle-maker, crafter, card shark, historian. Volunteered at the Providence Home.","Returned to Waterflow in 1976.","Funeral Mass at St. Joseph Catholic Church, Jasper, with visitation at Becher & Kluesner Downtown Chapel. Her obituary ran in the Evansville Courier & Press on July 17, 2009.","Survived by daughters Carolyn Schmitt, Elizabeth Folz and Rosemary Stratman; sons Edward and Joseph; sister Mary Alice Higdon; 18 grandchildren and 35 great-grandchildren."], src:["ST","MEM","EUL","WEB"]},
   {id:"agnes_m", name:"Agnes Marie Stallings", fam:"S", b:"July 19, 1921", d:"Sept. 23, 1921", par:["lt","alice"], role:"Died in infancy", src:["ST","MEM"]},
   {id:"aloysius", name:"Joseph Aloysius Stallings", fam:"S", b:"Aug. 3, 1922", d:"Dec. 10, 1966", par:["lt","alice"], src:["ST","MEM","EUL"]},
   {id:"cecilia", name:"Cecilia (Stallings) Highman", fam:"S", b:"Aug. 25, 1924", d:"Feb. 28, 2009", par:["lt","alice"], src:["ST","MEM"]},
   {id:"virginia", name:"Virginia Marie (Stallings) Richard", fam:"S", b:"Nov. 15, 1926", d:"Nov. 11, 2008", par:["lt","alice"], src:["ST","MEM"]},
   {id:"lt_jr", name:"Legora Thomas “L.T.” Stallings Jr.", fam:"S", b:"Nov. 29, 1929", d:"May 23, 2008", par:["lt","alice"], src:["ST","MEM"]},
-  {id:"mary_alice", name:"Mary Alice (Stallings) Higdon", fam:"S", b:"Dec. 31, 1931", d:"Dec. 7, 2018", par:["lt","alice"], role:"Youngest of L.T.’s children", src:["ST","MEM"]},
+  {id:"mary_alice", name:"Mary Alice (Stallings) Higdon", fam:"S", b:"Dec. 31, 1931", bp:"Waterflow, New Mexico", d:"Dec. 7, 2018", dp:"Owensboro, Kentucky · age 86", bur:"Resurrection Cemetery, Owensboro", par:["lt","alice"], role:"Youngest of L.T.’s children", notes:["Her obituary confirms her parents as Legora “L.T.” Stallings and Alice Bertha Massey Stallings.","Retired registered nurse: 25 years in coronary care at Owensboro-Daviess County Hospital. Also a potter, seamstress and former beautician.","Married 66 years to Gene Higdon. Member of St. Pius Tenth Catholic Church; volunteered with St. Vincent de Paul."], src:["ST","MEM","WEB"]},
 
   // Bud & Theresa's children (named in the eulogy/memoir; full names & dates to add)
-  {id:"c_joe", name:"Joe Zoglman", fam:"Z", par:["bud","theresa"], role:"Shares her love of family tradition and history", notes:["“I see her intellect and interest in family traditions and history in Joe.”","Once called her bluff at poker."], src:["EUL"]},
-  {id:"c_rosie", name:"Rosie", fam:"Z", par:["bud","theresa"], role:"Took Theresa & Bud back to Waterflow, c. 1976", notes:["“I see her gentle, easygoing personality and love for children in Rosie.”"], src:["EUL","MEM"]},
-  {id:"c_susie", name:"Susie", fam:"Z", par:["bud","theresa"], notes:["“I see her interest in politics and the world, dedication to her Husband, and the love for her Grandchildren in Susie.”"], src:["EUL"]},
-  {id:"c_libby", name:"Libby", fam:"Z", par:["bud","theresa"], role:"Carries on the crafting tradition", notes:["“I see her craftsmanship, musical talent, and creativity in Libby.”"], src:["EUL"]},
-  {id:"c_ed", name:"Ed Zoglman", fam:"Z", par:["bud","theresa"], role:"Theresa’s youngest son", notes:["“I see her concern for helping the less fortunate and her sense of humor and mischief in Ed.”","Went on the November 2014 trip to Waterflow. As a boy he thought his grandfather L.T. was 6 ft. 3 in.; he was 5 ft. 9 in."], src:["EUL","MEM"]},
+  {id:"c_joe", name:"Joseph “Joe” Zoglman", fam:"Z", par:["bud","theresa"], role:"Shares her love of family tradition and history", notes:["“I see her intellect and interest in family traditions and history in Joe.”","Once called her bluff at poker."], src:["EUL"]},
+  {id:"c_rosie", name:"Rosemary “Rosie” Stratman", fam:"Z", par:["bud","theresa"], role:"Took Theresa & Bud back to Waterflow, c. 1976", notes:["“I see her gentle, easygoing personality and love for children in Rosie.”"], src:["EUL","MEM"]},
+  {id:"c_susie", name:"Carolyn S. (Zoglman) Schmitt", fam:"Z", par:["bud","theresa"], role:"Probably the “Susie” of the eulogy", notes:["Named as a daughter in Theresa’s 2009 obituary. The eulogy’s five names (Joe, Rosie, Susie, Libby, Ed) match the obituary’s five children if Carolyn S. is “Susie.”","Married William J. “Bill” Schmitt on July 24, 1965, at Holy Family Catholic Church, Jasper (Dubois County Herald, 50th-anniversary notice). Their four sons made the 2014 trip to Waterflow.","“I see her interest in politics and the world, dedication to her Husband, and the love for her Grandchildren in Susie.”"], src:["EUL","WEB"]},
+  {id:"c_libby", name:"Elizabeth “Libby” Folz", fam:"Z", par:["bud","theresa"], role:"Carries on the crafting tradition", notes:["“I see her craftsmanship, musical talent, and creativity in Libby.”"], src:["EUL"]},
+  {id:"c_ed", name:"Edward “Ed” Zoglman", fam:"Z", par:["bud","theresa"], role:"Theresa’s youngest son", notes:["“I see her concern for helping the less fortunate and her sense of humor and mischief in Ed.”","Went on the November 2014 trip to Waterflow. As a boy he thought his grandfather L.T. was 6 ft. 3 in.; he was 5 ft. 9 in."], src:["EUL","MEM"]},
 
   // ---------------- MARRIED IN (Stallings spouses) ----------------
   {id:"rosabelle", name:"Rosabelle Warren Stallings", fam:"M", sp:["lorenzo"], role:"Wife of Lorenzo", notes:["Sister of Ben Warren and Mary Warren Watson. Visited Waterflow, met Lorenzo, and married him soon after."], src:["MEM"]},
@@ -652,12 +689,16 @@ const EVENTS = [
  {y:1600, label:"1600s", t:"The Stallings family leaves England for the Catholic refuge of Maryland.", f:"S"},
  {y:1811, t:"William Peter Coomes born in Kentucky.", f:"C", who:["wp_coomes"]},
  {y:1823, t:"Elizabeth Jane Peyton born in Owensboro.", f:"C", who:["ej_peyton"]},
- {y:1833, d:"Dec. 17", t:"Joseph Zoglmann born in Germany.", f:"Z", who:["joseph_z"]},
+ {y:1833, d:"Dec. 17", t:"Joseph Zoglmann born in Bavaria, eldest child of Leonard and Theresa (Spatt) Zoglmann.", f:"Z", who:["joseph_z","leonard_z","theresa_spatt"]},
+ {y:1843, t:"William Peter Coomes marries Elizabeth Jane Peyton in Daviess County, Kentucky.", f:"C", who:["wp_coomes","ej_peyton"]},
+ {y:1852, t:"Joseph Zoglmann arrives in Fulda, Indiana, and opens a blacksmith shop.", f:"Z", who:["joseph_z"]},
+ {y:1854, t:"Joseph Zoglmann marries Kathrina (Lauber) Diebenbach.", f:"Z", who:["joseph_z","catherine_l"]},
  {y:1834, d:"Mar. 30", t:"Catherine Lauber born in Bavaria.", f:"Z", who:["catherine_l"]},
  {y:1848, d:"Feb. 18", t:"William Martin Stallings born.", f:"S", who:["wm_martin"]},
  {y:1855, d:"Aug. 14", t:"Johann Adam Zoglmann born in Fulda, Indiana.", f:"Z", who:["johann_adam"]},
  {y:1855, d:"Oct. 28", t:"Lucy Ann Coomes born at Beech Grove, McLean County, Kentucky.", f:"C", who:["lucy"]},
  {y:1859, d:"Aug. 30", t:"Johanna Zoglemann born in Fulda.", f:"Z", who:["johanna"]},
+ {y:1874, d:"Nov. 11", t:"Martin Zoglmann born in Fulda.", f:"Z", who:["martin_z"]},
  {y:1866, d:"July 4", t:"Henry Zoglman born.", f:"Z", who:["henry"]},
  {y:1872, d:"May 18", t:"Anna Elizabeth “Lizzie” Haller born.", f:"Z", who:["lizzie"]},
  {y:1873, d:"Feb. 22", t:"William Martin Stallings marries Lucy Ann Coomes.", f:"S", who:["wm_martin","lucy"]},
@@ -696,11 +737,12 @@ const EVENTS = [
  {y:1936, d:"July 10", t:"Lucy Coomes Stallings dies in Waterflow. L.T. and Alice return to New Mexico.", f:"S", who:["lucy"]},
  {y:1938, d:"Apr. 19", t:"Theresa marries Bud Zoglman at St. Bernard’s, in a double wedding with her sister.", f:"Z", who:["theresa","bud","mary_olive"]},
  {y:1942, d:"May 15", t:"Lizzie Haller Zoglmann dies.", f:"Z", who:["lizzie"]},
+ {y:1965, d:"July 24", t:"Carolyn Zoglman marries William “Bill” Schmitt at Holy Family Church, Jasper.", f:"Z", who:["c_susie"]},
  {y:1959, d:"May 26", t:"L.T. Stallings dies; buried at St. Mary’s, Tell City, in his Franciscan robe.", f:"S", who:["lt"]},
  {y:1974, d:"Oct. 5", t:"Alice Massey Stallings dies.", f:"S", who:["alice"]},
  {y:1976, t:"Theresa and Bud return to Waterflow with Rosie’s family.", f:"Z", who:["theresa","bud","c_rosie"]},
  {y:1985, d:"Sept. 28", t:"Bud Zoglman dies.", f:"Z", who:["bud"]},
- {y:2009, d:"July 15", t:"Theresa Lavina Zoglman dies at 90.", f:"Z", who:["theresa"]},
+ {y:2009, d:"July 15", t:"Theresa Lavina Zoglman dies at 90 at Memorial Hospital, Jasper; buried in Fairview Cemetery.", f:"Z", who:["theresa"]},
  {y:2014, d:"Nov. 1–5", t:"Bill Schmitt, his four sons and Ed Zoglman visit Waterflow and attend Mass at Sacred Heart.", f:"W", who:["c_ed"]}
 ];
 const EVFAM = {S:{label:"Stallings",c:"var(--rust)"}, Z:{label:"Zoglman",c:"var(--sage)"}, C:{label:"Coomes",c:"var(--plum)"}, W:{label:"New Mexico & church",c:"var(--gold)"}};
@@ -718,6 +760,9 @@ const PLACES = [
 ];
 
 const NOTES = [
+ {h:"Theresa’s children, from her obituary", s:"Resolved", p:"The 2009 obituary names daughters Carolyn Schmitt, Elizabeth Folz and Rosemary Stratman and sons Edward and Joseph. The eulogy’s “Libby” is Elizabeth, “Rosie” is Rosemary, and “Susie” is most likely Carolyn S. Schmitt.", v:"Updated on the tree. Carolyn = Susie is still an inference."},
+ {h:"Joseph Zoglmann’s parents and Catherine’s first marriage", s:"New", p:"A Spencer County history biography names Joseph’s parents, Leonard and Theresa (Spatt) Zoglmann of Bavaria, and gives his bride’s name in 1854 as Kathrina (Lauber) Diebenbach, which points to an earlier marriage for her.", v:"Added a new generation to the tree. Look for a Diebenbach marriage before 1854."},
+ {h:"More Zoglmann children", s:"New", p:"The county history counts ten children of Joseph and Kathrina, eight sons and two daughters. The family page lists only three. Martin (b. 1874) and Mary are now added.", v:"Five or more sons still unnamed."},
  {h:"William Martin Stallings’s death date", s:"Conflict", p:"The tree page gives 3/30/1897. The memoir gives November 30, 1897, and says Lottie (born Aug. 27, 1897) was three months old.", v:"Preferred: Nov. 30, 1897. It fits Lottie’s age."},
  {h:"L.T.’s birthday", s:"Conflict", p:"The tree page gives 11-2-1886; the memoir gives February 11, 1886.", v:"Preferred: Feb. 11, 1886. The tree page likely wrote day before month."},
  {h:"When Lucy died", s:"Conflict", p:"The tree page says July 1934 in Waterflow. The memoir says July 10, 1936, and that L.T. and Alice went back to New Mexico in 1936 when she died.", v:"Preferred: July 10, 1936. A burial record at Sacred Heart Cemetery, Waterflow, would settle it."},
@@ -732,6 +777,54 @@ const NOTES = [
  {h:"Gaps to fill", s:"Open", p:"Parents of Lizzie Haller and of Alice Massey. Full names and dates for Bud and Theresa’s children. Names of Johann Adam’s 11 and Catherine Scherm’s 6 children. Lucy’s 14 Coomes siblings. Where the Stallings lived between Maryland and Kentucky.", v:"The memoir and scans still to come may answer some of these."}
 ];
 
+
+/* --------- Newspapers & online records (found by web search, Nov. 2026) ---------
+   status: "found" = the record matches names and dates in the family papers; "lead" = likely, needs confirming */
+const RECORDS = [
+ {title:"Theresa Zoglman obituary", pub:"Evansville Courier & Press (via Legacy.com)", date:"July 17, 2009", region:"Evansville", kind:"Obituary", status:"found", url:"https://www.legacy.com/us/obituaries/courierpress/name/theresa-zoglman-obituary?id=49303498", who:["theresa","bud","c_susie","c_libby","c_rosie","c_ed","c_joe","mary_alice"], sum:"Names her survivors: daughters Carolyn Schmitt, Elizabeth Folz and Rosemary Stratman; sons Edward and Joseph; sister Mary Alice Higdon; 18 grandchildren and 35 great-grandchildren. Mass at St. Joseph Catholic Church; burial in Fairview Cemetery."},
+ {title:"Theresa Zoglman obituary", pub:"Becher & Kluesner Funeral Home, Jasper", date:"July 2009", region:"Jasper", kind:"Obituary", status:"found", url:"https://www.becherkluesner.com/obituaries/Theresa-Zoglman/", who:["theresa","lt","alice"], sum:"Theresa, 90, of Jasper, died July 15, 2009, at Jasper Memorial Hospital. Born March 5, 1919, at Waterflow, N.M., to L.T. and Alice (Massey) Stallings. Visitation at the Downtown Chapel."},
+ {title:"Theresa L. Zoglman (1919–2009)", pub:"AncientFaces", region:"Jasper", kind:"Record index", status:"found", url:"https://www.ancientfaces.com/person/theresa-l-zoglman-birth-1919-death-2009/37908827", who:["theresa"], sum:"Index entry for Theresa L. Zoglman of Jasper, Indiana, born March 5, 1919."},
+ {title:"50 years: William J. and Carolyn S. Schmitt", pub:"The Herald (Dubois County Herald), Jasper", region:"Jasper", kind:"Newspaper", status:"found", url:"https://www.duboiscountyherald.com/people/anniversary/50-years-william-j-and-carolyn-s-schmitt/article_f188c166-4adf-5bad-87a5-cfe5c5006ca7.html", who:["c_susie"], sum:"Anniversary notice: William Schmitt and Carolyn Zoglman were married July 24, 1965, at Holy Family Catholic Church."},
+ {title:"Mary Alice Higdon obituary", pub:"A.F. Crow & Son Funeral Home", date:"Dec. 2018", region:"Owensboro", kind:"Obituary", status:"found", url:"https://www.afcrowfh.com/obituaries/Mary-Higdon?obId=28851024", who:["mary_alice","lt","alice"], sum:"Born Dec. 31, 1931, in Waterflow, N.M., to Legora “L.T.” Stallings and Alice Bertha Massey Stallings; died Dec. 7, 2018, in Owensboro. Retired coronary-care nurse; wife of Gene Higdon for 66 years. Buried at Resurrection Cemetery."},
+ {title:"Mary Alice Stallings Higdon (1931–2018)", pub:"Find a Grave · memorial 195231918", region:"Owensboro", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/195231918/mary-alice-higdon", who:["mary_alice","lt","alice"], sum:"Memorial page with links to her parents (1886–1959 and 1889–1974), which may lead to L.T.’s and Alice’s own memorials."},
+ {title:"Robert John Zoglmann (1898–1975)", pub:"Find a Grave · memorial 64352778", region:"Owensboro", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/64352778/robert-john-zoglmann", who:["robert_j"], sum:"Buried at Mater Dolorosa Cemetery, Owensboro, the same cemetery as his father Henry."},
+ {title:"William J. “Bill” Zoglmann obituary", pub:"Owensboro Messenger-Inquirer", date:"2020", region:"Owensboro", kind:"Obituary", status:"found", url:"https://www.messenger-inquirer.com/obituaries/william-j-bill-zoglmann/article_d6860a20-3a02-5213-85e0-37264e356353.html", who:["henry_j"], sum:"Born Nov. 18, 1931, in Daviess County to Henry and Margaret (Tong) Zoglmann. Henry Joseph, Bud’s eldest brother, married Margaret Rebecca Tong about 1928."},
+ {title:"Mater Dolorosa Cemetery burials (Jerry Long)", pub:"West-Central Kentucky History & Genealogy (PDF)", region:"Owensboro", kind:"Cemetery list", status:"lead", url:"https://wckyhistory-genealogy.org/wp-content/uploads/2024/08/Mater-Dolorosa-Cemetery.pdf", who:["henry","robert_j"], sum:"Burial list for Owensboro’s Catholic cemetery. Check it for Henry Zoglman (d. 1926) and Lizzie Haller Zoglmann (d. 1942); their memorials were not found online."},
+ {title:"William Peter Coomes (1811–1894)", pub:"Find a Grave · memorial 6330650", region:"Owensboro", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/6330650/william-peter-coomes", who:["wp_coomes","ej_peyton","lucy"], sum:"Died Nov. 22, 1894; buried at St. Benedict Catholic Cemetery, Beech Grove, McLean County. Linked to his wife (1823–1893). Cites his obituary in an Owensboro newspaper. Parentage marked unknown."},
+ {title:"Descendants of Richard Coomes I", pub:"RootsWeb family history", region:"Owensboro", kind:"Family history", status:"lead", url:"http://sites.rootsweb.com/~tnwcogs/famhist/coomesftw01b.htm", who:["wp_coomes"], sum:"Calls William Peter Coomes one of the first settlers of what became Beech Grove, and notes his 1843 marriage to Elizabeth Jane Peyton in Daviess County."},
+ {title:"Felix Damien Stallings (1893–1969)", pub:"Find a Grave · memorial 35282553", region:"Spencer Co.", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/35282553/felix-damien-stallings", who:["damien","wm_martin","lucy"], sum:"Buried at St. Bernard Cemetery, Rockport, Indiana. Gives his birth as Jan. 17, 1893, and links a parent dated 1848–1897 (William Martin)."},
+ {title:"Joseph Zoglmann biography, Harrison Township", pub:"Genealogy Trails · Spencer County county history", region:"Spencer Co.", kind:"County history", status:"found", url:"http://genealogytrails.com/ind/spencer/bios-harrison-twp.html", who:["joseph_z","catherine_l","leonard_z","theresa_spatt","johanna","mary_z","johann_adam","henry"], sum:"Born Dec. 17, 1833, in Bavaria to Leonard and Theresa (Spatt) Zoglmann; blacksmith; came to Fulda in 1852; married Kathrina (Lauber) Diebenbach in 1854; ten children, eight sons and two daughters."},
+ {title:"Johanna Zogelman Rupprecht (1859–1905)", pub:"Find a Grave · memorial 95809750", region:"Spencer Co.", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/95809750/johanna-rupprecht", who:["johanna"], sum:"Buried at St. Boniface Cemetery, Fulda, Spencer County."},
+ {title:"Zoglmann genealogy", pub:"WikiTree", region:"Spencer Co.", kind:"Online tree", status:"lead", url:"https://www.wikitree.com/genealogy/ZOGLMANN", who:["joseph_z","johann_adam"], sum:"Profiles for Joseph Zoglmann (Bavaria 1833 – 1894) and Johann Adam Zoglmann (Fulda, Harrison Township, 1855 – 1904)."},
+ {title:"Zoglmann family birth index", pub:"SortedByName.com", region:"Spencer Co.", kind:"Record index", status:"lead", url:"https://sortedbyname.com/letter_z/zoglmann/index_2.html", who:["martin_z","joseph_z","catherine_l"], sum:"Lists Martin Zoglmann, born Nov. 11, 1874, in Fulda to Joseph Zoglmann and “Caterina Lauba.”"},
+ {title:"Clara Christina Zoglman", pub:"Ancestry", region:"Spencer Co.", kind:"Online tree", status:"lead", url:"https://www.ancestry.com/genealogy/records/clara-christina-zoglman-24-15vqxv", who:["johann_adam","elizabeth_s"], sum:"Born Aug. 28, 1895, in Fulda to Johann Adam Zoglmann and Elizabeth Sergesketter."},
+ {title:"Legora Troosten Stallings (1887–1959)", pub:"FamilySearch · LR2K-ZCC", region:"Online trees", kind:"Online tree", status:"lead", url:"https://ancestors.familysearch.org/en/LR2K-ZCC/legora-troosten-stallings-1887-1959", who:["lt"], sum:"FamilySearch profile for L.T. Gives a birth year of 1887, a third version of his birth date."},
+ {title:"Maude Ann “Maudie” Gibson Stallings-Hamblin (1894–1987)", pub:"Find a Grave · memorial 132467086", region:"New Mexico", kind:"Grave memorial", status:"found", url:"https://www.findagrave.com/memorial/132467086/maude-ann-stallings-hamblin", who:["maude","paul","wm_martin","lucy"], sum:"Wife of Paul D. Stallings; names his parents as William Martin Stallings and Lucy Ann “Annie” Coomes Stallings. Marker in Sacred Heart Cemetery, Waterflow."},
+ {title:"Sacred Heart Academy, Waterflow, New Mexico", pub:"Ursuline Sisters of Mount Saint Joseph", region:"New Mexico", kind:"History", status:"found", url:"https://ursulinesmsj.org/sacred-heart-academy-waterflow-new-mexico/", who:["lt","theresa","joseph_a","lorenzo","watson"], sum:"The Sisters’ own history: Joseph and Lorenzo Stallings and David Watson as pioneer settlers, first Mass Feb. 22, 1912, the academy founded 1919, all 12 grades by 1930, closed 1964 after 188 graduates. Sister Consolata Stallings later taught science there."},
+ {title:"Waterflow, New Mexico", pub:"Wikipedia", region:"New Mexico", kind:"History", status:"found", url:"https://en.wikipedia.org/wiki/Waterflow,_New_Mexico", who:["joseph_a","lorenzo","watson","walter"], sum:"Sacred Heart Church dedicated May 16, 1917. The Navajo name for the place, Chʼį́įdii Łichííʼ (“Red Devil”), refers to Walter Stallings, who ran the trading post. Early Anglo settlers called it Jewett Valley."}
+];
+const ARCHIVES = [
+ {title:"Owensboro Area Obituary Index", pub:"Daviess County Public Library", region:"Owensboro", url:"https://obits.dcplibrary.org/", sum:"Free index of Owensboro Messenger and Messenger-Inquirer obituaries from 1842 to today, including Southern Indiana deaths. Search Zoglmann, Stallings and Coomes for Henry (1926), Lizzie (1942) and William Martin (1897)."},
+ {title:"Hoosier State Chronicles", pub:"Indiana State Library", region:"Indiana", url:"https://newspapers.library.in.gov/", sum:"Free digitized Indiana newspapers, including Evansville titles. Coverage of Jasper and Rockport papers is limited."},
+ {title:"St. Boniface Cemetery directory, Fulda", pub:"St. Boniface & St. Meinrad parishes", region:"Spencer Co.", url:"https://sbcatholic.church/1847", sum:"Searchable burial directory with headstone photos and an aerial map. Look for Joseph and Catherine Zoglmann."},
+ {title:"Fairview Cemetery, Jasper", pub:"Find a Grave", region:"Jasper", url:"https://www.findagrave.com/cemetery/1979985/fairview-cemetery", sum:"Over 7,500 memorials. Theresa is buried here; search for Bud’s memorial too."},
+ {title:"Mater Dolorosa Cemetery, Owensboro", pub:"Find a Grave", region:"Owensboro", url:"https://www.findagrave.com/cemetery/1998152/mater-dolorosa-cemetery", sum:"Henry Zoglman’s burial place per the family tree page."},
+ {title:"St. Bernard Cemetery, Rockport", pub:"Find a Grave", region:"Spencer Co.", url:"https://www.findagrave.com/cemetery/86661/saint-bernard-cemetery", sum:"Damien Stallings is buried here. St. Bernard’s Church is where Theresa and Bud married in 1938."},
+ {title:"Zoglmann obituaries in the Messenger-Inquirer", pub:"Ancestry", region:"Owensboro", url:"https://www.ancestry.com/obituaries/kentucky/owensboro/messenger-inquirer_7158/Z-1/zoglmann-1", sum:"Subscription index of Zoglmann family obituaries in the Owensboro paper."},
+ {title:"Spencer County obits, bios and wills", pub:"Spencer County, Indiana genealogy", region:"Spencer Co.", url:"https://spencercoin.weebly.com/obits-bios-and-wills4.html", sum:"Transcribed obituaries and biographies from Spencer County, home of Fulda, Gentryville and Rockport."},
+ {title:"Chronicling America", pub:"Library of Congress", region:"New Mexico", url:"https://chroniclingamerica.loc.gov/", sum:"Free historic newspapers. Try New Mexico and Colorado papers from October 1917 for Joseph Stallings’s automobile accident."}
+];
+let recRegion="all";
+function drawRecords(){
+  const regions=["all",...new Set(RECORDS.map(r=>r.region))];
+  $("#rec-filters").innerHTML=regions.map(r=>`<button class="chip" type="button" data-rr="${esc(r)}" aria-pressed="${recRegion===r}">${r==="all"?"All places":esc(r)}</button>`).join("");
+  const card=(r,isArch)=>`<article class="rec"><div class="meta"><span class="kind">${esc(isArch?"Archive":r.kind)}</span><span>${esc(r.region)}</span>${r.date?`<span>${esc(r.date)}</span>`:""}${r.status==="lead"?`<span class="lead">lead</span>`:""}</div>
+    <h3><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></h3><p class="muted" style="font-size:.85rem">${esc(r.pub)}</p><p>${esc(r.sum)}</p>
+    ${r.who?`<div class="chips">${r.who.filter(id=>P[id]).map(id=>`<button class="chip" type="button" data-p="${id}"><span class="sw" style="background:${FAM[P[id].fam].color}"></span>${esc(P[id].short||P[id].name)}</button>`).join("")}</div>`:""}</article>`;
+  $("#rec-list").innerHTML=RECORDS.filter(r=>recRegion==="all"||r.region===recRegion).map(r=>card(r,false)).join("");
+  $("#arch-list").innerHTML=ARCHIVES.map(r=>card(r,true)).join("");
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-rr]");if(!b)return;recRegion=b.dataset.rr;drawRecords();});
 /* =====================================================================
    RENDER
    ===================================================================== */
@@ -753,6 +846,8 @@ const TREE = [
   {id:"lt", x:615, y:395, from:"theresa"},
   {id:"alice", x:820, y:420, from:"theresa"},
   {id:"joseph_z", x:105, y:255, from:"henry"},
+  {id:"leonard_z", x:105, y:100, from:"joseph_z"},
+  {id:"theresa_spatt", x:300, y:70, from:"joseph_z", label:"Theresa Spatt"},
   {id:"catherine_l", x:270, y:190, from:"henry", label:"Catherine Lauber"},
   {id:"haller", x:430, y:280, from:"lizzie", unknown:"Haller parents"},
   {id:"wm_martin", x:585, y:190, from:"lt"},
@@ -845,9 +940,9 @@ function drawTree(){
     g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openPerson(k.id)}});
   });
   // side labels
-  const sl = (x,txt,col)=>{const t=mk("text",{x,y:30,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:col},gNodes);t.textContent=txt;};
+  const sl = (x,txt,col)=>{const t=mk("text",{x,y:22,"text-anchor":"middle","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:col},gNodes);t.textContent=txt;};
   sl(180,"BUD’S SIDE · ZOGLMAN","var(--sage)");
-  const t=mk("text",{x:980,y:30,"text-anchor":"end","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:"var(--rust)"},gNodes); t.textContent="THERESA’S SIDE · STALLINGS & COOMES";
+  const t=mk("text",{x:980,y:22,"text-anchor":"end","font-family":"Courier Prime, monospace","font-size":13,"letter-spacing":"2",fill:"var(--rust)"},gNodes); t.textContent="THERESA’S SIDE · STALLINGS & COOMES";
 }
 
 /* ---------- Branches ---------- */
@@ -982,9 +1077,11 @@ function openPerson(id){
   if(kids.length) h+=`<h4>Children</h4>${chipList(kids.map(k=>k.id))}`;
   if(sibs.length) h+=`<h4>Siblings</h4>${chipList(sibs.map(s=>s.id))}`;
   h+=`</div>`;
-  if(p.notes.length) h+=`<div class="rel"><h4>From the family papers</h4><ul class="story">${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`;
+  if(p.notes.length) h+=`<div class="rel"><h4>What the papers and records say</h4><ul class="story">${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>`;
   const chs=CHAPTERS.filter(c=>c.who&&c.who.includes(id));
   if(chs.length) h+=`<div class="rel"><h4>Appears in these stories</h4><div class="chips">${chs.map(c=>`<a class="chip" href="#ch-${c.id}" data-close style="text-decoration:none">${esc(c.title)}</a>`).join("")}</div></div>`;
+  const recs=RECORDS.filter(r=>r.who.includes(id));
+  if(recs.length) h+=`<div class="rel"><h4>Newspapers &amp; records</h4><ul class="reclinks">${recs.map(r=>`<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><span>${esc(r.pub)}${r.date?" · "+esc(r.date):""}</span></li>`).join("")}</ul></div>`;
   if(p.src.length) h+=`<p class="srcs">Sources: ${p.src.map(s=>esc(SOURCES[s].title)).join(" · ")}</p>`;
   $("#d-body").innerHTML=h;
   $("#drawer").scrollTop=0;
@@ -1061,7 +1158,7 @@ $("#shake").addEventListener("click",()=>{ if(!running) setPaused(false); burst(
 /* ---------- boot ---------- */
 drawTree(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>{ seed=7; drawTree(); });
 { const sh=document.querySelector(".tree-shell"); if(sh.scrollWidth>sh.clientWidth) sh.scrollLeft=(sh.scrollWidth-sh.clientWidth)/2; }
-drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes();
+drawBranches(); drawChapters(); drawTimeline(); drawMap(); showPlace(); drawDir(); drawNotes(); drawRecords();
 </script>
 </body>
 </html>
